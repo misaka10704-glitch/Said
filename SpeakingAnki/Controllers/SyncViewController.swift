@@ -87,17 +87,20 @@ final class SyncViewController: UIViewController, ThemeRefreshable {
       scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-      contentStack.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 32),
+      contentStack.topAnchor.constraint(
+        equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 32),
       contentStack.leadingAnchor.constraint(
-        greaterThanOrEqualTo: scrollView.leadingAnchor, constant: DSTheme.contentPadding),
+        greaterThanOrEqualTo: scrollView.contentLayoutGuide.leadingAnchor,
+        constant: DSTheme.contentPadding),
       contentStack.trailingAnchor.constraint(
-        lessThanOrEqualTo: scrollView.trailingAnchor, constant: -DSTheme.contentPadding),
-      contentStack.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+        lessThanOrEqualTo: scrollView.contentLayoutGuide.trailingAnchor,
+        constant: -DSTheme.contentPadding),
+      contentStack.centerXAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerXAnchor),
       contentStack.bottomAnchor.constraint(
-        equalTo: scrollView.bottomAnchor, constant: -DSTheme.contentPadding),
+        equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -DSTheme.contentPadding),
       contentStack.widthAnchor.constraint(lessThanOrEqualToConstant: DSTheme.contentMaxWidth),
       contentStack.widthAnchor.constraint(
-        equalTo: scrollView.widthAnchor, constant: -DSTheme.contentPadding * 2
+        equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -DSTheme.contentPadding * 2
       ).withPriority(750),
     ])
   }

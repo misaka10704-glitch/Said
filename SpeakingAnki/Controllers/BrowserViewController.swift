@@ -91,8 +91,11 @@ final class BrowserViewController: UIViewController, ThemeRefreshable {
       let button = UIButton(type: .system)
       button.setTitle(title, for: .normal)
       button.titleLabel?.font = DSTheme.titleFont(size: 14)
+      button.titleLabel?.numberOfLines = 1
       button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
       button.layer.cornerRadius = 8
+      button.setContentHuggingPriority(.required, for: .horizontal)
+      button.setContentCompressionResistancePriority(.required, for: .horizontal)
       button.addTarget(self, action: selector, for: .touchUpInside)
       actionStack.addArrangedSubview(button)
     }
@@ -127,11 +130,12 @@ final class BrowserViewController: UIViewController, ThemeRefreshable {
       actionBar.widthAnchor.constraint(equalTo: view.widthAnchor).withPriority(750),
       actionBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
       actionBar.heightAnchor.constraint(equalToConstant: 54),
-      actionStack.leadingAnchor.constraint(equalTo: actionBar.leadingAnchor, constant: 12),
-      actionStack.trailingAnchor.constraint(equalTo: actionBar.trailingAnchor, constant: -12),
-      actionStack.topAnchor.constraint(equalTo: actionBar.topAnchor),
-      actionStack.bottomAnchor.constraint(equalTo: actionBar.bottomAnchor),
-      actionStack.heightAnchor.constraint(equalTo: actionBar.heightAnchor),
+      actionStack.leadingAnchor.constraint(equalTo: actionBar.contentLayoutGuide.leadingAnchor, constant: 12),
+      actionStack.trailingAnchor.constraint(equalTo: actionBar.contentLayoutGuide.trailingAnchor, constant: -12),
+      actionStack.topAnchor.constraint(equalTo: actionBar.frameLayoutGuide.topAnchor),
+      actionStack.bottomAnchor.constraint(equalTo: actionBar.frameLayoutGuide.bottomAnchor),
+      actionStack.widthAnchor.constraint(
+        greaterThanOrEqualTo: actionBar.frameLayoutGuide.widthAnchor, constant: -24),
       tableView.topAnchor.constraint(equalTo: deckButton.bottomAnchor),
       tableView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor),
       tableView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor),
@@ -504,6 +508,8 @@ private final class BrowserCardCell: UITableViewCell {
     metadataLabel.font = DSTheme.bodyFont(size: 12)
     badgeLabel.font = DSTheme.titleFont(size: 11)
     badgeLabel.textAlignment = .right
+    badgeLabel.setContentHuggingPriority(.required, for: .horizontal)
+    badgeLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
     for label in [frontLabel, backLabel, metadataLabel] { label.numberOfLines = 1 }
     applyTheme()
   }

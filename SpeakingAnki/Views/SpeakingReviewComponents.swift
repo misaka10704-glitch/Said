@@ -434,10 +434,21 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
         }
         if !result.metrics.isEmpty {
             let metrics = UIStackView()
-            metrics.axis = .horizontal
-            metrics.distribution = .fillEqually
+            metrics.axis = .vertical
             metrics.spacing = 8
-            result.metrics.forEach { metrics.addArrangedSubview(metricView($0)) }
+            for start in stride(from: 0, to: result.metrics.count, by: 2) {
+                let row = UIStackView()
+                row.axis = .horizontal
+                row.distribution = .fillEqually
+                row.spacing = 8
+                for index in start..<min(start + 2, result.metrics.count) {
+                    row.addArrangedSubview(metricView(result.metrics[index]))
+                }
+                if row.arrangedSubviews.count == 1 {
+                    row.addArrangedSubview(UIView())
+                }
+                metrics.addArrangedSubview(row)
+            }
             addDynamic(metrics)
         }
         result.sections.filter { !$0.body.isEmpty }.forEach {

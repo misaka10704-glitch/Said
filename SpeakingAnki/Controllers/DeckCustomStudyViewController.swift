@@ -147,11 +147,16 @@ final class DeckCustomStudyViewController: UIViewController, ThemeRefreshable,
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            contentStack.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 20),
-            contentStack.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 20),
-            contentStack.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -20),
-            contentStack.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -20),
-            contentStack.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -40)
+            contentStack.topAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 20),
+            contentStack.leadingAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 20),
+            contentStack.trailingAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -20),
+            contentStack.bottomAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -20),
+            contentStack.widthAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -40)
         ])
         modeChanged()
     }

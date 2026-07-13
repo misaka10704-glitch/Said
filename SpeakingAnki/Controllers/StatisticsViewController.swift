@@ -68,9 +68,8 @@ final class StatisticsViewController: UIViewController, ThemeRefreshable {
     contentStack.spacing = 18
     contentStack.translatesAutoresizingMaskIntoConstraints = false
 
-    summaryStack.axis = .horizontal
+    summaryStack.axis = .vertical
     summaryStack.spacing = 10
-    summaryStack.distribution = .fillEqually
     factsStack.axis = .vertical
     factsStack.spacing = 8
     chartsStack.axis = .vertical
@@ -107,17 +106,20 @@ final class StatisticsViewController: UIViewController, ThemeRefreshable {
       scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-      contentStack.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 8),
+      contentStack.topAnchor.constraint(
+        equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 8),
       contentStack.leadingAnchor.constraint(
-        greaterThanOrEqualTo: scrollView.leadingAnchor, constant: DSTheme.contentPadding),
+        greaterThanOrEqualTo: scrollView.contentLayoutGuide.leadingAnchor,
+        constant: DSTheme.contentPadding),
       contentStack.trailingAnchor.constraint(
-        lessThanOrEqualTo: scrollView.trailingAnchor, constant: -DSTheme.contentPadding),
-      contentStack.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+        lessThanOrEqualTo: scrollView.contentLayoutGuide.trailingAnchor,
+        constant: -DSTheme.contentPadding),
+      contentStack.centerXAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerXAnchor),
       contentStack.bottomAnchor.constraint(
-        equalTo: scrollView.bottomAnchor, constant: -DSTheme.contentPadding),
+        equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -DSTheme.contentPadding),
       contentStack.widthAnchor.constraint(lessThanOrEqualToConstant: DSTheme.contentMaxWidth),
       contentStack.widthAnchor.constraint(
-        equalTo: scrollView.widthAnchor, constant: -DSTheme.contentPadding * 2
+        equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -DSTheme.contentPadding * 2
       ).withPriority(750),
     ])
   }
@@ -249,8 +251,16 @@ final class StatisticsViewController: UIViewController, ThemeRefreshable {
       } ?? "—"),
       ("连续", "\(snapshot.summary.streakDays) 天"),
     ]
-    for (title, value) in values {
-      summaryStack.addArrangedSubview(StatisticsSummaryCard(title: title, value: value))
+    for start in stride(from: 0, to: values.count, by: 2) {
+      let row = UIStackView()
+      row.axis = .horizontal
+      row.spacing = 10
+      row.distribution = .fillEqually
+      for index in start..<min(start + 2, values.count) {
+        let (title, value) = values[index]
+        row.addArrangedSubview(StatisticsSummaryCard(title: title, value: value))
+      }
+      summaryStack.addArrangedSubview(row)
     }
     for fact in snapshot.facts {
       factsStack.addArrangedSubview(StatisticsFactRow(title: fact.title, value: fact.value))

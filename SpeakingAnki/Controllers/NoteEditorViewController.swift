@@ -12,6 +12,7 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
   private let activityIndicator = UIActivityIndicatorView(style: .gray)
   private let mediaButton = DSButton(style: .secondary)
   private let recordButton = DSButton(style: .secondary)
+  private let toolRow = UIStackView()
   private let tagsSection = DSFormSection(title: "标签")
   private let mediaSection = DSFormSection(title: "媒体")
 
@@ -70,7 +71,7 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
     fieldsStack.spacing = 14
 
     modelLabel.font = DSTheme.bodyFont(size: 13)
-    modelLabel.numberOfLines = 1
+    modelLabel.numberOfLines = 0
     let infoSection = DSFormSection(title: "笔记类型")
     infoSection.addRow(modelLabel, separated: false)
     contentStack.addArrangedSubview(infoSection)
@@ -84,7 +85,8 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
     tagsSection.addRow(tagsField, separated: false)
     contentStack.addArrangedSubview(tagsSection)
 
-    let toolRow = UIStackView(arrangedSubviews: [mediaButton, recordButton])
+    toolRow.addArrangedSubview(mediaButton)
+    toolRow.addArrangedSubview(recordButton)
     toolRow.axis = .horizontal
     toolRow.spacing = 12
     toolRow.distribution = .fillEqually
@@ -104,17 +106,19 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
       scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
       contentStack.topAnchor.constraint(
-        equalTo: scrollView.topAnchor, constant: DSTheme.contentPadding),
+        equalTo: scrollView.contentLayoutGuide.topAnchor, constant: DSTheme.contentPadding),
       contentStack.leadingAnchor.constraint(
-        greaterThanOrEqualTo: scrollView.leadingAnchor, constant: DSTheme.contentPadding),
+        greaterThanOrEqualTo: scrollView.contentLayoutGuide.leadingAnchor,
+        constant: DSTheme.contentPadding),
       contentStack.trailingAnchor.constraint(
-        lessThanOrEqualTo: scrollView.trailingAnchor, constant: -DSTheme.contentPadding),
-      contentStack.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+        lessThanOrEqualTo: scrollView.contentLayoutGuide.trailingAnchor,
+        constant: -DSTheme.contentPadding),
+      contentStack.centerXAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerXAnchor),
       contentStack.bottomAnchor.constraint(
-        equalTo: scrollView.bottomAnchor, constant: -DSTheme.contentPadding),
+        equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -DSTheme.contentPadding),
       contentStack.widthAnchor.constraint(lessThanOrEqualToConstant: DSTheme.contentMaxWidth),
       contentStack.widthAnchor.constraint(
-        equalTo: scrollView.widthAnchor, constant: -DSTheme.contentPadding * 2
+        equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -DSTheme.contentPadding * 2
       ).withPriority(750),
     ])
   }

@@ -31,16 +31,18 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
       scroll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       scroll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       scroll.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-      stack.topAnchor.constraint(equalTo: scroll.topAnchor, constant: 16),
+      stack.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor, constant: 16),
       stack.leadingAnchor.constraint(
-        greaterThanOrEqualTo: scroll.leadingAnchor, constant: DSTheme.contentPadding),
+        greaterThanOrEqualTo: scroll.contentLayoutGuide.leadingAnchor,
+        constant: DSTheme.contentPadding),
       stack.trailingAnchor.constraint(
-        lessThanOrEqualTo: scroll.trailingAnchor, constant: -DSTheme.contentPadding),
-      stack.centerXAnchor.constraint(equalTo: scroll.centerXAnchor),
-      stack.bottomAnchor.constraint(equalTo: scroll.bottomAnchor, constant: -16),
+        lessThanOrEqualTo: scroll.contentLayoutGuide.trailingAnchor,
+        constant: -DSTheme.contentPadding),
+      stack.centerXAnchor.constraint(equalTo: scroll.frameLayoutGuide.centerXAnchor),
+      stack.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor, constant: -16),
       stack.widthAnchor.constraint(lessThanOrEqualToConstant: DSTheme.contentMaxWidth),
       stack.widthAnchor.constraint(
-        equalTo: scroll.widthAnchor, constant: -DSTheme.contentPadding * 2
+        equalTo: scroll.frameLayoutGuide.widthAnchor, constant: -DSTheme.contentPadding * 2
       ).withPriority(750),
     ])
 
@@ -49,7 +51,10 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
       AppearanceMode.allCases.firstIndex(of: ThemeManager.shared.mode) ?? 1
     appearanceControl.addTarget(self, action: #selector(appearanceChanged), for: .valueChanged)
     appearanceControl.heightAnchor.constraint(equalToConstant: 34).isActive = true
-    appearanceSection.addRow(DSFormRow(title: "主题", control: appearanceControl), separated: false)
+    appearanceSection.addRow(
+      DSFormLayout.labeledControlRow(title: "主题", control: appearanceControl),
+      separated: false
+    )
     stack.addArrangedSubview(appearanceSection)
 
     let dataSection = DSFormSection(
