@@ -131,12 +131,44 @@ protocol StatisticsDataProviding: AnyObject {
 struct DeckOptions {
     let deckID: Int64
     let deckName: String
+    let presetName: String
+    let presetUseCount: Int
+    let configID: Int64
+    let fsrsEnabled: Bool
     var desiredRetention: Double
-    var newCardsPerDay: Int
-    var reviewsPerDay: Int
+    var desiredRetentionIsOverride: Bool
+    var presetNewCardsPerDay: Int
+    var presetReviewsPerDay: Int
+    var deckNewCardsPerDay: Int?
+    var deckReviewsPerDay: Int?
+    var todayNewCardsPerDay: Int?
+    var todayReviewsPerDay: Int?
+    var learnSteps: [Double]
+    var graduatingIntervalGood: Int
+    var graduatingIntervalEasy: Int
+    var relearnSteps: [Double]
+    var minimumLapseInterval: Int
+    var leechThreshold: Int
+    var leechAction: Int
+    var maximumReviewInterval: Int
+    var historicalRetention: Double
+    var newCardInsertOrder: Int
+    var newCardGatherPriority: Int
+    var newCardSortOrder: Int
+    var newMix: Int
+    var interdayLearningMix: Int
+    var reviewOrder: Int
     var buryNewSiblings: Bool
     var buryReviewSiblings: Bool
     var buryInterdayLearningSiblings: Bool
+
+    var effectiveNewCardsPerDay: Int {
+        todayNewCardsPerDay ?? deckNewCardsPerDay ?? presetNewCardsPerDay
+    }
+
+    var effectiveReviewsPerDay: Int {
+        todayReviewsPerDay ?? deckReviewsPerDay ?? presetReviewsPerDay
+    }
 }
 
 protocol DeckOptionsDataProviding: AnyObject {
@@ -268,7 +300,15 @@ protocol DeckManagementDataProviding: AnyObject {
     func startCustomStudy(
         deckID: Int64,
         action: DeckCustomStudyAction,
+        completion: @escaping (Result<Int64?, Error>) -> Void
+    )
+    func emptyFilteredDeck(
+        deckID: Int64,
         completion: @escaping (Result<Void, Error>) -> Void
+    )
+    func rebuildFilteredDeck(
+        deckID: Int64,
+        completion: @escaping (Result<Int, Error>) -> Void
     )
 }
 
@@ -412,13 +452,31 @@ final class OfficialDeckManagementProvider: DeckManagementDataProviding {
     func startCustomStudy(
         deckID: Int64,
         action: DeckCustomStudyAction,
-        completion: @escaping (Result<Void, Error>) -> Void
+        completion: @escaping (Result<Int64?, Error>) -> Void
     ) {
         perform(completion: completion) {
             try self.collection().startCustomStudy(
                 deckID: deckID,
                 mode: self.mapCustomStudy(action)
             )
+        }
+    }
+
+    func emptyFilteredDeck(
+        deckID: Int64,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        perform(completion: completion) {
+            try self.collection().emptyFilteredDeck(id: deckID)
+        }
+    }
+
+    func rebuildFilteredDeck(
+        deckID: Int64,
+        completion: @escaping (Result<Int, Error>) -> Void
+    ) {
+        perform(completion: completion) {
+            try self.collection().rebuildFilteredDeck(id: deckID)
         }
     }
 

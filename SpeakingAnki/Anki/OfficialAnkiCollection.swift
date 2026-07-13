@@ -176,9 +176,45 @@ final class OfficialAnkiCollection {
         resetCollectionCaches()
     }
 
-    func startCustomStudy(deckID: Int64, mode: SaidCustomStudy) throws {
+    /// Limit extensions keep studying in the source deck. Other custom-study
+    /// modes create or reuse rslib's localized filtered deck and return its ID.
+    func startCustomStudy(deckID: Int64, mode: SaidCustomStudy) throws -> Int64? {
+        let createsFilteredDeck: Bool
+        switch mode {
+        case .increaseNewLimit, .increaseReviewLimit:
+            createsFilteredDeck = false
+        case .forgotten, .reviewAhead, .previewNew, .cram:
+            createsFilteredDeck = true
+        }
+        let before = createsFilteredDeck ? try filteredDecksByID() : [:]
         try services.customStudy(deckID: deckID, mode: mode)
         resetCollectionCaches()
+        guard createsFilteredDeck else { return nil }
+
+        let after = try filteredDecksByID()
+        let created = after.keys.filter { before[$0] == nil }
+        if created.count == 1 { return created[0] }
+        let changed = after.keys.filter { id in
+            guard let previous = before[id], let current = after[id] else { return false }
+            return previous != current
+        }
+        if changed.count == 1 { return changed[0] }
+        if after.count == 1 { return after.keys.first }
+        throw AnkiError.openFailed(
+            "自定义学习已创建，但无法可靠确定对应的筛选牌组。请返回牌组列表后手动打开筛选牌组。"
+        )
+    }
+
+    func emptyFilteredDeck(id: Int64) throws {
+        try services.emptyFilteredDeck(deckID: id)
+        resetCollectionCaches()
+    }
+
+    @discardableResult
+    func rebuildFilteredDeck(id: Int64) throws -> Int {
+        let count = try services.rebuildFilteredDeck(deckID: id)
+        resetCollectionCaches()
+        return count
     }
 
     func nextCard(deckId: Int64?) throws -> AnkiCardSnapshot? {
@@ -379,9 +415,33 @@ final class OfficialAnkiCollection {
         return DeckOptions(
             deckID: id,
             deckName: value.deckName,
+            presetName: value.presetName,
+            presetUseCount: value.presetUseCount,
+            configID: value.configID,
+            fsrsEnabled: value.fsrsEnabled,
             desiredRetention: value.desiredRetention,
-            newCardsPerDay: value.newCardsPerDay,
-            reviewsPerDay: value.reviewsPerDay,
+            desiredRetentionIsOverride: value.desiredRetentionIsOverride,
+            presetNewCardsPerDay: value.presetNewCardsPerDay,
+            presetReviewsPerDay: value.presetReviewsPerDay,
+            deckNewCardsPerDay: value.deckNewCardsPerDay,
+            deckReviewsPerDay: value.deckReviewsPerDay,
+            todayNewCardsPerDay: value.todayNewCardsPerDay,
+            todayReviewsPerDay: value.todayReviewsPerDay,
+            learnSteps: value.learnSteps,
+            graduatingIntervalGood: value.graduatingIntervalGood,
+            graduatingIntervalEasy: value.graduatingIntervalEasy,
+            relearnSteps: value.relearnSteps,
+            minimumLapseInterval: value.minimumLapseInterval,
+            leechThreshold: value.leechThreshold,
+            leechAction: value.leechAction,
+            maximumReviewInterval: value.maximumReviewInterval,
+            historicalRetention: value.historicalRetention,
+            newCardInsertOrder: value.newCardInsertOrder,
+            newCardGatherPriority: value.newCardGatherPriority,
+            newCardSortOrder: value.newCardSortOrder,
+            newMix: value.newMix,
+            interdayLearningMix: value.interdayLearningMix,
+            reviewOrder: value.reviewOrder,
             buryNewSiblings: value.buryNew,
             buryReviewSiblings: value.buryReviews,
             buryInterdayLearningSiblings: value.buryInterdayLearning
@@ -395,8 +455,28 @@ final class OfficialAnkiCollection {
         try services.updateDeckOptions(
             source,
             desiredRetention: options.desiredRetention,
-            newCardsPerDay: options.newCardsPerDay,
-            reviewsPerDay: options.reviewsPerDay,
+            desiredRetentionIsOverride: options.desiredRetentionIsOverride,
+            presetNewCardsPerDay: options.presetNewCardsPerDay,
+            presetReviewsPerDay: options.presetReviewsPerDay,
+            deckNewCardsPerDay: options.deckNewCardsPerDay,
+            deckReviewsPerDay: options.deckReviewsPerDay,
+            todayNewCardsPerDay: options.todayNewCardsPerDay,
+            todayReviewsPerDay: options.todayReviewsPerDay,
+            learnSteps: options.learnSteps,
+            graduatingIntervalGood: options.graduatingIntervalGood,
+            graduatingIntervalEasy: options.graduatingIntervalEasy,
+            relearnSteps: options.relearnSteps,
+            minimumLapseInterval: options.minimumLapseInterval,
+            leechThreshold: options.leechThreshold,
+            leechAction: options.leechAction,
+            maximumReviewInterval: options.maximumReviewInterval,
+            historicalRetention: options.historicalRetention,
+            newCardInsertOrder: options.newCardInsertOrder,
+            newCardGatherPriority: options.newCardGatherPriority,
+            newCardSortOrder: options.newCardSortOrder,
+            newMix: options.newMix,
+            interdayLearningMix: options.interdayLearningMix,
+            reviewOrder: options.reviewOrder,
             buryNew: options.buryNewSiblings,
             buryReviews: options.buryReviewSiblings,
             buryInterdayLearning: options.buryInterdayLearningSiblings
@@ -462,6 +542,18 @@ final class OfficialAnkiCollection {
             }
         }
         add(nodes)
+    }
+
+    private func filteredDecksByID() throws -> [Int64: SaidDeck] {
+        var result: [Int64: SaidDeck] = [:]
+        func collect(_ decks: [SaidDeck]) {
+            for deck in decks {
+                if deck.filtered { result[deck.id] = deck }
+                collect(deck.children)
+            }
+        }
+        collect(try services.deckTree())
+        return result
     }
 
     /// Adds a scored recording through rslib's media database and writes the

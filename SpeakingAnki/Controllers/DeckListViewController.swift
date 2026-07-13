@@ -83,12 +83,12 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
     }
 
     private func configureNavigationItems() {
-        let add = UIBarButtonItem(
-            barButtonSystemItem: .add,
+        let add = ActionIconFactory.barItem(
+            kind: .createDeck,
             target: self,
-            action: #selector(showAddMenu(_:))
+            action: #selector(showAddMenu(_:)),
+            accessibility: "创建牌组"
         )
-        add.accessibilityLabel = "创建牌组"
         let importItem = ActionIconFactory.barItem(
             kind: .importFile,
             target: self,
@@ -177,13 +177,13 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
             from: self,
             title: "添加",
             items: [
-                SaidMenuItem(title: "创建顶层牌组", icon: .decks) { [weak self] in
+                SaidMenuItem(title: "创建顶层牌组", icon: .createDeck) { [weak self] in
                     self?.promptCreateDeck(parent: nil)
                 },
-                SaidMenuItem(title: "创建子牌组", icon: .decks) { [weak self] in
+                SaidMenuItem(title: "创建子牌组", icon: .createSubdeck) { [weak self] in
                     self?.showParentPickerForCreation()
                 },
-                SaidMenuItem(title: "导入 APKG", icon: .sync) { [weak self] in
+                SaidMenuItem(title: "导入 APKG", icon: .importFile) { [weak self] in
                     self?.importApkg()
                 },
             ],
@@ -193,6 +193,10 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
     }
 
     private func promptCreateDeck(parent: DeckManagementNode?) {
+        guard parent?.filtered != true else {
+            presentAlert("筛选牌组不能包含子牌组。请先选择普通牌组。")
+            return
+        }
         let title = parent == nil ? "创建牌组" : "创建子牌组"
         let alert = UIAlertController(
             title: title,
@@ -225,7 +229,7 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
     }
 
     private func showParentPickerForCreation() {
-        let choices = flattened(roots)
+        let choices = flattened(roots).filter { !$0.filtered }
         guard !choices.isEmpty else {
             promptCreateDeck(parent: nil)
             return
@@ -355,11 +359,18 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
             self?.startStudy(node)
             done(true)
         }
+        study.image = ActionIconFactory.image(.study)
         study.backgroundColor = DSTheme.brandCyan
+        guard !node.filtered else {
+            let configuration = UISwipeActionsConfiguration(actions: [study])
+            configuration.performsFirstActionWithFullSwipe = false
+            return configuration
+        }
         let custom = UIContextualAction(style: .normal, title: "自定义") { [weak self] _, _, done in
             self?.showCustomStudy(node)
             done(true)
         }
+        custom.image = ActionIconFactory.image(.customStudy)
         custom.backgroundColor = DSTheme.speakingViolet
         let configuration = UISwipeActionsConfiguration(actions: [study, custom])
         configuration.performsFirstActionWithFullSwipe = false
@@ -374,45 +385,131 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
     }
 
     private func showDeckMenu(for node: DeckManagementNode, sourceView: UIView?) {
+        let items = node.filtered
+            ? filteredDeckMenuItems(for: node, sourceView: sourceView)
+            : normalDeckMenuItems(for: node, sourceView: sourceView)
         SaidMenu.present(
             from: self,
             title: node.name,
-            items: [
-                SaidMenuItem(title: "普通学习", icon: .decks) { [weak self] in
-                    self?.startStudy(node)
-                },
-                SaidMenuItem(title: "自定义学习", icon: .settings) { [weak self] in
-                    self?.showCustomStudy(node)
-                },
-                SaidMenuItem(title: "创建子牌组", icon: .decks) { [weak self] in
-                    self?.promptCreateDeck(parent: node)
-                },
-                SaidMenuItem(title: "重命名") { [weak self] in
-                    self?.promptRename(node)
-                },
-                SaidMenuItem(title: "移动到父级或根", icon: .sidebar) { [weak self] in
-                    self?.showMovePicker(node)
-                },
-                SaidMenuItem(title: "牌组选项", icon: .settings) { [weak self] in
-                    self?.navigationController?.pushViewController(
-                        DeckOptionsViewController(deckID: node.id, provider: OfficialBrowserProvider()),
-                        animated: true
-                    )
-                },
-                SaidMenuItem(title: "导出此牌组", icon: .sync) { [weak self] in
-                    self?.showExportOptions(node, sourceView: sourceView)
-                },
-                SaidMenuItem(title: "删除", isDestructive: true) { [weak self] in
-                    self?.beginDeletion(node)
-                },
-            ],
+            items: items,
             sourceView: sourceView ?? view,
             sourceRect: sourceView?.bounds,
             preferVertical: true
         )
     }
 
+    private func normalDeckMenuItems(
+        for node: DeckManagementNode,
+        sourceView: UIView?
+    ) -> [SaidMenuItem] {
+        [
+            SaidMenuItem(title: "普通学习", icon: .study) { [weak self] in
+                self?.startStudy(node)
+            },
+            SaidMenuItem(title: "自定义学习", icon: .customStudy) { [weak self] in
+                self?.showCustomStudy(node)
+            },
+            SaidMenuItem(title: "创建子牌组", icon: .createSubdeck) { [weak self] in
+                self?.promptCreateDeck(parent: node)
+            },
+            SaidMenuItem(title: "重命名", icon: .rename) { [weak self] in
+                self?.promptRename(node)
+            },
+            SaidMenuItem(title: "移动到父级或根", icon: .moveDeck) { [weak self] in
+                self?.showMovePicker(node)
+            },
+            SaidMenuItem(title: "牌组选项", icon: .deckOptions) { [weak self] in
+                self?.navigationController?.pushViewController(
+                    DeckOptionsViewController(deckID: node.id, provider: OfficialBrowserProvider()),
+                    animated: true
+                )
+            },
+            SaidMenuItem(title: "导出此牌组", icon: .exportDeck) { [weak self] in
+                self?.showExportOptions(node, sourceView: sourceView)
+            },
+            SaidMenuItem(title: "删除", icon: .delete, isDestructive: true) { [weak self] in
+                self?.beginDeletion(node)
+            },
+        ]
+    }
+
+    private func filteredDeckMenuItems(
+        for node: DeckManagementNode,
+        sourceView: UIView?
+    ) -> [SaidMenuItem] {
+        [
+            SaidMenuItem(title: "学习筛选牌组", icon: .study) { [weak self] in
+                self?.startStudy(node)
+            },
+            SaidMenuItem(title: "重新构建", icon: .rebuildFiltered) { [weak self] in
+                self?.rebuildFilteredDeck(node)
+            },
+            SaidMenuItem(title: "清空筛选牌组", icon: .emptyFiltered) { [weak self] in
+                self?.confirmEmptyFilteredDeck(node)
+            },
+            SaidMenuItem(title: "重命名", icon: .rename) { [weak self] in
+                self?.promptRename(node)
+            },
+            SaidMenuItem(title: "移动到父级或根", icon: .moveDeck) { [weak self] in
+                self?.showMovePicker(node)
+            },
+            SaidMenuItem(title: "导出此牌组", icon: .exportDeck) { [weak self] in
+                self?.showExportOptions(node, sourceView: sourceView)
+            },
+            SaidMenuItem(title: "删除", icon: .delete, isDestructive: true) { [weak self] in
+                self?.beginDeletion(node)
+            },
+        ]
+    }
+
+    private func rebuildFilteredDeck(_ node: DeckManagementNode) {
+        provider.rebuildFilteredDeck(deckID: node.id) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                switch result {
+                case .success(let count):
+                    self.reload()
+                    self.presentAlert("筛选牌组已重新构建，共收集 \(count) 张卡片。")
+                case .failure(let error):
+                    self.presentAlert("重新构建筛选牌组失败：\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    private func confirmEmptyFilteredDeck(_ node: DeckManagementNode) {
+        let alert = UIAlertController(
+            title: "清空筛选牌组？",
+            message: "卡片会返回各自的原牌组，不会被删除。",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel))
+        alert.addAction(UIAlertAction(title: "清空", style: .destructive) { [weak self] _ in
+            self?.emptyFilteredDeck(node)
+        })
+        present(alert, animated: true)
+    }
+
+    private func emptyFilteredDeck(_ node: DeckManagementNode) {
+        provider.emptyFilteredDeck(deckID: node.id) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                switch result {
+                case .success:
+                    self.reload()
+                    self.presentAlert("筛选牌组已清空，卡片已返回原牌组。")
+                case .failure(let error):
+                    self.presentAlert("清空筛选牌组失败：\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
     private func showCustomStudy(_ node: DeckManagementNode) {
+        guard !node.filtered else {
+            presentAlert("筛选牌组不支持自定义学习；请使用“重新构建”或“清空筛选牌组”。")
+            return
+        }
         navigationController?.pushViewController(
             DeckCustomStudyViewController(deck: node, provider: provider),
             animated: true
@@ -450,7 +547,9 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
 
     private func showMovePicker(_ node: DeckManagementNode) {
         let excluded = Set(flattened([node]).map(\.id))
-        let choices = flattened(roots).filter { !excluded.contains($0.id) }
+        let choices = flattened(roots).filter {
+            !excluded.contains($0.id) && !$0.filtered
+        }
         let picker = DeckParentPickerViewController(
             title: "移动牌组",
             headerTitle: "移动“\(node.name)”到",
@@ -475,10 +574,10 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
             from: self,
             title: "导出 \(node.name)",
             items: [
-                SaidMenuItem(title: "包含学习进度", icon: .sync) { [weak self] in
+                SaidMenuItem(title: "包含学习进度", icon: .exportWithScheduling) { [weak self] in
                     self?.exportDeck(node, includeScheduling: true)
                 },
-                SaidMenuItem(title: "不含学习进度", icon: .sync) { [weak self] in
+                SaidMenuItem(title: "不含学习进度", icon: .exportWithoutScheduling) { [weak self] in
                     self?.exportDeck(node, includeScheduling: false)
                 },
             ],

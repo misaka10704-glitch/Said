@@ -7,6 +7,17 @@ extension NSLayoutConstraint {
   }
 }
 
+extension UITextField {
+  func setHorizontalPadding(_ width: CGFloat) {
+    let leftInset = UIView(frame: CGRect(x: 0, y: 0, width: width, height: 1))
+    let rightInset = UIView(frame: CGRect(x: 0, y: 0, width: width, height: 1))
+    leftView = leftInset
+    leftViewMode = .always
+    rightView = rightInset
+    rightViewMode = .always
+  }
+}
+
 enum DSNavigationBarStyle {
   static func apply(to navigationController: UINavigationController) {
     let colors = DSTheme.c
@@ -306,5 +317,76 @@ final class DSTextField: UITextField, ThemeRefreshable {
     tintColor = DSTheme.c.accent
     layer.borderColor = DSTheme.c.inputBorder.cgColor
     keyboardAppearance = ThemeManager.shared.mode == .dark ? .dark : .light
+  }
+}
+
+/// Shared form layouts for numeric fields and accessory controls.
+enum DSFormLayout {
+  static func configureNumericField(
+    _ field: UITextField,
+    placeholder: String? = nil,
+    keyboard: UIKeyboardType = .numberPad
+  ) {
+    field.keyboardType = keyboard
+    field.textAlignment = .right
+    field.placeholder = placeholder
+    field.font = DSTheme.monoFont(size: 16)
+    field.layer.borderWidth = DSTheme.List.separatorHeight
+    field.layer.cornerRadius = DSTheme.Form.cornerRadius
+    field.setHorizontalPadding(DSTheme.Form.fieldHorizontalInset)
+    field.heightAnchor.constraint(equalToConstant: DSTheme.Form.compactControlHeight).isActive = true
+    field.setContentHuggingPriority(.defaultLow, for: .horizontal)
+    field.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+  }
+
+  /// Title above a full-width numeric field — avoids misalignment with wrapped labels.
+  static func numericRow(title: String, field: UITextField) -> UIStackView {
+    let label = UILabel()
+    label.text = title
+    label.font = DSTheme.bodyFont(size: 15)
+    label.numberOfLines = 0
+    label.textColor = DSTheme.c.textPrimary
+
+    let row = UIStackView(arrangedSubviews: [label, field])
+    row.axis = .vertical
+    row.alignment = .fill
+    row.spacing = 6
+    return row
+  }
+
+  /// Title above a full-width control such as a segmented picker.
+  static func labeledControlRow(title: String, control: UIView) -> UIStackView {
+    let label = UILabel()
+    label.text = title
+    label.font = DSTheme.bodyFont(size: 15)
+    label.numberOfLines = 0
+    label.textColor = DSTheme.c.textPrimary
+
+    let row = UIStackView(arrangedSubviews: [label, control])
+    row.axis = .vertical
+    row.alignment = .fill
+    row.spacing = 8
+    return row
+  }
+
+  /// Title on the left, compact accessory on the right (switches, menus).
+  static func accessoryRow(title: String, control: UIView) -> UIStackView {
+    let label = UILabel()
+    label.text = title
+    label.font = DSTheme.bodyFont(size: 15)
+    label.numberOfLines = 0
+    label.textColor = DSTheme.c.textPrimary
+    label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+    label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+    control.setContentHuggingPriority(.required, for: .horizontal)
+    control.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+    let row = UIStackView(arrangedSubviews: [label, control])
+    row.axis = .horizontal
+    row.alignment = .top
+    row.spacing = DSTheme.Form.rowSpacing
+    row.distribution = .fill
+    return row
   }
 }

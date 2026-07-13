@@ -20,6 +20,19 @@ enum ActionIconFactory {
         case collapse
         case expand
         case reveal
+        case createDeck
+        case createSubdeck
+        case study
+        case customStudy
+        case rename
+        case moveDeck
+        case deckOptions
+        case exportDeck
+        case exportWithScheduling
+        case exportWithoutScheduling
+        case delete
+        case rebuildFiltered
+        case emptyFiltered
     }
 
     private static let cache = NSCache<NSString, UIImage>()
@@ -50,6 +63,57 @@ enum ActionIconFactory {
 
         let inset = (canvas - pointSize) / 2
         let rect = CGRect(x: inset, y: inset, width: pointSize, height: pointSize)
+        func stroke(_ points: [CGPoint], width: CGFloat = 1.55, close: Bool = false) {
+            guard let first = points.first else { return }
+            let path = UIBezierPath()
+            path.move(to: first)
+            points.dropFirst().forEach { path.addLine(to: $0) }
+            if close { path.close() }
+            path.lineWidth = width
+            path.stroke()
+        }
+        func drawPlus(center: CGPoint, radius: CGFloat = 3) {
+            stroke([
+                CGPoint(x: center.x - radius, y: center.y),
+                CGPoint(x: center.x + radius, y: center.y)
+            ], width: 1.7)
+            stroke([
+                CGPoint(x: center.x, y: center.y - radius),
+                CGPoint(x: center.x, y: center.y + radius)
+            ], width: 1.7)
+        }
+        func drawDeckBox(_ box: CGRect) {
+            let path = UIBezierPath(roundedRect: box, cornerRadius: 1.8)
+            path.lineWidth = 1.55
+            path.stroke()
+            stroke([
+                CGPoint(x: box.minX + 2, y: box.minY + 3),
+                CGPoint(x: box.maxX - 2, y: box.minY + 3)
+            ])
+        }
+        func drawExportArrow(slash: Bool = false) {
+            stroke([
+                CGPoint(x: rect.midX, y: rect.maxY - 3),
+                CGPoint(x: rect.midX, y: rect.minY + 3),
+                CGPoint(x: rect.midX - 3.5, y: rect.minY + 6.5)
+            ], width: 1.7)
+            stroke([
+                CGPoint(x: rect.midX, y: rect.minY + 3),
+                CGPoint(x: rect.midX + 3.5, y: rect.minY + 6.5)
+            ], width: 1.7)
+            stroke([
+                CGPoint(x: rect.minX + 2, y: rect.maxY - 6),
+                CGPoint(x: rect.minX + 2, y: rect.maxY - 2),
+                CGPoint(x: rect.maxX - 2, y: rect.maxY - 2),
+                CGPoint(x: rect.maxX - 2, y: rect.maxY - 6)
+            ])
+            if slash {
+                stroke([
+                    CGPoint(x: rect.minX + 3, y: rect.minY + 3),
+                    CGPoint(x: rect.maxX - 3, y: rect.maxY - 3)
+                ], width: 1.8)
+            }
+        }
 
         switch kind {
         case .decks:
@@ -289,6 +353,176 @@ enum ActionIconFactory {
             eye.lineWidth = 1.55
             eye.stroke()
             UIBezierPath(ovalIn: CGRect(x: rect.midX - 2.2, y: rect.midY - 2.2, width: 4.4, height: 4.4)).fill()
+
+        case .createDeck:
+            drawDeckBox(rect.insetBy(dx: 2, dy: 4))
+            drawPlus(center: CGPoint(x: rect.maxX - 3, y: rect.minY + 3), radius: 2.5)
+
+        case .createSubdeck:
+            drawDeckBox(CGRect(
+                x: rect.minX + 1,
+                y: rect.minY + 2,
+                width: pointSize * 0.64,
+                height: pointSize * 0.58
+            ))
+            drawDeckBox(CGRect(
+                x: rect.minX + pointSize * 0.34,
+                y: rect.minY + pointSize * 0.42,
+                width: pointSize * 0.62,
+                height: pointSize * 0.52
+            ))
+            drawPlus(center: CGPoint(x: rect.maxX - 2, y: rect.minY + 2), radius: 2.2)
+
+        case .study:
+            drawDeckBox(rect.insetBy(dx: 2, dy: 3))
+            let play = UIBezierPath()
+            play.move(to: CGPoint(x: rect.midX - 2.5, y: rect.midY - 4))
+            play.addLine(to: CGPoint(x: rect.midX + 4.5, y: rect.midY))
+            play.addLine(to: CGPoint(x: rect.midX - 2.5, y: rect.midY + 4))
+            play.close()
+            play.fill()
+
+        case .customStudy:
+            let clock = UIBezierPath(ovalIn: rect.insetBy(dx: 2.5, dy: 2.5))
+            clock.lineWidth = 1.55
+            clock.stroke()
+            stroke([
+                CGPoint(x: rect.midX, y: rect.midY),
+                CGPoint(x: rect.midX, y: rect.minY + 5)
+            ])
+            stroke([
+                CGPoint(x: rect.midX, y: rect.midY),
+                CGPoint(x: rect.midX + 4, y: rect.midY + 2)
+            ])
+            drawPlus(center: CGPoint(x: rect.maxX - 2.5, y: rect.minY + 3), radius: 2.4)
+
+        case .rename:
+            stroke([
+                CGPoint(x: rect.minX + 3, y: rect.maxY - 4),
+                CGPoint(x: rect.minX + 5, y: rect.maxY - 9),
+                CGPoint(x: rect.maxX - 4, y: rect.minY + 2),
+                CGPoint(x: rect.maxX - 1.5, y: rect.minY + 4.5),
+                CGPoint(x: rect.minX + 7.5, y: rect.maxY - 6.5),
+                CGPoint(x: rect.minX + 3, y: rect.maxY - 4)
+            ], close: true)
+            stroke([
+                CGPoint(x: rect.minX + 2, y: rect.maxY - 2),
+                CGPoint(x: rect.maxX - 3, y: rect.maxY - 2)
+            ])
+
+        case .moveDeck:
+            drawDeckBox(rect.insetBy(dx: 2, dy: 3.5))
+            stroke([
+                CGPoint(x: rect.minX + 5, y: rect.midY),
+                CGPoint(x: rect.maxX - 4, y: rect.midY),
+                CGPoint(x: rect.maxX - 7, y: rect.midY - 3)
+            ], width: 1.7)
+            stroke([
+                CGPoint(x: rect.maxX - 4, y: rect.midY),
+                CGPoint(x: rect.maxX - 7, y: rect.midY + 3)
+            ], width: 1.7)
+
+        case .deckOptions:
+            for offset in [CGFloat(4), rect.midY - rect.minY, pointSize - 4] {
+                let y = rect.minY + offset
+                stroke([
+                    CGPoint(x: rect.minX + 2, y: y),
+                    CGPoint(x: rect.maxX - 2, y: y)
+                ])
+            }
+            for point in [
+                CGPoint(x: rect.minX + 7, y: rect.minY + 4),
+                CGPoint(x: rect.maxX - 7, y: rect.midY),
+                CGPoint(x: rect.midX, y: rect.maxY - 4)
+            ] {
+                UIBezierPath(ovalIn: CGRect(x: point.x - 2, y: point.y - 2, width: 4, height: 4)).fill()
+            }
+
+        case .exportDeck:
+            drawExportArrow()
+
+        case .exportWithScheduling:
+            drawExportArrow()
+            let badge = UIBezierPath(ovalIn: CGRect(x: rect.minX, y: rect.minY, width: 7, height: 7))
+            badge.lineWidth = 1.35
+            badge.stroke()
+            stroke([
+                CGPoint(x: rect.minX + 3.5, y: rect.minY + 3.5),
+                CGPoint(x: rect.minX + 3.5, y: rect.minY + 1.5)
+            ], width: 1.2)
+
+        case .exportWithoutScheduling:
+            drawExportArrow(slash: true)
+
+        case .delete:
+            let bin = UIBezierPath(roundedRect: CGRect(
+                x: rect.minX + 4,
+                y: rect.minY + 6,
+                width: pointSize - 8,
+                height: pointSize - 8
+            ), cornerRadius: 1.5)
+            bin.lineWidth = 1.55
+            bin.stroke()
+            stroke([
+                CGPoint(x: rect.minX + 2.5, y: rect.minY + 5),
+                CGPoint(x: rect.maxX - 2.5, y: rect.minY + 5)
+            ], width: 1.8)
+            stroke([
+                CGPoint(x: rect.midX - 3, y: rect.minY + 2.5),
+                CGPoint(x: rect.midX + 3, y: rect.minY + 2.5)
+            ])
+            stroke([
+                CGPoint(x: rect.midX - 2.5, y: rect.minY + 9),
+                CGPoint(x: rect.midX - 2.5, y: rect.maxY - 4)
+            ])
+            stroke([
+                CGPoint(x: rect.midX + 2.5, y: rect.minY + 9),
+                CGPoint(x: rect.midX + 2.5, y: rect.maxY - 4)
+            ])
+
+        case .rebuildFiltered:
+            let center = CGPoint(x: rect.midX, y: rect.midY)
+            let top = UIBezierPath(
+                arcCenter: center, radius: pointSize * 0.35,
+                startAngle: -.pi * 0.85, endAngle: .pi * 0.15, clockwise: true
+            )
+            top.lineWidth = 1.55
+            top.stroke()
+            let bottom = UIBezierPath(
+                arcCenter: center, radius: pointSize * 0.35,
+                startAngle: .pi * 0.15, endAngle: .pi * 1.15, clockwise: true
+            )
+            bottom.lineWidth = 1.55
+            bottom.stroke()
+            stroke([
+                CGPoint(x: rect.maxX - 2, y: rect.midY - 2),
+                CGPoint(x: rect.maxX - 5, y: rect.midY - 5)
+            ])
+            stroke([
+                CGPoint(x: rect.minX + 2, y: rect.midY + 2),
+                CGPoint(x: rect.minX + 5, y: rect.midY + 5)
+            ])
+            stroke([
+                CGPoint(x: rect.midX - 3, y: rect.minY + 5),
+                CGPoint(x: rect.midX + 3, y: rect.minY + 5),
+                CGPoint(x: rect.midX + 1, y: rect.midY),
+                CGPoint(x: rect.midX + 1, y: rect.midY + 3)
+            ])
+
+        case .emptyFiltered:
+            stroke([
+                CGPoint(x: rect.minX + 2, y: rect.minY + 3),
+                CGPoint(x: rect.maxX - 2, y: rect.minY + 3),
+                CGPoint(x: rect.midX + 2, y: rect.midY),
+                CGPoint(x: rect.midX + 2, y: rect.maxY - 4),
+                CGPoint(x: rect.midX - 2, y: rect.maxY - 2),
+                CGPoint(x: rect.midX - 2, y: rect.midY),
+                CGPoint(x: rect.minX + 2, y: rect.minY + 3)
+            ], close: true)
+            stroke([
+                CGPoint(x: rect.minX + 3, y: rect.maxY - 4),
+                CGPoint(x: rect.maxX - 3, y: rect.minY + 4)
+            ], width: 1.8)
         }
 
         let result = (UIGraphicsGetImageFromCurrentImageContext() ?? UIImage()).withRenderingMode(.alwaysTemplate)

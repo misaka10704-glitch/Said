@@ -136,9 +136,35 @@ public struct SaidBrowserCard: Sendable {
 public struct SaidDeckOptions: Sendable {
     public let deckID: Int64
     public let deckName: String
+    public let presetName: String
+    public let presetUseCount: Int
+    public let configID: Int64
+    public let fsrsEnabled: Bool
     public let desiredRetention: Double
-    public let newCardsPerDay: Int
-    public let reviewsPerDay: Int
+    public let desiredRetentionIsOverride: Bool
+    public let presetNewCardsPerDay: Int
+    public let presetReviewsPerDay: Int
+    public let deckNewCardsPerDay: Int?
+    public let deckReviewsPerDay: Int?
+    public let todayNewCardsPerDay: Int?
+    public let todayReviewsPerDay: Int?
+    public let effectiveNewCardsPerDay: Int
+    public let effectiveReviewsPerDay: Int
+    public let learnSteps: [Double]
+    public let graduatingIntervalGood: Int
+    public let graduatingIntervalEasy: Int
+    public let relearnSteps: [Double]
+    public let minimumLapseInterval: Int
+    public let leechThreshold: Int
+    public let leechAction: Int
+    public let maximumReviewInterval: Int
+    public let historicalRetention: Double
+    public let newCardInsertOrder: Int
+    public let newCardGatherPriority: Int
+    public let newCardSortOrder: Int
+    public let newMix: Int
+    public let interdayLearningMix: Int
+    public let reviewOrder: Int
     public let buryNew: Bool
     public let buryReviews: Bool
     public let buryInterdayLearning: Bool
@@ -392,6 +418,28 @@ public final class SaidAnkiServices {
             method: RustAnkiBackend.SchedulerMethod.customStudy,
             request: request
         )
+    }
+
+    public func emptyFilteredDeck(deckID: Int64) throws {
+        var request = Anki_Decks_DeckId()
+        request.did = deckID
+        try backend.callVoid(
+            service: RustAnkiBackend.Service.scheduler,
+            method: RustAnkiBackend.SchedulerMethod.emptyFilteredDeck,
+            request: request
+        )
+    }
+
+    @discardableResult
+    public func rebuildFilteredDeck(deckID: Int64) throws -> Int {
+        var request = Anki_Decks_DeckId()
+        request.did = deckID
+        let response: Anki_Collection_OpChangesWithCount = try backend.invoke(
+            service: RustAnkiBackend.Service.scheduler,
+            method: RustAnkiBackend.SchedulerMethod.rebuildFilteredDeck,
+            request: request
+        )
+        return Int(response.count)
     }
 
     public func setCurrentDeck(_ deckID: Int64) throws {
@@ -648,20 +696,53 @@ public final class SaidAnkiServices {
             method: RustAnkiBackend.DeckConfigMethod.getDeckConfigsForUpdate,
             request: request
         )
-        guard let selected = response.allConfig.first(where: {
+        guard let selectedWithExtra = response.allConfig.first(where: {
             $0.config.id == response.currentDeck.configID
-        })?.config else {
+        }) else {
             throw BackendError(kind: .notFoundError, message: "Deck preset is unavailable")
         }
+        let selected = selectedWithExtra.config
         let config = selected.config
+        let limits = response.currentDeck.limits
         let retention = response.currentDeck.limits.hasDesiredRetention
             ? response.currentDeck.limits.desiredRetention : config.desiredRetention
+        let deckNew = limits.hasNew ? Int(limits.new) : nil
+        let deckReviews = limits.hasReview ? Int(limits.review) : nil
+        let todayNew = limits.hasNewToday && limits.newTodayActive ? Int(limits.newToday) : nil
+        let todayReviews = limits.hasReviewToday && limits.reviewTodayActive
+            ? Int(limits.reviewToday) : nil
         return SaidDeckOptions(
             deckID: deckID,
             deckName: response.currentDeck.name,
+            presetName: selected.name,
+            presetUseCount: Int(selectedWithExtra.useCount),
+            configID: selected.id,
+            fsrsEnabled: response.fsrs,
             desiredRetention: Double(retention),
-            newCardsPerDay: Int(config.newPerDay),
-            reviewsPerDay: Int(config.reviewsPerDay),
+            desiredRetentionIsOverride: limits.hasDesiredRetention,
+            presetNewCardsPerDay: Int(config.newPerDay),
+            presetReviewsPerDay: Int(config.reviewsPerDay),
+            deckNewCardsPerDay: deckNew,
+            deckReviewsPerDay: deckReviews,
+            todayNewCardsPerDay: todayNew,
+            todayReviewsPerDay: todayReviews,
+            effectiveNewCardsPerDay: todayNew ?? deckNew ?? Int(config.newPerDay),
+            effectiveReviewsPerDay: todayReviews ?? deckReviews ?? Int(config.reviewsPerDay),
+            learnSteps: config.learnSteps.map(Double.init),
+            graduatingIntervalGood: Int(config.graduatingIntervalGood),
+            graduatingIntervalEasy: Int(config.graduatingIntervalEasy),
+            relearnSteps: config.relearnSteps.map(Double.init),
+            minimumLapseInterval: Int(config.minimumLapseInterval),
+            leechThreshold: Int(config.leechThreshold),
+            leechAction: config.leechAction.rawValue,
+            maximumReviewInterval: Int(config.maximumReviewInterval),
+            historicalRetention: Double(config.historicalRetention),
+            newCardInsertOrder: config.newCardInsertOrder.rawValue,
+            newCardGatherPriority: config.newCardGatherPriority.rawValue,
+            newCardSortOrder: config.newCardSortOrder.rawValue,
+            newMix: config.newMix.rawValue,
+            interdayLearningMix: config.interdayLearningMix.rawValue,
+            reviewOrder: config.reviewOrder.rawValue,
             buryNew: config.buryNew,
             buryReviews: config.buryReviews,
             buryInterdayLearning: config.buryInterdayLearning,
@@ -672,8 +753,28 @@ public final class SaidAnkiServices {
     public func updateDeckOptions(
         _ options: SaidDeckOptions,
         desiredRetention: Double,
-        newCardsPerDay: Int,
-        reviewsPerDay: Int,
+        desiredRetentionIsOverride: Bool,
+        presetNewCardsPerDay: Int,
+        presetReviewsPerDay: Int,
+        deckNewCardsPerDay: Int?,
+        deckReviewsPerDay: Int?,
+        todayNewCardsPerDay: Int?,
+        todayReviewsPerDay: Int?,
+        learnSteps: [Double],
+        graduatingIntervalGood: Int,
+        graduatingIntervalEasy: Int,
+        relearnSteps: [Double],
+        minimumLapseInterval: Int,
+        leechThreshold: Int,
+        leechAction: Int,
+        maximumReviewInterval: Int,
+        historicalRetention: Double,
+        newCardInsertOrder: Int,
+        newCardGatherPriority: Int,
+        newCardSortOrder: Int,
+        newMix: Int,
+        interdayLearningMix: Int,
+        reviewOrder: Int,
         buryNew: Bool,
         buryReviews: Bool,
         buryInterdayLearning: Bool
@@ -684,9 +785,51 @@ public final class SaidAnkiServices {
         })?.config else {
             throw BackendError(kind: .notFoundError, message: "Deck preset is unavailable")
         }
-        selected.config.desiredRetention = Float(desiredRetention)
-        selected.config.newPerDay = UInt32(max(0, newCardsPerDay))
-        selected.config.reviewsPerDay = UInt32(max(0, reviewsPerDay))
+        // Desired retention is a deck override in the loaded state, so it must
+        // be written back to Limits instead of silently changing the preset.
+        var limits = source.currentDeck.limits
+        if desiredRetentionIsOverride {
+            limits.desiredRetention = Float(desiredRetention)
+        } else {
+            limits.clearDesiredRetention()
+        }
+        selected.config.newPerDay = UInt32(max(0, presetNewCardsPerDay))
+        selected.config.reviewsPerDay = UInt32(max(0, presetReviewsPerDay))
+        setLimit(deckNewCardsPerDay, value: { limits.new = $0 }, clear: { limits.clearNew() })
+        setLimit(deckReviewsPerDay, value: { limits.review = $0 }, clear: { limits.clearReview() })
+        if let todayNewCardsPerDay = todayNewCardsPerDay {
+            limits.newToday = UInt32(max(0, todayNewCardsPerDay))
+            limits.newTodayActive = true
+        } else if source.currentDeck.limits.newTodayActive {
+            limits.clearNewToday()
+            limits.newTodayActive = false
+        }
+        if let todayReviewsPerDay = todayReviewsPerDay {
+            limits.reviewToday = UInt32(max(0, todayReviewsPerDay))
+            limits.reviewTodayActive = true
+        } else if source.currentDeck.limits.reviewTodayActive {
+            limits.clearReviewToday()
+            limits.reviewTodayActive = false
+        }
+        selected.config.learnSteps = learnSteps.map(Float.init)
+        selected.config.graduatingIntervalGood = UInt32(max(1, graduatingIntervalGood))
+        selected.config.graduatingIntervalEasy = UInt32(max(1, graduatingIntervalEasy))
+        selected.config.relearnSteps = relearnSteps.map(Float.init)
+        selected.config.minimumLapseInterval = UInt32(max(0, minimumLapseInterval))
+        selected.config.leechThreshold = UInt32(max(1, leechThreshold))
+        selected.config.leechAction = .init(rawValue: leechAction) ?? selected.config.leechAction
+        selected.config.maximumReviewInterval = UInt32(max(1, maximumReviewInterval))
+        selected.config.historicalRetention = Float(historicalRetention)
+        selected.config.newCardInsertOrder =
+            .init(rawValue: newCardInsertOrder) ?? selected.config.newCardInsertOrder
+        selected.config.newCardGatherPriority =
+            .init(rawValue: newCardGatherPriority) ?? selected.config.newCardGatherPriority
+        selected.config.newCardSortOrder =
+            .init(rawValue: newCardSortOrder) ?? selected.config.newCardSortOrder
+        selected.config.newMix = .init(rawValue: newMix) ?? selected.config.newMix
+        selected.config.interdayLearningMix =
+            .init(rawValue: interdayLearningMix) ?? selected.config.interdayLearningMix
+        selected.config.reviewOrder = .init(rawValue: reviewOrder) ?? selected.config.reviewOrder
         selected.config.buryNew = buryNew
         selected.config.buryReviews = buryReviews
         selected.config.buryInterdayLearning = buryInterdayLearning
@@ -694,7 +837,8 @@ public final class SaidAnkiServices {
         request.targetDeckID = options.deckID
         request.configs = [selected]
         request.mode = .normal
-        request.limits = source.currentDeck.limits
+        request.limits = limits
+        request.cardStateCustomizer = source.cardStateCustomizer
         request.newCardsIgnoreReviewLimit = source.newCardsIgnoreReviewLimit
         request.fsrs = source.fsrs
         request.applyAllParentLimits = source.applyAllParentLimits
@@ -704,6 +848,18 @@ public final class SaidAnkiServices {
             method: RustAnkiBackend.DeckConfigMethod.updateDeckConfigs,
             request: request
         )
+    }
+
+    private func setLimit(
+        _ value: Int?,
+        value assign: (UInt32) -> Void,
+        clear: () -> Void
+    ) {
+        if let value = value {
+            assign(UInt32(max(0, value)))
+        } else {
+            clear()
+        }
     }
 
     public func statistics(days: UInt32, search: String = "") throws -> SaidStatistics {

@@ -7,7 +7,8 @@ final class DeckCustomStudyViewController: UIViewController, ThemeRefreshable,
     private let provider: DeckManagementDataProviding
     private let scrollView = UIScrollView()
     private let contentStack = UIStackView()
-    private let modeControl = UISegmentedControl(items: ["新卡", "复习", "遗忘", "提前", "预习", "筛选"])
+    private let modeControlPrimary = UISegmentedControl(items: ["新卡", "复习", "遗忘"])
+    private let modeControlSecondary = UISegmentedControl(items: ["提前", "预习", "筛选"])
     private let valueTitleLabel = UILabel()
     private let valueField = UITextField()
     private let availabilityLabel = UILabel()
@@ -64,7 +65,8 @@ final class DeckCustomStudyViewController: UIViewController, ThemeRefreshable,
         valueField.backgroundColor = colors.inputBackground
         valueField.layer.borderColor = colors.inputBorder.cgColor
         valueField.keyboardAppearance = ThemeManager.shared.mode == .dark ? .dark : .light
-        modeControl.tintColor = colors.accent
+        modeControlPrimary.tintColor = colors.accent
+        modeControlSecondary.tintColor = colors.accent
         cramKindControl.tintColor = colors.accent
         tagTableView.backgroundColor = colors.surface
         tagTableView.separatorColor = colors.divider
@@ -92,19 +94,21 @@ final class DeckCustomStudyViewController: UIViewController, ThemeRefreshable,
         deckLabel.textColor = DSTheme.c.textPrimary
         contentStack.addArrangedSubview(deckLabel)
 
-        modeControl.selectedSegmentIndex = 0
-        modeControl.addTarget(self, action: #selector(modeChanged), for: .valueChanged)
-        contentStack.addArrangedSubview(makeCard(containing: modeControl))
+        modeControlPrimary.selectedSegmentIndex = 0
+        modeControlSecondary.selectedSegmentIndex = -1
+        modeControlPrimary.addTarget(self, action: #selector(modePrimaryChanged), for: .valueChanged)
+        modeControlSecondary.addTarget(self, action: #selector(modeSecondaryChanged), for: .valueChanged)
+        let modeStack = UIStackView(arrangedSubviews: [modeControlPrimary, modeControlSecondary])
+        modeStack.axis = .vertical
+        modeStack.spacing = 8
+        contentStack.addArrangedSubview(makeCard(containing: modeStack))
 
         valueTitleLabel.font = DSTheme.titleFont(size: 15)
+        valueTitleLabel.numberOfLines = 0
         availabilityLabel.font = DSTheme.bodyFont(size: 12)
         availabilityLabel.numberOfLines = 0
-        configureNumberField()
-        let valueRow = UIStackView(arrangedSubviews: [valueTitleLabel, valueField])
-        valueRow.axis = .horizontal
-        valueRow.alignment = .center
-        valueRow.spacing = 12
-        let valueStack = UIStackView(arrangedSubviews: [valueRow, availabilityLabel])
+        DSFormLayout.configureNumericField(valueField)
+        let valueStack = UIStackView(arrangedSubviews: [valueTitleLabel, valueField, availabilityLabel])
         valueStack.axis = .vertical
         valueStack.spacing = 8
         contentStack.addArrangedSubview(makeCard(containing: valueStack))
@@ -174,8 +178,28 @@ final class DeckCustomStudyViewController: UIViewController, ThemeRefreshable,
         }
     }
 
+    @objc private func modePrimaryChanged() {
+        modeControlSecondary.selectedSegmentIndex = -1
+        modeChanged()
+    }
+
+    @objc private func modeSecondaryChanged() {
+        modeControlPrimary.selectedSegmentIndex = -1
+        modeChanged()
+    }
+
+    private var selectedMode: Int {
+        if modeControlPrimary.selectedSegmentIndex >= 0 {
+            return modeControlPrimary.selectedSegmentIndex
+        }
+        if modeControlSecondary.selectedSegmentIndex >= 0 {
+            return modeControlSecondary.selectedSegmentIndex + 3
+        }
+        return 0
+    }
+
     @objc private func modeChanged() {
-        let mode = modeControl.selectedSegmentIndex
+        let mode = selectedMode
         cramCard.isHidden = mode != 5
         let value = defaults
         switch mode {
@@ -212,7 +236,7 @@ final class DeckCustomStudyViewController: UIViewController, ThemeRefreshable,
             return
         }
         let action: DeckCustomStudyAction
-        switch modeControl.selectedSegmentIndex {
+        switch selectedMode {
         case 0:
             guard number <= Int64(Int32.max) else {
                 showAlert("数值过大。")
@@ -262,26 +286,56 @@ final class DeckCustomStudyViewController: UIViewController, ThemeRefreshable,
                 guard let self = self else { return }
                 self.setWorking(false)
                 switch result {
-                case .success:
-                    let alert = UIAlertController(
-                        title: "自定义学习已准备好",
-                        message: "牌组列表会显示最新状态。",
-                        preferredStyle: .alert
-                    )
-                    alert.addAction(UIAlertAction(title: "完成", style: .default) { [weak self] _ in
-                        self?.navigationController?.popViewController(animated: true)
-                    })
-                    self.present(alert, animated: true)
+                case .success(let filteredDeckID):
+                    if self.selectedMode <= 1 {
+                        self.enterStudy(deckID: self.deck.id, deckName: self.deck.name)
+                    } else if let filteredDeckID = filteredDeckID {
+                        self.loadAndEnterFilteredDeck(id: filteredDeckID)
+                    } else {
+                        self.showAlert("筛选牌组已创建，但后端没有返回可进入的牌组 ID。请返回牌组列表后重试。")
+                    }
                 case .failure(let error):
-                    self.showAlert(error.localizedDescription)
+                    self.showAlert("无法完成自定义学习：\(error.localizedDescription)")
                 }
             }
         }
     }
 
+    private func loadAndEnterFilteredDeck(id: Int64) {
+        setWorking(true)
+        provider.loadDeckDetail(deckID: id) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.setWorking(false)
+                switch result {
+                case .success(let detail):
+                    guard detail.filtered else {
+                        self.showAlert("自定义学习返回的目标不是筛选牌组，已停止进入学习。")
+                        return
+                    }
+                    self.enterStudy(deckID: detail.id, deckName: detail.name)
+                case .failure(let error):
+                    self.showAlert("筛选牌组已创建，但读取牌组信息失败：\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    private func enterStudy(deckID: Int64, deckName: String) {
+        let reviewer = ReviewViewController(deckId: deckID, deckName: deckName)
+        guard let navigationController = navigationController else { return }
+        var controllers = navigationController.viewControllers
+        if controllers.last === self {
+            controllers.removeLast()
+        }
+        controllers.append(reviewer)
+        navigationController.setViewControllers(controllers, animated: true)
+    }
+
     private func setWorking(_ working: Bool) {
         startButton.isEnabled = !working
-        modeControl.isEnabled = !working
+        modeControlPrimary.isEnabled = !working
+        modeControlSecondary.isEnabled = !working
         if working {
             activityIndicator.startAnimating()
         } else {
@@ -319,16 +373,6 @@ final class DeckCustomStudyViewController: UIViewController, ThemeRefreshable,
             tags[indexPath.row] = DeckCustomStudyTag(name: old.name, included: false, excluded: false)
         }
         tableView.reloadRows(at: [indexPath], with: .none)
-    }
-
-    private func configureNumberField() {
-        valueField.keyboardType = .numberPad
-        valueField.textAlignment = .right
-        valueField.font = UIFont.monospacedDigitSystemFont(ofSize: 16, weight: .medium)
-        valueField.layer.borderWidth = 1
-        valueField.layer.cornerRadius = 8
-        valueField.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        valueField.heightAnchor.constraint(equalToConstant: 36).isActive = true
     }
 
     private func labeled(_ title: String, control: UIView) -> UIStackView {
