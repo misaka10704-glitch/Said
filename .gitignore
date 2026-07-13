@@ -1,0 +1,22 @@
+.DS_Store
+DerivedData/
+build/
+*.xcuserdata
+xcuserdata/
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+.swiftpm/
+*.ipa
+*.dSYM
+_import_staging/
+_export_staging/
+*.staging/
+
+# Rust / SPM build artifacts (keep AnkiRust.xcframework)
+AnkiBackend/.build/
+AnkiBackend/anki-bridge-rs/target/
+AnkiBackend/anki-bridge-rs/target-host/
+
+# Nested VCS metadata inside vendored Anki tree
+AnkiBackend/anki-upstream/**/.git/

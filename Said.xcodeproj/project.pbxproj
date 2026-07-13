@@ -1,0 +1,642 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0479BB3B768AD447FAAABE96 /* SpeakingPracticeVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C00A5F6E5BA63D71102F5E7 /* SpeakingPracticeVisuals.swift */; };
+		13FFDD45A9583F5B5EA2A613 /* PronounceHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1C0312A5CD8F7A0EBF8637 /* PronounceHistoryStore.swift */; };
+		188AF1A354BF8543C769D5C4 /* DeckOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303C8B325F6A4F54A53037FB /* DeckOptionsViewController.swift */; };
+		20B5E2128ADAA627863FBFE3 /* NoteEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB73F04851DBE9D9685473F0 /* NoteEditorViewController.swift */; };
+		22A3B75B26FA49B106B61331 /* PronounceSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74191EDBBAE2515D5AB147EF /* PronounceSessionController.swift */; };
+		2BA5C93EB22380897B6DCA57 /* IELTSNativeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9DA61A2869CC63D9C084AF /* IELTSNativeService.swift */; };
+		303C6CCE3E376E088944B39D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2FFF6BBFD1F20CB934E35A /* SettingsViewController.swift */; };
+		34F86216C450FFDCA62F0035 /* PronounceAttachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1FF9F1B96D3BFDE163B9A33 /* PronounceAttachments.swift */; };
+		37E8B079FAA7AACC55615330 /* AnkiCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B338B070241D965B743600D /* AnkiCollection.swift */; };
+		38597DDB53B6ED2E4F3C62CF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18DD2E8DC54261819F25555 /* AppDelegate.swift */; };
+		3B171B5303C63876B274B8B1 /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8689726D491357ED6E7179 /* RootSplitViewController.swift */; };
+		4CFBF863707A1718C86FE20D /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8EFAD87F6102462BE9D9F16 /* AudioRecorder.swift */; };
+		54697F02E37F9A9C6F202AFE /* ReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7638E779FB034A175B8842A1 /* ReviewViewController.swift */; };
+		565DC8F2457FA02A31D28CBB /* MemoryGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCA4138C345E820A251284D /* MemoryGuard.swift */; };
+		5DCDC9F23B91E23C666FD835 /* PronounceDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A0A4A8C5F2446D79F958324 /* PronounceDomain.swift */; };
+		6059C24A1905CEBE38C47B70 /* AnkiManagementModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0380B48A86AEF151CD5147BB /* AnkiManagementModels.swift */; };
+		64E1106FC0BD7D4646BD3E8B /* AzureSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757564E4736C63920421021F /* AzureSpeechService.swift */; };
+		65EB094A2A37888FBD63EB17 /* AnkiStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED307B5CBCA9876C842D3EC2 /* AnkiStore.swift */; };
+		6D8CD4E55D23642196A10DBF /* DSTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F90363CF8307481B2A9E57 /* DSTheme.swift */; };
+		71A9F6EC681B360D3E8CE902 /* OfficialAnkiCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A8109037EBC7222C91FE49 /* OfficialAnkiCollection.swift */; };
+		74DECE6DA90187857B2E9B2B /* SaidLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B9EDD20B0420A8AD1D03581 /* SaidLogo.png */; };
+		7E263BB69A3208D84CD37813 /* DeckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9873D354EAE12E57862B610E /* DeckListViewController.swift */; };
+		7FB0EED34FE5BF4A27BD7B6A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C75D1F35A20A712E646D998 /* Assets.xcassets */; };
+		8123579F987D45B2FE2A849D /* ComposeMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66B01E5160D717F97DDDCED /* ComposeMode.swift */; };
+		831088E6E1C1E9CCF421829F /* EdgeTTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53308E6E8B4D5916DE136FAE /* EdgeTTSService.swift */; };
+		87086CEB92247639CEC68A2B /* PronounceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A8B1D273B1F41FC0A22D28 /* PronounceMode.swift */; };
+		8C7D9D8FE2C7C7ED5F379A81 /* PronounceAssessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7960DB303E60B5EFD5E1EE3E /* PronounceAssessment.swift */; };
+		906DE9F250BBB033F73000FC /* ModeRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72C3FF7197400ECD097A0AC /* ModeRouter.swift */; };
+		91BCC458E2742401FBE140C6 /* QwenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987C0559D242BBEB0864A2 /* QwenService.swift */; };
+		9771310E482B6025DB27F03F /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E59695412CA426E2FE9FC6 /* StatisticsViewController.swift */; };
+		9C07D3D74C270A23AABE1CCE /* IELTSSpeakingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93FCD3E03D5D740DC24B6C7 /* IELTSSpeakingMode.swift */; };
+		A1D315802FFFBE9F3F3ECC55 /* AnkiBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A54B935B249C36AB31A58F /* AnkiBackend.swift */; };
+		A2CFA9C516EFE35B694E9644 /* SimpleZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A88181C33E9FA2CA5C55919 /* SimpleZip.swift */; };
+		ADDF24347790A404FC577446 /* AnkiScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C085E1140C637189ED3E7D7 /* AnkiScheduler.swift */; };
+		B8C6016B0DA50F637CF2D043 /* DataMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215E7CCF4AFD88DBA7B95153 /* DataMaintenanceViewController.swift */; };
+		BB056D77B219EA479B38DBDC /* SaidMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B264ED76DFE94C7AE8DEA125 /* SaidMenu.swift */; };
+		C97770D2549443D53CFBE4A7 /* BrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058B7EBC561CFE34F23DA22B /* BrowserViewController.swift */; };
+		D4C44FC09CD95E3C92FFEECD /* CardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0418318FFCF0C042434A1C2F /* CardModels.swift */; };
+		D50FD4C086DDD01DC1A11FE7 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECC0D80B5469545DFA945E2 /* KeychainStore.swift */; };
+		D6F56AE0690C5668DEC0CE61 /* DSComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B303958068AD849EBCBCB632 /* DSComponents.swift */; };
+		D9C1B275419E8141AB9B2409 /* IELTSServiceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F828CB2238CFCCFF2BB67F52 /* IELTSServiceModels.swift */; };
+		DB49DF2BBCAFCD7A9F8240F5 /* SaidAnkiBackend in Frameworks */ = {isa = PBXBuildFile; productRef = A9C4C56BB2A4DCC8DD3EDE09 /* SaidAnkiBackend */; };
+		DB71FB431283D42A70FD5F2C /* ActionIconFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532441801B8A70233CFB43D2 /* ActionIconFactory.swift */; };
+		E47A3DBDD097513F7EEF3740 /* DeckParentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D208DC73608777D31765828 /* DeckParentPickerViewController.swift */; };
+		E5A624336B73B133132D4217 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3BBBE9CF723E06D17E074E1 /* LaunchScreen.storyboard */; };
+		E8E0643B7821F71D5B8ECFCD /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9359462EDF23C1E041B673 /* SidebarViewController.swift */; };
+		E9FD9C50097400A570C8695B /* AzureSpeechResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CFA8B633862B720C2D3231E /* AzureSpeechResponse.swift */; };
+		EE11D7F9CF312A3F587C7709 /* SpeakingReviewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EDC831A8139A684DC7C07F /* SpeakingReviewComponents.swift */; };
+		EFFA62CCE5D27A8B6274D2F7 /* DeckCustomStudyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0B84169C570F00C540E476 /* DeckCustomStudyViewController.swift */; };
+		FF3B7D0A963AFC56FFE436F3 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 1A50012FBCC730FBD7D14FEC /* Starscream */; };
+		FFE4EC38006E354EF9DA1BCA /* SyncViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8D1D16CB73F91F38D5D2F5 /* SyncViewController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0380B48A86AEF151CD5147BB /* AnkiManagementModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiManagementModels.swift; sourceTree = "<group>"; };
+		0418318FFCF0C042434A1C2F /* CardModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModels.swift; sourceTree = "<group>"; };
+		058B7EBC561CFE34F23DA22B /* BrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserViewController.swift; sourceTree = "<group>"; };
+		07BF6B50487EC2D56525DC6B /* Said.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Said.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0ECC0D80B5469545DFA945E2 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		215E7CCF4AFD88DBA7B95153 /* DataMaintenanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataMaintenanceViewController.swift; sourceTree = "<group>"; };
+		2A0A4A8C5F2446D79F958324 /* PronounceDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceDomain.swift; sourceTree = "<group>"; };
+		303C8B325F6A4F54A53037FB /* DeckOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckOptionsViewController.swift; sourceTree = "<group>"; };
+		32A8109037EBC7222C91FE49 /* OfficialAnkiCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficialAnkiCollection.swift; sourceTree = "<group>"; };
+		4B0B84169C570F00C540E476 /* DeckCustomStudyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckCustomStudyViewController.swift; sourceTree = "<group>"; };
+		4B338B070241D965B743600D /* AnkiCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiCollection.swift; sourceTree = "<group>"; };
+		4C75D1F35A20A712E646D998 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4FCA4138C345E820A251284D /* MemoryGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryGuard.swift; sourceTree = "<group>"; };
+		532441801B8A70233CFB43D2 /* ActionIconFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionIconFactory.swift; sourceTree = "<group>"; };
+		53308E6E8B4D5916DE136FAE /* EdgeTTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeTTSService.swift; sourceTree = "<group>"; };
+		53987C0559D242BBEB0864A2 /* QwenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QwenService.swift; sourceTree = "<group>"; };
+		54EDC831A8139A684DC7C07F /* SpeakingReviewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakingReviewComponents.swift; sourceTree = "<group>"; };
+		5B9EDD20B0420A8AD1D03581 /* SaidLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SaidLogo.png; sourceTree = "<group>"; };
+		5C00A5F6E5BA63D71102F5E7 /* SpeakingPracticeVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakingPracticeVisuals.swift; sourceTree = "<group>"; };
+		5D208DC73608777D31765828 /* DeckParentPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckParentPickerViewController.swift; sourceTree = "<group>"; };
+		64E59695412CA426E2FE9FC6 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
+		6A88181C33E9FA2CA5C55919 /* SimpleZip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleZip.swift; sourceTree = "<group>"; };
+		6C085E1140C637189ED3E7D7 /* AnkiScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiScheduler.swift; sourceTree = "<group>"; };
+		6CFA8B633862B720C2D3231E /* AzureSpeechResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AzureSpeechResponse.swift; sourceTree = "<group>"; };
+		71F90363CF8307481B2A9E57 /* DSTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSTheme.swift; sourceTree = "<group>"; };
+		74191EDBBAE2515D5AB147EF /* PronounceSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceSessionController.swift; sourceTree = "<group>"; };
+		757564E4736C63920421021F /* AzureSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AzureSpeechService.swift; sourceTree = "<group>"; };
+		7638E779FB034A175B8842A1 /* ReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewViewController.swift; sourceTree = "<group>"; };
+		7960DB303E60B5EFD5E1EE3E /* PronounceAssessment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceAssessment.swift; sourceTree = "<group>"; };
+		7A8D1D16CB73F91F38D5D2F5 /* SyncViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncViewController.swift; sourceTree = "<group>"; };
+		7F8689726D491357ED6E7179 /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
+		85CF1D45BDEDAB843214FE25 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8C2FFF6BBFD1F20CB934E35A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		9873D354EAE12E57862B610E /* DeckListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckListViewController.swift; sourceTree = "<group>"; };
+		A66B01E5160D717F97DDDCED /* ComposeMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMode.swift; sourceTree = "<group>"; };
+		A72C3FF7197400ECD097A0AC /* ModeRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeRouter.swift; sourceTree = "<group>"; };
+		A93FCD3E03D5D740DC24B6C7 /* IELTSSpeakingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IELTSSpeakingMode.swift; sourceTree = "<group>"; };
+		AA9DA61A2869CC63D9C084AF /* IELTSNativeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IELTSNativeService.swift; sourceTree = "<group>"; };
+		AB0536EB998C2FE35C513EA2 /* AnkiBackend */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AnkiBackend; path = AnkiBackend; sourceTree = SOURCE_ROOT; };
+		AD9359462EDF23C1E041B673 /* SidebarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewController.swift; sourceTree = "<group>"; };
+		B0A8B1D273B1F41FC0A22D28 /* PronounceMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceMode.swift; sourceTree = "<group>"; };
+		B18DD2E8DC54261819F25555 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B264ED76DFE94C7AE8DEA125 /* SaidMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaidMenu.swift; sourceTree = "<group>"; };
+		B303958068AD849EBCBCB632 /* DSComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSComponents.swift; sourceTree = "<group>"; };
+		B3BBBE9CF723E06D17E074E1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C8EFAD87F6102462BE9D9F16 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		E7A54B935B249C36AB31A58F /* AnkiBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiBackend.swift; sourceTree = "<group>"; };
+		ED307B5CBCA9876C842D3EC2 /* AnkiStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiStore.swift; sourceTree = "<group>"; };
+		F1FF9F1B96D3BFDE163B9A33 /* PronounceAttachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceAttachments.swift; sourceTree = "<group>"; };
+		F828CB2238CFCCFF2BB67F52 /* IELTSServiceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IELTSServiceModels.swift; sourceTree = "<group>"; };
+		FB73F04851DBE9D9685473F0 /* NoteEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteEditorViewController.swift; sourceTree = "<group>"; };
+		FF1C0312A5CD8F7A0EBF8637 /* PronounceHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceHistoryStore.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FB84478B3BA18DBCBC39099A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB49DF2BBCAFCD7A9F8240F5 /* SaidAnkiBackend in Frameworks */,
+				FF3B7D0A963AFC56FFE436F3 /* Starscream in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0149ABB82936AE9FD43983D8 /* Modes */ = {
+			isa = PBXGroup;
+			children = (
+				A66B01E5160D717F97DDDCED /* ComposeMode.swift */,
+				A93FCD3E03D5D740DC24B6C7 /* IELTSSpeakingMode.swift */,
+				A72C3FF7197400ECD097A0AC /* ModeRouter.swift */,
+				2A0A4A8C5F2446D79F958324 /* PronounceDomain.swift */,
+				B0A8B1D273B1F41FC0A22D28 /* PronounceMode.swift */,
+			);
+			path = Modes;
+			sourceTree = "<group>";
+		};
+		254A65CAAAB7AE3517B8FBC3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				07BF6B50487EC2D56525DC6B /* Said.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		409410E07FD5EB5F41726C64 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				B303958068AD849EBCBCB632 /* DSComponents.swift */,
+				B264ED76DFE94C7AE8DEA125 /* SaidMenu.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4E5AD5FACC6AA3EDD09C18D1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4C75D1F35A20A712E646D998 /* Assets.xcassets */,
+				5B9EDD20B0420A8AD1D03581 /* SaidLogo.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5837BE029447A0925A164F24 /* SpeakingAnki */ = {
+			isa = PBXGroup;
+			children = (
+				DC1808FFD4D147876D523703 /* Anki */,
+				409410E07FD5EB5F41726C64 /* Components */,
+				7A36F9006D0E8CF3D7AE3631 /* Controllers */,
+				0149ABB82936AE9FD43983D8 /* Modes */,
+				4E5AD5FACC6AA3EDD09C18D1 /* Resources */,
+				BDB0C37B9097EE8D98193685 /* Services */,
+				C39753A4921441FCDE54231C /* Supporting */,
+				5A3F1A0C93D966DEA3CE9C2B /* Theme */,
+				82C3CC010F582DE8BCC99169 /* Views */,
+			);
+			path = SpeakingAnki;
+			sourceTree = "<group>";
+		};
+		5A3F1A0C93D966DEA3CE9C2B /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				532441801B8A70233CFB43D2 /* ActionIconFactory.swift */,
+				71F90363CF8307481B2A9E57 /* DSTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		7A36F9006D0E8CF3D7AE3631 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				0380B48A86AEF151CD5147BB /* AnkiManagementModels.swift */,
+				058B7EBC561CFE34F23DA22B /* BrowserViewController.swift */,
+				215E7CCF4AFD88DBA7B95153 /* DataMaintenanceViewController.swift */,
+				4B0B84169C570F00C540E476 /* DeckCustomStudyViewController.swift */,
+				9873D354EAE12E57862B610E /* DeckListViewController.swift */,
+				303C8B325F6A4F54A53037FB /* DeckOptionsViewController.swift */,
+				5D208DC73608777D31765828 /* DeckParentPickerViewController.swift */,
+				FB73F04851DBE9D9685473F0 /* NoteEditorViewController.swift */,
+				7638E779FB034A175B8842A1 /* ReviewViewController.swift */,
+				7F8689726D491357ED6E7179 /* RootSplitViewController.swift */,
+				8C2FFF6BBFD1F20CB934E35A /* SettingsViewController.swift */,
+				AD9359462EDF23C1E041B673 /* SidebarViewController.swift */,
+				64E59695412CA426E2FE9FC6 /* StatisticsViewController.swift */,
+				7A8D1D16CB73F91F38D5D2F5 /* SyncViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		7E781DBA596A9D3AC8EF3BF7 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				AB0536EB998C2FE35C513EA2 /* AnkiBackend */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		82C3CC010F582DE8BCC99169 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5C00A5F6E5BA63D71102F5E7 /* SpeakingPracticeVisuals.swift */,
+				54EDC831A8139A684DC7C07F /* SpeakingReviewComponents.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8382EEF061D8D9332AEC62CD = {
+			isa = PBXGroup;
+			children = (
+				7E781DBA596A9D3AC8EF3BF7 /* Packages */,
+				5837BE029447A0925A164F24 /* SpeakingAnki */,
+				254A65CAAAB7AE3517B8FBC3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BDB0C37B9097EE8D98193685 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				C8EFAD87F6102462BE9D9F16 /* AudioRecorder.swift */,
+				6CFA8B633862B720C2D3231E /* AzureSpeechResponse.swift */,
+				757564E4736C63920421021F /* AzureSpeechService.swift */,
+				53308E6E8B4D5916DE136FAE /* EdgeTTSService.swift */,
+				AA9DA61A2869CC63D9C084AF /* IELTSNativeService.swift */,
+				F828CB2238CFCCFF2BB67F52 /* IELTSServiceModels.swift */,
+				0ECC0D80B5469545DFA945E2 /* KeychainStore.swift */,
+				4FCA4138C345E820A251284D /* MemoryGuard.swift */,
+				7960DB303E60B5EFD5E1EE3E /* PronounceAssessment.swift */,
+				F1FF9F1B96D3BFDE163B9A33 /* PronounceAttachments.swift */,
+				FF1C0312A5CD8F7A0EBF8637 /* PronounceHistoryStore.swift */,
+				74191EDBBAE2515D5AB147EF /* PronounceSessionController.swift */,
+				53987C0559D242BBEB0864A2 /* QwenService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		C39753A4921441FCDE54231C /* Supporting */ = {
+			isa = PBXGroup;
+			children = (
+				B18DD2E8DC54261819F25555 /* AppDelegate.swift */,
+				85CF1D45BDEDAB843214FE25 /* Info.plist */,
+				B3BBBE9CF723E06D17E074E1 /* LaunchScreen.storyboard */,
+			);
+			path = Supporting;
+			sourceTree = "<group>";
+		};
+		DC1808FFD4D147876D523703 /* Anki */ = {
+			isa = PBXGroup;
+			children = (
+				E7A54B935B249C36AB31A58F /* AnkiBackend.swift */,
+				4B338B070241D965B743600D /* AnkiCollection.swift */,
+				6C085E1140C637189ED3E7D7 /* AnkiScheduler.swift */,
+				ED307B5CBCA9876C842D3EC2 /* AnkiStore.swift */,
+				0418318FFCF0C042434A1C2F /* CardModels.swift */,
+				32A8109037EBC7222C91FE49 /* OfficialAnkiCollection.swift */,
+				6A88181C33E9FA2CA5C55919 /* SimpleZip.swift */,
+			);
+			path = Anki;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BB51F8390AE36D28C27E9DA4 /* Said */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A786A49FBD5FB9E24EFC851E /* Build configuration list for PBXNativeTarget "Said" */;
+			buildPhases = (
+				D548D973E9289DA98688AE98 /* Sources */,
+				A4014EA3C1856C2B41B07565 /* Resources */,
+				FB84478B3BA18DBCBC39099A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Said;
+			packageProductDependencies = (
+				A9C4C56BB2A4DCC8DD3EDE09 /* SaidAnkiBackend */,
+				1A50012FBCC730FBD7D14FEC /* Starscream */,
+			);
+			productName = Said;
+			productReference = 07BF6B50487EC2D56525DC6B /* Said.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A9261C0B681C0DA739A3762D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					BB51F8390AE36D28C27E9DA4 = {
+						DevelopmentTeam = C8XVZJLC2D;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 86F638CA2A5B93BC4ED3DCB3 /* Build configuration list for PBXProject "Said" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 8382EEF061D8D9332AEC62CD;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				487C2DC89D159AC2A04AF735 /* XCRemoteSwiftPackageReference "Starscream" */,
+				7756486904CCB7A2DB85CC7F /* XCLocalSwiftPackageReference "AnkiBackend" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 254A65CAAAB7AE3517B8FBC3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BB51F8390AE36D28C27E9DA4 /* Said */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A4014EA3C1856C2B41B07565 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FB0EED34FE5BF4A27BD7B6A /* Assets.xcassets in Resources */,
+				E5A624336B73B133132D4217 /* LaunchScreen.storyboard in Resources */,
+				74DECE6DA90187857B2E9B2B /* SaidLogo.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D548D973E9289DA98688AE98 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB71FB431283D42A70FD5F2C /* ActionIconFactory.swift in Sources */,
+				A1D315802FFFBE9F3F3ECC55 /* AnkiBackend.swift in Sources */,
+				37E8B079FAA7AACC55615330 /* AnkiCollection.swift in Sources */,
+				6059C24A1905CEBE38C47B70 /* AnkiManagementModels.swift in Sources */,
+				ADDF24347790A404FC577446 /* AnkiScheduler.swift in Sources */,
+				65EB094A2A37888FBD63EB17 /* AnkiStore.swift in Sources */,
+				38597DDB53B6ED2E4F3C62CF /* AppDelegate.swift in Sources */,
+				4CFBF863707A1718C86FE20D /* AudioRecorder.swift in Sources */,
+				E9FD9C50097400A570C8695B /* AzureSpeechResponse.swift in Sources */,
+				64E1106FC0BD7D4646BD3E8B /* AzureSpeechService.swift in Sources */,
+				C97770D2549443D53CFBE4A7 /* BrowserViewController.swift in Sources */,
+				D4C44FC09CD95E3C92FFEECD /* CardModels.swift in Sources */,
+				8123579F987D45B2FE2A849D /* ComposeMode.swift in Sources */,
+				D6F56AE0690C5668DEC0CE61 /* DSComponents.swift in Sources */,
+				6D8CD4E55D23642196A10DBF /* DSTheme.swift in Sources */,
+				B8C6016B0DA50F637CF2D043 /* DataMaintenanceViewController.swift in Sources */,
+				EFFA62CCE5D27A8B6274D2F7 /* DeckCustomStudyViewController.swift in Sources */,
+				7E263BB69A3208D84CD37813 /* DeckListViewController.swift in Sources */,
+				188AF1A354BF8543C769D5C4 /* DeckOptionsViewController.swift in Sources */,
+				E47A3DBDD097513F7EEF3740 /* DeckParentPickerViewController.swift in Sources */,
+				831088E6E1C1E9CCF421829F /* EdgeTTSService.swift in Sources */,
+				2BA5C93EB22380897B6DCA57 /* IELTSNativeService.swift in Sources */,
+				D9C1B275419E8141AB9B2409 /* IELTSServiceModels.swift in Sources */,
+				9C07D3D74C270A23AABE1CCE /* IELTSSpeakingMode.swift in Sources */,
+				D50FD4C086DDD01DC1A11FE7 /* KeychainStore.swift in Sources */,
+				565DC8F2457FA02A31D28CBB /* MemoryGuard.swift in Sources */,
+				906DE9F250BBB033F73000FC /* ModeRouter.swift in Sources */,
+				20B5E2128ADAA627863FBFE3 /* NoteEditorViewController.swift in Sources */,
+				71A9F6EC681B360D3E8CE902 /* OfficialAnkiCollection.swift in Sources */,
+				8C7D9D8FE2C7C7ED5F379A81 /* PronounceAssessment.swift in Sources */,
+				34F86216C450FFDCA62F0035 /* PronounceAttachments.swift in Sources */,
+				5DCDC9F23B91E23C666FD835 /* PronounceDomain.swift in Sources */,
+				13FFDD45A9583F5B5EA2A613 /* PronounceHistoryStore.swift in Sources */,
+				87086CEB92247639CEC68A2B /* PronounceMode.swift in Sources */,
+				22A3B75B26FA49B106B61331 /* PronounceSessionController.swift in Sources */,
+				91BCC458E2742401FBE140C6 /* QwenService.swift in Sources */,
+				54697F02E37F9A9C6F202AFE /* ReviewViewController.swift in Sources */,
+				3B171B5303C63876B274B8B1 /* RootSplitViewController.swift in Sources */,
+				BB056D77B219EA479B38DBDC /* SaidMenu.swift in Sources */,
+				303C6CCE3E376E088944B39D /* SettingsViewController.swift in Sources */,
+				E8E0643B7821F71D5B8ECFCD /* SidebarViewController.swift in Sources */,
+				A2CFA9C516EFE35B694E9644 /* SimpleZip.swift in Sources */,
+				0479BB3B768AD447FAAABE96 /* SpeakingPracticeVisuals.swift in Sources */,
+				EE11D7F9CF312A3F587C7709 /* SpeakingReviewComponents.swift in Sources */,
+				9771310E482B6025DB27F03F /* StatisticsViewController.swift in Sources */,
+				FFE4EC38006E354EF9DA1BCA /* SyncViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1977BB25B810188243B9E7FA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+		60379B1EC9D17947E7003CF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = C8XVZJLC2D;
+				ENABLE_DEBUG_DYLIB = NO;
+				INFOPLIST_FILE = SpeakingAnki/Supporting/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "$(inherited) -lsqlite3 -lz";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = "$(inherited) -Wl,-force_load,$(PROJECT_DIR)/AnkiBackend/AnkiRust.xcframework/ios-arm64/libanki_bridge_ios.a -lsqlite3 -lz";
+				PRODUCT_BUNDLE_IDENTIFIER = com.misaka10704.Said;
+				PRODUCT_NAME = Said;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		6CB9532C33F303E6B0EF5B28 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = C8XVZJLC2D;
+				ENABLE_DEBUG_DYLIB = NO;
+				INFOPLIST_FILE = SpeakingAnki/Supporting/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "$(inherited) -lsqlite3 -lz";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = "$(inherited) -Wl,-force_load,$(PROJECT_DIR)/AnkiBackend/AnkiRust.xcframework/ios-arm64/libanki_bridge_ios.a -lsqlite3 -lz";
+				PRODUCT_BUNDLE_IDENTIFIER = com.misaka10704.Said;
+				PRODUCT_NAME = Said;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+		9AC6E23A307ABD806C432064 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		86F638CA2A5B93BC4ED3DCB3 /* Build configuration list for PBXProject "Said" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9AC6E23A307ABD806C432064 /* Debug */,
+				1977BB25B810188243B9E7FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A786A49FBD5FB9E24EFC851E /* Build configuration list for PBXNativeTarget "Said" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				60379B1EC9D17947E7003CF5 /* Debug */,
+				6CB9532C33F303E6B0EF5B28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		7756486904CCB7A2DB85CC7F /* XCLocalSwiftPackageReference "AnkiBackend" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = AnkiBackend;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		487C2DC89D159AC2A04AF735 /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.8;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1A50012FBCC730FBD7D14FEC /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 487C2DC89D159AC2A04AF735 /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
+		};
+		A9C4C56BB2A4DCC8DD3EDE09 /* SaidAnkiBackend */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SaidAnkiBackend;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A9261C0B681C0DA739A3762D /* Project object */;
+}

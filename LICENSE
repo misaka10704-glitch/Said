@@ -1,0 +1,13 @@
+SpeakingAnki — AGPL-3.0 notice
+
+This project implements Anki-compatible collection I/O and SM-2 scheduling
+semantics derived from the open-source Anki ecosystem (ankitects/anki, AGPL-3.0).
+
+If you distribute this application (including TestFlight / App Store), you must
+provide corresponding source code under AGPL-3.0 terms.
+
+When the optional Rust `rslib` XCFramework is linked, the AGPL obligation is
+strict and unavoidable for any distributed binary.
+
+Azure Speech and DashScope/Qwen are third-party cloud services; their SDKs/APIs
+are subject to their own licenses and terms. API keys must not be committed.

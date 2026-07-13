@@ -1,0 +1,64 @@
+name: Said
+options:
+  bundleIdPrefix: com.misaka10704
+  deploymentTarget:
+    iOS: "12.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "2"
+    IPHONEOS_DEPLOYMENT_TARGET: "12.0"
+    CLANG_ENABLE_MODULES: YES
+    ENABLE_BITCODE: NO
+packages:
+  SaidAnkiBackend:
+    path: AnkiBackend
+  Starscream:
+    url: https://github.com/daltoniam/Starscream.git
+    from: 4.0.8
+targets:
+  Said:
+    type: application
+    platform: iOS
+    deploymentTarget: "12.0"
+    sources:
+      - path: SpeakingAnki
+    dependencies:
+      - package: SaidAnkiBackend
+        product: SaidAnkiBackend
+      - package: Starscream
+        product: Starscream
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.misaka10704.Said
+        INFOPLIST_FILE: SpeakingAnki/Supporting/Info.plist
+        PRODUCT_NAME: Said
+        DEVELOPMENT_TEAM: C8XVZJLC2D
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "Apple Development"
+        ENABLE_DEBUG_DYLIB: NO
+        ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: YES
+        TARGETED_DEVICE_FAMILY: "2"
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: YES
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks"
+        OTHER_LDFLAGS: "$(inherited) -lsqlite3 -lz"
+        "OTHER_LDFLAGS[sdk=iphoneos*]": "$(inherited) -Wl,-force_load,$(PROJECT_DIR)/AnkiBackend/AnkiRust.xcframework/ios-arm64/libanki_bridge_ios.a -lsqlite3 -lz"
+    info:
+      path: SpeakingAnki/Supporting/Info.plist
+      properties:
+        CFBundleDisplayName: Said
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        UILaunchStoryboardName: LaunchScreen
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        NSMicrophoneUsageDescription: "录音用于发音评分与口语练习。"
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        UIRequiresFullScreen: true
+        MinimumOSVersion: "12.0"
