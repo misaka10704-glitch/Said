@@ -410,9 +410,10 @@ final class IELTSNativeService {
         guard let value = value else { return "" }
         var lines = ["Azure pronunciation — accuracy \(value.accuracy), fluency \(value.fluency), completeness \(value.completeness)"]
         let weak = value.words.filter {
-            $0.accuracy < 75 || ["Mispronunciation", "Omission", "Insertion"].contains($0.error)
+            $0.accuracy < 75
+                || $0.error.map { ["Mispronunciation", "Omission", "Insertion"].contains($0) } == true
         }.prefix(15).map {
-            "\($0.word)(\($0.accuracy)\($0.error.isEmpty ? "" : "," + $0.error))"
+            "\($0.word)(\($0.accuracy)\($0.error.map { "," + $0 } ?? ""))"
         }
         if !weak.isEmpty { lines.append("Problem words: " + weak.joined(separator: ", ")) }
         return lines.joined(separator: "\n")

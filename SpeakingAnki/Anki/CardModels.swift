@@ -67,12 +67,52 @@ struct AnkiCardSnapshot {
     let nextIntervals: [AnkiEase: String]
 }
 
+struct PronunciationPhonemeScore: Codable, Equatable {
+    let symbol: String
+    let accuracy: Double
+    let stress: Int
+
+    init(symbol: String, accuracy: Double, stress: Int = 0) {
+        self.symbol = symbol
+        self.accuracy = accuracy
+        self.stress = stress
+    }
+
+    var stressMark: String { stress == 1 ? "'" : (stress == 2 ? "," : "") }
+}
+
+struct PronunciationWordScore: Codable, Equatable {
+    let word: String
+    let accuracy: Double
+    let error: String?
+    let phonemes: [PronunciationPhonemeScore]
+    let prosodyErrors: [String]?
+    let breakLength: Double?
+
+    init(
+        word: String,
+        accuracy: Double,
+        error: String?,
+        phonemes: [PronunciationPhonemeScore],
+        prosodyErrors: [String]? = nil,
+        breakLength: Double? = nil
+    ) {
+        self.word = word
+        self.accuracy = accuracy
+        self.error = error
+        self.phonemes = phonemes
+        self.prosodyErrors = prosodyErrors
+        self.breakLength = breakLength
+    }
+}
+
 struct ScoreResult {
     var transcript: String = ""
     var accuracy: Double = 0
     var fluency: Double = 0
     var completeness: Double = 0
-    var words: [[String: Any]] = []
+    var prosody: Double?
+    var words: [PronunciationWordScore] = []
     var llmFix: String = ""
     var llmBetter: String = ""
     var error: String?

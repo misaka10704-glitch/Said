@@ -27,22 +27,14 @@ struct IELTSStageReport {
     }
 }
 
-struct IELTSPhonemeScore {
-    let phoneme: String
-    let accuracy: Double
-}
-
-struct IELTSWordScore {
-    let word: String
-    let accuracy: Double
-    let error: String
-    let phonemes: [IELTSPhonemeScore]
-}
+typealias IELTSPhonemeScore = PronunciationPhonemeScore
+typealias IELTSWordScore = PronunciationWordScore
 
 struct IELTSPronunciationResult {
     var accuracy: Double = 0
     var fluency: Double = 0
     var completeness: Double = 0
+    var prosody: Double?
     var words: [IELTSWordScore] = []
     var error: String?
 
@@ -50,28 +42,9 @@ struct IELTSPronunciationResult {
         accuracy = score.accuracy
         fluency = score.fluency
         completeness = score.completeness
+        prosody = score.prosody
         error = score.error
-        words = score.words.map { value in
-            let phonemes = (value["phonemes"] as? [[String: Any]] ?? []).map {
-                IELTSPhonemeScore(
-                    phoneme: $0["phoneme"] as? String ?? "",
-                    accuracy: IELTSPronunciationResult.number($0["accuracy"])
-                )
-            }
-            return IELTSWordScore(
-                word: value["word"] as? String ?? "",
-                accuracy: IELTSPronunciationResult.number(value["accuracy"]),
-                error: value["error"] as? String ?? "",
-                phonemes: phonemes
-            )
-        }
-    }
-
-    private static func number(_ value: Any?) -> Double {
-        if let number = value as? NSNumber { return number.doubleValue }
-        if let value = value as? Double { return value }
-        if let value = value as? Int { return Double(value) }
-        return 0
+        words = score.words
     }
 }
 

@@ -22,6 +22,7 @@ final class OfficialAnkiCollection {
 
     private let backend: RustAnkiBackend
     private let services: SaidAnkiServices
+    private let queuedCardsLock = NSLock()
     private var queuedByCardID: [Int64: SaidQueuedCard] = [:]
     private var deckNames: [Int64: String] = [:]
     private var selectedDeckID: Int64?
@@ -221,11 +222,15 @@ final class OfficialAnkiCollection {
         if let deckId = deckId, selectedDeckID != deckId {
             try services.setCurrentDeck(deckId)
             selectedDeckID = deckId
-            queuedByCardID.removeAll(keepingCapacity: true)
+            withQueuedCardsLock {
+                queuedByCardID.removeAll(keepingCapacity: true)
+            }
         }
         let queue = try services.queuedCards(limit: 1)
         guard let card = queue.cards.first else { return nil }
-        queuedByCardID[card.cardID] = card
+        withQueuedCardsLock {
+            queuedByCardID[card.cardID] = card
+        }
 
         let rendered = try services.render(cardID: card.cardID)
         let note = try services.note(id: card.noteID)
@@ -262,15 +267,18 @@ final class OfficialAnkiCollection {
     }
 
     func answer(cardId: Int64, ease: AnkiEase, timeMs: Int) throws {
-        guard let card = queuedByCardID.removeValue(forKey: cardId),
+        guard let card = withQueuedCardsLock({ queuedByCardID[cardId] }),
               let rating = SaidRating(rawValue: ease.rawValue) else {
             throw AnkiError.notFound
         }
         try services.answer(
             card,
             rating: rating,
-            millisecondsTaken: UInt32(max(0, timeMs))
+            millisecondsTaken: UInt32(clamping: max(0, timeMs))
         )
+        withQueuedCardsLock {
+            queuedByCardID.removeValue(forKey: cardId)
+        }
     }
 
     func importApkg(from url: URL) throws {
@@ -336,7 +344,13 @@ final class OfficialAnkiCollection {
 
     func undo() throws {
         try services.undo()
-        queuedByCardID.removeAll()
+        withQueuedCardsLock {
+            queuedByCardID.removeAll()
+        }
+    }
+
+    func canUndo() throws -> Bool {
+        try services.canUndo()
     }
 
     func browserPage(query: String, offset: Int, limit: Int) throws -> (rows: [BrowserCardRow], total: Int) {
@@ -516,6 +530,7 @@ final class OfficialAnkiCollection {
             upload: upload,
             serverMediaUSN: serverMediaUSN
         )
+        resetCollectionCaches()
     }
 
     func abortSync() throws {
@@ -527,10 +542,18 @@ final class OfficialAnkiCollection {
     }
 
     private func resetCollectionCaches() {
-        queuedByCardID.removeAll()
+        withQueuedCardsLock {
+            queuedByCardID.removeAll()
+        }
         deckNames.removeAll()
         selectedDeckID = nil
         loadedDeckOptions.removeAll()
+    }
+
+    private func withQueuedCardsLock<T>(_ body: () throws -> T) rethrows -> T {
+        queuedCardsLock.lock()
+        defer { queuedCardsLock.unlock() }
+        return try body()
     }
 
     private func refreshDeckNameCache(from nodes: [SaidDeck]) {

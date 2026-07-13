@@ -261,9 +261,12 @@ final class AnswerEaseBar: UIView, ThemeRefreshable {
             }
             if let interval = intervals[ease], !interval.isEmpty {
                 button.setTitle("\(title)\n\(interval)", for: .normal)
+                button.accessibilityLabel = "\(title)，下次间隔 \(interval)"
             } else {
                 button.setTitle(title, for: .normal)
+                button.accessibilityLabel = title
             }
+            button.accessibilityHint = "使用此记忆程度回答当前卡片"
         }
     }
 
@@ -325,9 +328,26 @@ struct SpeakingMetric {
     let value: Double
 }
 
+enum SpeakingResultSectionStyle {
+    case neutral
+    case azure
+    case qwenModel
+    case qwenCorrection
+    case qwenImprovement
+    case qwenCoach
+    case error
+}
+
 struct SpeakingResultSection {
     let title: String
     let body: String
+    let style: SpeakingResultSectionStyle
+
+    init(title: String, body: String, style: SpeakingResultSectionStyle = .neutral) {
+        self.title = title
+        self.body = body
+        self.style = style
+    }
 }
 
 struct SpeakingWeakItem {
@@ -342,6 +362,23 @@ struct SpeakingResultContent {
     let metrics: [SpeakingMetric]
     let sections: [SpeakingResultSection]
     let weakItems: [SpeakingWeakItem]
+    let pronunciationWords: [PronunciationWordScore]
+
+    init(
+        title: String,
+        transcript: String,
+        metrics: [SpeakingMetric],
+        sections: [SpeakingResultSection],
+        weakItems: [SpeakingWeakItem],
+        pronunciationWords: [PronunciationWordScore] = []
+    ) {
+        self.title = title
+        self.transcript = transcript
+        self.metrics = metrics
+        self.sections = sections
+        self.weakItems = weakItems
+        self.pronunciationWords = pronunciationWords
+    }
 }
 
 final class SpeakingResultPanel: UIView, ThemeRefreshable {
@@ -393,7 +430,7 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
         statusLabel.isHidden = true
         addText(result.title, font: DSTheme.titleFont(size: 15), color: DSTheme.c.textPrimary)
         if !result.transcript.isEmpty {
-            addSection(title: "TRANSCRIPT", body: result.transcript)
+            addSection(title: "AZURE TRANSCRIPT", body: result.transcript, style: .azure)
         }
         if !result.metrics.isEmpty {
             let metrics = UIStackView()
@@ -404,7 +441,20 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
             addDynamic(metrics)
         }
         result.sections.filter { !$0.body.isEmpty }.forEach {
-            addSection(title: $0.title, body: $0.body)
+            addSection(title: $0.title, body: $0.body, style: $0.style)
+        }
+        if !result.pronunciationWords.isEmpty {
+            addText(
+                "AZURE 发音明细",
+                font: DSTheme.titleFont(size: 12),
+                color: DSTheme.voiceBlue
+            )
+            addText(
+                "绿≥80 黄60–79 红<60 · '主重音 ,次重音 · ⏸异常停顿 ⇥缺停顿 →单调",
+                font: DSTheme.bodyFont(size: 11),
+                color: DSTheme.c.textSecondary
+            )
+            addPronunciationDetails(result.pronunciationWords)
         }
         if !result.weakItems.isEmpty {
             addText("弱项词与音素", font: DSTheme.titleFont(size: 12), color: DSTheme.c.textTertiary)
@@ -500,20 +550,182 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
         addDynamic(label)
     }
 
-    private func addSection(title: String, body: String) {
+    private func addSection(
+        title: String,
+        body: String,
+        style: SpeakingResultSectionStyle = .neutral
+    ) {
+        let color = sectionColor(style)
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = DSTheme.titleFont(size: 11)
-        titleLabel.textColor = DSTheme.c.textTertiary
+        titleLabel.textColor = color
         let bodyLabel = UILabel()
         bodyLabel.text = body
         bodyLabel.font = DSTheme.bodyFont(size: 14)
-        bodyLabel.textColor = DSTheme.c.textSecondary
+        bodyLabel.textColor = style == .neutral ? DSTheme.c.textSecondary : color
         bodyLabel.numberOfLines = 0
         let stack = UIStackView(arrangedSubviews: [titleLabel, bodyLabel])
         stack.axis = .vertical
         stack.spacing = 4
-        addDynamic(stack)
+        if style == .neutral {
+            addDynamic(stack)
+            return
+        }
+        let wrapper = UIView()
+        wrapper.backgroundColor = color.withAlphaComponent(
+            ThemeManager.shared.mode == .dark ? 0.12 : 0.08
+        )
+        wrapper.layer.cornerRadius = 8
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        wrapper.addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: wrapper.topAnchor, constant: 8),
+            stack.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor, constant: 9),
+            stack.trailingAnchor.constraint(equalTo: wrapper.trailingAnchor, constant: -9),
+            stack.bottomAnchor.constraint(equalTo: wrapper.bottomAnchor, constant: -8)
+        ])
+        addDynamic(wrapper)
+    }
+
+    private func addPronunciationDetails(_ words: [PronunciationWordScore]) {
+        let horizontalScroll = UIScrollView()
+        horizontalScroll.alwaysBounceHorizontal = true
+        horizontalScroll.showsHorizontalScrollIndicator = true
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        horizontalScroll.addSubview(container)
+        let row = UIStackView()
+        row.axis = .horizontal
+        row.alignment = .center
+        row.spacing = 16
+        row.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(row)
+
+        words.forEach { row.addArrangedSubview(pronunciationWordView($0)) }
+        let hasProsodyFeedback = words.contains { !realProsodyErrors($0).isEmpty }
+        horizontalScroll.heightAnchor.constraint(
+            equalToConstant: hasProsodyFeedback ? 82 : 64
+        ).isActive = true
+        NSLayoutConstraint.activate([
+            container.topAnchor.constraint(equalTo: horizontalScroll.contentLayoutGuide.topAnchor),
+            container.leadingAnchor.constraint(equalTo: horizontalScroll.contentLayoutGuide.leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: horizontalScroll.contentLayoutGuide.trailingAnchor),
+            container.bottomAnchor.constraint(equalTo: horizontalScroll.contentLayoutGuide.bottomAnchor),
+            container.heightAnchor.constraint(equalTo: horizontalScroll.frameLayoutGuide.heightAnchor),
+            container.widthAnchor.constraint(
+                greaterThanOrEqualTo: horizontalScroll.frameLayoutGuide.widthAnchor
+            ),
+            container.widthAnchor.constraint(greaterThanOrEqualTo: row.widthAnchor, constant: 16),
+            row.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            row.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            row.leadingAnchor.constraint(greaterThanOrEqualTo: container.leadingAnchor, constant: 8),
+            row.trailingAnchor.constraint(lessThanOrEqualTo: container.trailingAnchor, constant: -8)
+        ])
+        addDynamic(horizontalScroll)
+    }
+
+    private func pronunciationWordView(_ word: PronunciationWordScore) -> UIView {
+        let presentation = wordErrorPresentation(word.error, score: word.accuracy)
+        let wordLabel = UILabel()
+        let message = presentation.message.isEmpty ? "" : " · \(presentation.message)"
+        wordLabel.text = "\(presentation.mark) \(word.word) \(Int(word.accuracy))\(message)"
+        wordLabel.font = DSTheme.titleFont(size: 13)
+        wordLabel.textColor = presentation.color
+        wordLabel.textAlignment = .center
+        wordLabel.numberOfLines = 1
+
+        let phonemeStack = UIStackView()
+        phonemeStack.axis = .horizontal
+        phonemeStack.alignment = .center
+        phonemeStack.spacing = 7
+        word.phonemes.forEach { phoneme in
+            let symbol = UILabel()
+            symbol.text = "\(phoneme.stressMark)\(PronouncePhonemeNotation.ipa(for: phoneme.symbol))"
+            symbol.font = DSTheme.monoFont(size: 13)
+            symbol.textAlignment = .center
+            symbol.textColor = scoreColor(phoneme.accuracy)
+
+            let score = UILabel()
+            score.text = "\(Int(phoneme.accuracy))"
+            score.font = DSTheme.monoFont(size: 10)
+            score.textAlignment = .center
+            score.textColor = scoreColor(phoneme.accuracy)
+
+            let column = UIStackView(arrangedSubviews: [symbol, score])
+            column.axis = .vertical
+            column.alignment = .center
+            column.spacing = 1
+            phonemeStack.addArrangedSubview(column)
+        }
+        if word.phonemes.isEmpty {
+            let label = UILabel()
+            label.text = word.error == "Omission" ? "无音素返回" : "—"
+            label.font = DSTheme.bodyFont(size: 11)
+            label.textColor = DSTheme.c.textTertiary
+            label.textAlignment = .center
+            phonemeStack.addArrangedSubview(label)
+        }
+
+        var rows: [UIView] = [wordLabel, phonemeStack]
+        if let prosody = prosodyIndicator(for: word) {
+            let label = UILabel()
+            label.attributedText = prosody
+            label.font = DSTheme.bodyFont(size: 10)
+            label.textAlignment = .center
+            rows.append(label)
+        }
+        let stack = UIStackView(arrangedSubviews: rows)
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = 4
+        return stack
+    }
+
+    private func prosodyIndicator(for word: PronunciationWordScore) -> NSAttributedString? {
+        let errors = realProsodyErrors(word)
+        guard !errors.isEmpty else { return nil }
+        let output = NSMutableAttributedString()
+        for error in errors {
+            let text: String
+            let color: UIColor
+            switch error {
+            case "UnexpectedBreak":
+                let duration: String
+                if let value = word.breakLength, value > 0 {
+                    let seconds = value > 10 ? value / 1_000 : value
+                    duration = String(format: " %.2fs", seconds)
+                } else {
+                    duration = ""
+                }
+                text = "⏸ 异常停顿\(duration)"
+                color = DSTheme.c.destructive
+            case "MissingBreak":
+                text = "⇥ 缺停顿"
+                color = DSTheme.c.warning
+            case "Monotone":
+                text = "→ 单调"
+                color = DSTheme.speakingViolet
+            default:
+                text = "! \(error)"
+                color = DSTheme.c.warning
+            }
+            if output.length > 0 {
+                output.append(NSAttributedString(string: "  "))
+            }
+            output.append(NSAttributedString(
+                string: text,
+                attributes: [.foregroundColor: color]
+            ))
+        }
+        return output
+    }
+
+    private func realProsodyErrors(_ word: PronunciationWordScore) -> [String] {
+        (word.prosodyErrors ?? []).filter {
+            let normalized = $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            return !normalized.isEmpty && normalized != "none"
+        }
     }
 
     private func metricView(_ metric: SpeakingMetric) -> UIView {
@@ -563,6 +775,35 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
             label.bottomAnchor.constraint(equalTo: wrapper.bottomAnchor, constant: -7)
         ])
         addDynamic(wrapper)
+    }
+
+    private func sectionColor(_ style: SpeakingResultSectionStyle) -> UIColor {
+        switch style {
+        case .neutral: return DSTheme.c.textTertiary
+        case .azure, .qwenModel: return DSTheme.voiceBlue
+        case .qwenCorrection: return DSTheme.c.warning
+        case .qwenImprovement: return DSTheme.c.success
+        case .qwenCoach: return DSTheme.speakingViolet
+        case .error: return DSTheme.c.destructive
+        }
+    }
+
+    private func wordErrorPresentation(
+        _ error: String?,
+        score: Double
+    ) -> (mark: String, message: String, color: UIColor) {
+        switch error {
+        case "Omission":
+            return ("✗", "遗漏", DSTheme.c.destructive)
+        case "Insertion":
+            return ("~", "多读", DSTheme.learningAmber)
+        case "Mispronunciation":
+            return ("~", "发音错误", DSTheme.learningAmber)
+        case .some(let value) where !value.isEmpty && value != "None":
+            return ("~", value, DSTheme.learningAmber)
+        default:
+            return ("✓", "", scoreColor(score))
+        }
     }
 
     private func scoreColor(_ score: Double) -> UIColor {

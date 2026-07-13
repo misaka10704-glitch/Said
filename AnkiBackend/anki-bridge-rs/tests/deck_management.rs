@@ -5,19 +5,21 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use anki::backend::{init_backend, Backend};
 use anki_proto::backend::BackendInit;
 use anki_proto::collection::{
-    OpenCollectionRequest, OpChanges, OpChangesWithCount, OpChangesWithId,
+    OpenCollectionRequest, OpChanges, OpChangesAfterUndo, OpChangesWithCount, OpChangesWithId,
+    UndoStatus,
 };
 use anki_proto::decks::{
     Deck, DeckId, DeckIds, DeckTreeNode, DeckTreeRequest, RenameDeckRequest,
     ReparentDecksRequest,
 };
-use anki_proto::generic::Empty;
+use anki_proto::generic::{Empty, StringList};
 use anki_proto::notes::{AddNoteRequest, AddNoteResponse, Note};
 use anki_proto::notetypes::{NotetypeId, NotetypeNames};
 use anki_proto::scheduler::custom_study_request::Value as CustomStudyValue;
+use anki_proto::scheduler::card_answer::Rating;
 use anki_proto::scheduler::{
-    CustomStudyDefaultsRequest, CustomStudyDefaultsResponse, CustomStudyRequest,
-    ExtendLimitsRequest,
+    CardAnswer, CustomStudyDefaultsRequest, CustomStudyDefaultsResponse, CustomStudyRequest,
+    ExtendLimitsRequest, GetQueuedCardsRequest, QueuedCards,
 };
 use prost::Message;
 
@@ -29,7 +31,9 @@ fn call<Req: Message, Resp: Message + Default>(
 ) -> Resp {
     let output = backend
         .run_service_method(service, method, &request.encode_to_vec())
-        .expect("rslib method failed");
+        .unwrap_or_else(|error| {
+            panic!("rslib service {service} method {method} failed: {error:?}")
+        });
     Resp::decode(output.as_slice()).expect("invalid rslib response")
 }
 
@@ -162,6 +166,50 @@ fn deck_crud_hierarchy_and_recursive_card_deletion() {
         },
     );
     assert_ne!(added.note_id, 0);
+
+    let _: Empty = call(&backend, 7, 22, DeckId { did: child_id });
+    for rating in [Rating::Again, Rating::Hard, Rating::Good, Rating::Easy] {
+        let queued: QueuedCards = call(
+            &backend,
+            13,
+            3,
+            GetQueuedCardsRequest {
+                fetch_limit: 1,
+                intraday_learning_only: false,
+            },
+        );
+        let queued = queued.cards.first().expect("new card should be queued");
+        let card = queued.card.as_ref().expect("queued card missing card");
+        let states = queued.states.as_ref().expect("queued card missing states");
+        let descriptions: StringList = call(&backend, 13, 24, states.clone());
+        assert_eq!(descriptions.vals.len(), 4);
+
+        let new_state = match rating {
+            Rating::Again => states.again.clone(),
+            Rating::Hard => states.hard.clone(),
+            Rating::Good => states.good.clone(),
+            Rating::Easy => states.easy.clone(),
+        };
+        let _: OpChanges = call(
+            &backend,
+            13,
+            4,
+            CardAnswer {
+                card_id: card.id,
+                current_state: states.current.clone(),
+                new_state,
+                rating: rating as i32,
+                answered_at_millis: SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap()
+                    .as_millis() as i64,
+                milliseconds_taken: 1234,
+            },
+        );
+        let status: UndoStatus = call(&backend, 3, 7, Empty {});
+        assert!(!status.undo.is_empty());
+        let _: OpChangesAfterUndo = call(&backend, 3, 8, Empty {});
+    }
 
     let deleted: OpChangesWithCount = call(
         &backend,

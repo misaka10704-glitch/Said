@@ -460,13 +460,14 @@ public final class SaidAnkiServices {
             method: RustAnkiBackend.SchedulerMethod.getQueuedCards,
             request: request
         )
-        let cards = try response.cards.compactMap { queued -> SaidQueuedCard? in
-            guard queued.hasCard, queued.hasStates else { return nil }
-            var intervals: [SaidRating: String] = [:]
-            intervals[.again] = formatInterval(scheduledSeconds(queued.states.again))
-            intervals[.hard] = formatInterval(scheduledSeconds(queued.states.hard))
-            intervals[.good] = formatInterval(scheduledSeconds(queued.states.good))
-            intervals[.easy] = formatInterval(scheduledSeconds(queued.states.easy))
+        let cards = try response.cards.map { queued -> SaidQueuedCard in
+            guard queued.hasCard, queued.hasStates else {
+                throw BackendError(
+                    kind: .protoError,
+                    message: "Anki 调度队列返回了缺少卡片或状态的数据"
+                )
+            }
+            let intervals = officialNextIntervals(queued.states)
             return SaidQueuedCard(
                 cardID: queued.card.id,
                 noteID: queued.card.noteID,
@@ -490,6 +491,28 @@ public final class SaidAnkiServices {
             learningCount: Int(response.learningCount),
             reviewCount: Int(response.reviewCount)
         )
+    }
+
+    private func officialNextIntervals(
+        _ states: Anki_Scheduler_SchedulingStates
+    ) -> [SaidRating: String] {
+        if let response: Anki_Generic_StringList = try? backend.invoke(
+            service: RustAnkiBackend.Service.scheduler,
+            method: RustAnkiBackend.SchedulerMethod.describeNextStates,
+            request: states
+        ), response.vals.count >= SaidRating.allCases.count {
+            return Dictionary(uniqueKeysWithValues: SaidRating.allCases.enumerated().map {
+                ($0.element, response.vals[$0.offset])
+            })
+        }
+
+        // Keep the reviewer usable if an older embedded backend lacks the RPC.
+        return [
+            .again: formatInterval(scheduledSeconds(states.again)),
+            .hard: formatInterval(scheduledSeconds(states.hard)),
+            .good: formatInterval(scheduledSeconds(states.good)),
+            .easy: formatInterval(scheduledSeconds(states.easy)),
+        ]
     }
 
     public func answer(
@@ -1214,6 +1237,14 @@ public final class SaidAnkiServices {
             service: RustAnkiBackend.Service.collectionOps,
             method: RustAnkiBackend.CollectionOpsMethod.undo
         )
+    }
+
+    public func canUndo() throws -> Bool {
+        let response: Anki_Collection_UndoStatus = try backend.invoke(
+            service: RustAnkiBackend.Service.collectionOps,
+            method: RustAnkiBackend.CollectionOpsMethod.getUndoStatus
+        )
+        return !response.undo.isEmpty
     }
 
     public func checkDatabase() throws -> [String] {

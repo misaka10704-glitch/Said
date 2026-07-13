@@ -10,6 +10,8 @@ enum ModeRouter {
     static let sentenceDeckPrefixes = ["轻听英语·句库", "Pronounce_Learning::Sentence"]
     static let phraseDeckPrefixes = ["轻听英语·生词本", "Pronounce_Learning::Words", "Pronounce_Learning::Linking"]
     static let pronounceDeckPrefixes = ["Pronounce_Learning"]
+    static let speedModel = "Speed Audio Sentence"
+    static let speedDeckPrefixes = ["English_Speed"]
 
     static func mode(for card: AnkiCardSnapshot, deckHint: String? = nil) -> PracticeMode {
         if IELTSSpeakingMode.matches(card: card) { return .ielts }
@@ -28,6 +30,7 @@ enum ModeRouter {
 
     static func isPronounce(_ card: AnkiCardSnapshot, deckHint: String? = nil) -> Bool {
         if isCompose(card) { return false }
+        if isSpeed(card, deckHint: deckHint) { return true }
         let model = card.modelName.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         if (sentenceModels.union(phraseModels)).contains(where: { $0.lowercased() == model }) {
             return true
@@ -47,6 +50,16 @@ enum ModeRouter {
         return deckNames.contains {
             deckMatches($0, prefixes: pronounceDeckPrefixes + sentenceDeckPrefixes + phraseDeckPrefixes)
                 || $0.lowercased().contains("pronounce_learning")
+        }
+    }
+
+    static func isSpeed(_ card: AnkiCardSnapshot, deckHint: String? = nil) -> Bool {
+        if card.modelName.trimmingCharacters(in: .whitespacesAndNewlines)
+            .caseInsensitiveCompare(speedModel) == .orderedSame {
+            return true
+        }
+        return [card.deckName, deckHint].compactMap { $0 }.contains {
+            deckMatches($0, prefixes: speedDeckPrefixes)
         }
     }
 
@@ -100,7 +113,15 @@ enum ModeRouter {
                 .filter { !isUserRecordingName($0) }
             playbackNames = Array(recordingNames)
         case .pronounce:
-            referenceNames = []
+            if isSpeed(card) {
+                referenceNames = taggedFields
+                    .filter { isSpeedReferenceField($0.name) }
+                    .flatMap { $0.soundNames }
+                    .filter { !isUserRecordingName($0) }
+                    + renderedNames.filter { !isUserRecordingName($0) }
+            } else {
+                referenceNames = []
+            }
             playbackNames = Array(recordingNames)
         case .compose:
             referenceNames = taggedFields
@@ -179,6 +200,13 @@ enum ModeRouter {
         let value = normalizedFieldName(name)
         return ["referenceaudio", "originalaudio", "audio", "reference", "original"]
             .contains(value)
+            || value.contains("参考音")
+            || value.contains("原音")
+    }
+
+    private static func isSpeedReferenceField(_ name: String) -> Bool {
+        let value = normalizedFieldName(name)
+        return ["front", "audio", "referenceaudio", "originalaudio"].contains(value)
             || value.contains("参考音")
             || value.contains("原音")
     }

@@ -94,11 +94,10 @@ enum AzureSpeechService {
         region: String,
         continuous: Bool
     ) throws -> ScoreResult {
-        let wordCount = referenceText.split(whereSeparator: { $0.isWhitespace }).count
         let config: [String: Any] = [
             "ReferenceText": referenceText,
             "GradingSystem": "HundredMark",
-            "Granularity": wordCount > 15 ? "Word" : "Phoneme",
+            "Granularity": "Phoneme",
             "Dimension": "Comprehensive",
             "EnableMiscue": !continuous,
             "EnableProsodyAssessment": true,
@@ -193,6 +192,10 @@ enum AzureSpeechService {
             fluency: parts.reduce(0) { $0 + $1.fluency } / count,
             completeness: parts.reduce(0) { $0 + $1.completeness } / count
         )
+        let prosodyParts = parts.compactMap { $0.prosody }
+        if !prosodyParts.isEmpty {
+            result.prosody = prosodyParts.reduce(0, +) / Double(prosodyParts.count)
+        }
         result.words = parts.flatMap { $0.words }
         let errors = parts.compactMap { $0.error }.filter { !$0.isEmpty }
         if !errors.isEmpty { result.error = errors.joined(separator: " | ") }
@@ -205,18 +208,24 @@ enum AzureSpeechService {
             transcript: parsed.transcript,
             accuracy: parsed.accuracy,
             fluency: parsed.fluency,
-            completeness: parsed.completeness
+            completeness: parsed.completeness,
+            prosody: parsed.prosody
         )
         result.words = parsed.words.map { word in
-            var value: [String: Any] = [
-                "word": word.text,
-                "accuracy": word.accuracy,
-                "phonemes": word.phonemes.map {
-                    ["phoneme": $0.symbol, "accuracy": $0.accuracy]
-                }
-            ]
-            if let error = word.error { value["error"] = error }
-            return value
+            PronunciationWordScore(
+                word: word.text,
+                accuracy: word.accuracy,
+                error: word.error,
+                phonemes: word.phonemes.map {
+                    PronunciationPhonemeScore(
+                        symbol: PronouncePhonemeNotation.ipa(for: $0.symbol),
+                        accuracy: $0.accuracy,
+                        stress: $0.stress
+                    )
+                },
+                prosodyErrors: word.prosodyErrors.isEmpty ? nil : word.prosodyErrors,
+                breakLength: word.breakLength
+            )
         }
         return result
     }

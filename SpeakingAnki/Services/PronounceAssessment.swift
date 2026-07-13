@@ -109,10 +109,11 @@ final class AzurePronounceAssessmentClient: PronounceAssessmentProviding {
         let config: [String: Any] = [
             "ReferenceText": target.referenceText,
             "GradingSystem": "HundredMark",
-            "Granularity": target.granularity == .sentence && target.referenceText.split(separator: " ").count > 15 ? "Word" : "Phoneme",
+            "Granularity": "Phoneme",
             "Dimension": "Comprehensive",
             "EnableMiscue": true,
-            "EnableProsodyAssessment": true
+            "EnableProsodyAssessment": true,
+            "PhonemeAlphabet": "IPA"
         ]
         guard let configData = try? JSONSerialization.data(withJSONObject: config) else {
             dispatch(completion, .failure(PronounceAssessmentError.invalidResponse("config")))
@@ -171,7 +172,9 @@ final class AzurePronounceAssessmentClient: PronounceAssessmentProviding {
                 word: value.text,
                 accuracy: value.accuracy,
                 error: value.error,
-                phonemes: phonemes
+                phonemes: phonemes,
+                prosodyErrors: value.prosodyErrors.isEmpty ? nil : value.prosodyErrors,
+                breakLength: value.breakLength
             )
         }
         return PronounceScoreViewModel(

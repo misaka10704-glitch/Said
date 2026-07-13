@@ -267,7 +267,7 @@ public final class RustAnkiBackend: @unchecked Sendable {
 extension RustAnkiBackend {
     public enum Service {
         public static let sync: UInt32 = 1
-        public static let collectionOps: UInt32 = 2
+        public static let collectionOps: UInt32 = 3
         public static let collection: UInt32 = 3
         public static let cards: UInt32 = 5
         public static let decks: UInt32 = 7
@@ -286,9 +286,11 @@ extension RustAnkiBackend {
     }
 
     public enum CollectionOpsMethod {
-        public static let checkDatabase: UInt32 = 0
-        public static let getUndoStatus: UInt32 = 1
-        public static let undo: UInt32 = 2
+        // CollectionService methods follow the five backend-only collection
+        // methods (open/close/backup/wait/progress) and setWantsAbort.
+        public static let checkDatabase: UInt32 = 6
+        public static let getUndoStatus: UInt32 = 7
+        public static let undo: UInt32 = 8
     }
 
     public enum CollectionMethod {
@@ -333,6 +335,7 @@ extension RustAnkiBackend {
         public static let emptyFilteredDeck: UInt32 = 15
         public static let rebuildFilteredDeck: UInt32 = 16
         public static let scheduleCardsAsNew: UInt32 = 17
+        public static let describeNextStates: UInt32 = 24
         public static let customStudy: UInt32 = 27
         public static let customStudyDefaults: UInt32 = 28
         // Backend-only methods at the front of the dispatch table; verified

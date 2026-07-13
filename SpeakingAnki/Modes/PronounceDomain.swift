@@ -21,19 +21,8 @@ struct PronounceTarget: Codable, Equatable {
     }
 }
 
-struct PronouncePhonemeViewModel: Codable, Equatable {
-    let symbol: String
-    let accuracy: Double
-    let stress: Int
-    var stressMark: String { stress == 1 ? "ˈ" : (stress == 2 ? "ˌ" : "") }
-}
-
-struct PronounceWordViewModel: Codable, Equatable {
-    let word: String
-    let accuracy: Double
-    let error: String?
-    let phonemes: [PronouncePhonemeViewModel]
-}
+typealias PronouncePhonemeViewModel = PronunciationPhonemeScore
+typealias PronounceWordViewModel = PronunciationWordScore
 
 struct PronounceScoreViewModel: Codable, Equatable {
     let transcript: String
@@ -65,7 +54,11 @@ enum PronounceReferenceTargetParser {
         let phonetic: String
         let granularity: PronounceGranularity
 
-        if model == "speaking reference",
+        if ModeRouter.isSpeed(card, deckHint: deckHint) {
+            reference = speedSentenceText(card)
+            phonetic = ""
+            granularity = .sentence
+        } else if model == "speaking reference",
            decks.contains(where: { deckMatches($0, prefixes: ["Pronounce_Learning::Sentence"]) })
                 || deckLeaves.contains("sentence") {
             reference = speakingReferenceText(card)
@@ -138,15 +131,42 @@ enum PronounceReferenceTargetParser {
         return preferredText(card, names: ["Sentence", "Text", "Front"])
     }
 
+    private static func speedSentenceText(_ card: AnkiCardSnapshot) -> String {
+        guard let back = rawField(card, names: ["Back"]) else { return "" }
+        let spanPattern = "(?is)<span\\b[^>]*>(.*?)</span>"
+        if let regex = try? NSRegularExpression(pattern: spanPattern) {
+            for match in regex.matches(in: back, range: NSRange(back.startIndex..., in: back)) {
+                guard let range = Range(match.range(at: 1), in: back) else { continue }
+                let candidate = stripField(String(back[range]))
+                if candidate.range(of: "[A-Za-z]", options: .regularExpression) != nil {
+                    return candidate
+                }
+            }
+        }
+
+        let visibleText = stripField(back)
+        let sentencePattern = "[A-Za-z][A-Za-z0-9'’.,!?;:()\\- ]*"
+        guard let range = visibleText.range(of: sentencePattern, options: .regularExpression) else {
+            return ""
+        }
+        return normalizedWhitespace(String(visibleText[range]))
+    }
+
     private static func preferredText(_ card: AnkiCardSnapshot, names: [String]) -> String {
         field(card, names: names) ?? stripField(card.fields[0])
     }
 
     private static func field(_ card: AnkiCardSnapshot, names: [String]) -> String? {
+        guard let rawValue = rawField(card, names: names) else { return nil }
+        let value = stripField(rawValue)
+        return value.isEmpty ? nil : value
+    }
+
+    private static func rawField(_ card: AnkiCardSnapshot, names: [String]) -> String? {
         let wanted = names.map(normalizedName)
         for (index, fieldName) in card.fieldNames.enumerated() where index < card.fields.count {
             if wanted.contains(normalizedName(fieldName)) {
-                let value = stripField(card.fields[index])
+                let value = card.fields[index]
                 if !value.isEmpty { return value }
             }
         }
@@ -201,6 +221,12 @@ enum PronouncePhonemeNotation {
 
     static func ipa(for phoneme: String) -> String {
         let key = phoneme.lowercased().replacingOccurrences(of: "[0-9]", with: "", options: .regularExpression)
-        return arpabetToIPA[key] ?? phoneme
+        let ipa = arpabetToIPA[key] ?? phoneme
+        return ipa
+            .replacingOccurrences(of: "ɝ", with: "ɜːr")
+            .replacingOccurrences(of: "ɚ", with: "ər")
+            .replacingOccurrences(of: "ɹ", with: "r")
+            .replacingOccurrences(of: "ɻ", with: "r")
+            .replacingOccurrences(of: "ɡ", with: "g")
     }
 }

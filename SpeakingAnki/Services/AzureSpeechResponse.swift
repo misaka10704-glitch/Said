@@ -17,6 +17,8 @@ struct AzurePronunciationResponse {
         let accuracy: Double
         let error: String?
         let phonemes: [Phoneme]
+        let prosodyErrors: [String]
+        let breakLength: Double?
     }
 
     let transcript: String
@@ -55,11 +57,14 @@ struct AzurePronunciationResponse {
                 )
             }
             let error = (item["ErrorType"] as? String) ?? (assessment?["ErrorType"] as? String)
+            let prosody = prosodyFeedback(item, assessment)
             return Word(
                 text: item["Word"] as? String ?? "",
                 accuracy: value(item["AccuracyScore"], assessment?["AccuracyScore"]) ?? 0,
                 error: error == nil || error == "None" ? nil : error,
-                phonemes: phonemes
+                phonemes: phonemes,
+                prosodyErrors: prosody.errors,
+                breakLength: prosody.breakLength
             )
         }
 
@@ -79,6 +84,36 @@ struct AzurePronunciationResponse {
 
     private static func number(_ value: Any?) -> Double? {
         (value as? NSNumber)?.doubleValue
+    }
+
+    private static func prosodyFeedback(
+        _ word: [String: Any],
+        _ assessment: [String: Any]?
+    ) -> (errors: [String], breakLength: Double?) {
+        let feedback = (word["Feedback"] as? [String: Any])
+            ?? (assessment?["Feedback"] as? [String: Any])
+        let prosody = feedback?["Prosody"] as? [String: Any]
+        let breakFeedback = prosody?["Break"] as? [String: Any]
+        let intonation = prosody?["Intonation"] as? [String: Any]
+
+        var errors: [String] = []
+        [prosody, breakFeedback, intonation].compactMap { $0 }.forEach { value in
+            if let values = value["ErrorTypes"] as? [String] {
+                errors.append(contentsOf: values.filter { isRealProsodyError($0) })
+            }
+            if let value = value["ErrorType"] as? String, isRealProsodyError(value) {
+                errors.append(value)
+            }
+        }
+        return (
+            Array(Set(errors)).sorted(),
+            number(breakFeedback?["BreakLength"])
+        )
+    }
+
+    private static func isRealProsodyError(_ value: String) -> Bool {
+        let normalized = value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return !normalized.isEmpty && normalized != "none"
     }
 }
 

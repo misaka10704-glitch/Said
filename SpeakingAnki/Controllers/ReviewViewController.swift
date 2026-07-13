@@ -35,6 +35,8 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     private var sessionStart = Date()
     private var operationGeneration = 0
     private var didAttachCurrentRecording = false
+    private var reloadOnNextAppearance = false
+    private var reloadAfterBackground = false
 
     private var currentWebNavigation: WKNavigation?
     private var cardMediaPlayer: AVAudioPlayer?
@@ -84,6 +86,12 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             name: UIApplication.didEnterBackgroundNotification,
             object: nil
         )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
         pronounceSession.requestRecordingPermission { [weak self] allowed in
             if !allowed { self?.setStatus("需要麦克风权限", error: true) }
         }
@@ -103,7 +111,17 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        reloadOnNextAppearance = true
+        easeBar.setEnabled(false)
         cleanupReviewSession(stopWebView: true)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if reloadOnNextAppearance {
+            reloadOnNextAppearance = false
+            loadNext()
+        }
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -222,8 +240,9 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
         isAnswering = false
         isRecording = false
         didAttachCurrentRecording = false
-        setAnswerControlsEnabled(true)
+        setAnswerControlsEnabled(false)
         showEaseBar(true)
+        easeBar.setIntervals([:])
         resultPanel.reset()
         setResultCollapsed(false, animated: false)
         cardView.conceal()
@@ -235,8 +254,10 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
 
         do {
             let collection = try AnkiStore.shared.requireCollection()
+            undoControl.isEnabled = (try? collection.canUndo()) ?? false
             guard let next = try collection.nextCard(deckId: deckId) else {
                 card = nil
+                showEaseBar(false)
                 cardView.reveal()
                 setStatus("本牌组今日已完成")
                 currentWebNavigation = webView.loadHTMLString(doneHTML(), baseURL: nil)
@@ -245,6 +266,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             card = next
             mode = ModeRouter.mode(for: next, deckHint: deckName)
             easeBar.setIntervals(next.nextIntervals)
+            setAnswerControlsEnabled(true)
             setStatus("\(modeTitle(mode))  ·  \(next.modelName)")
             loadCardSide(reviewHTML(for: next), card: next)
             // Supported modes keep Score tappable so a missing recording produces
@@ -254,7 +276,9 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
                 pronounceSession.configure(card: next, deckHint: deckName)
                 controlBar.setEnabled(pronounceSession.target != nil, for: .reference)
                 controlBar.setEnabled(!playbackMediaQueue.isEmpty, for: .playback)
-                pronounceSession.loadReferenceAudio()
+                if referenceMediaQueue.isEmpty {
+                    pronounceSession.loadReferenceAudio()
+                }
             } else {
                 pronounceSession.configureRecording(card: next)
                 controlBar.setEnabled(referenceAvailable, for: .reference)
@@ -262,6 +286,8 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             }
         } catch {
             card = nil
+            showEaseBar(false)
+            setAnswerControlsEnabled(false)
             setStatus(error.localizedDescription, error: true)
         }
     }
@@ -304,17 +330,29 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     }
 
     private func reviewHTML(for card: AnkiCardSnapshot) -> String {
-        guard mode == .ielts else { return card.frontHTML }
-        let question = IELTSSpeakingMode.question(for: card)
-        guard !question.isEmpty else { return card.frontHTML }
-        // Do not reveal the original front template: it also contains topic,
-        // level and usage instructions. The Question field is the source of truth.
-        return """
-        <html><body>
-        <div class="said-original-label">ORIGINAL QUESTION</div>
-        <div class="said-original-question">\(escapeHTML(question))</div>
-        </body></html>
-        """
+        if mode == .ielts {
+            let question = IELTSSpeakingMode.question(for: card)
+            guard !question.isEmpty else { return card.frontHTML }
+            // Do not reveal the original front template: it also contains topic,
+            // level and usage instructions. The Question field is the source of truth.
+            return """
+            <html><body>
+            <div class="said-original-label">ORIGINAL QUESTION</div>
+            <div class="said-original-question">\(escapeHTML(question))</div>
+            </body></html>
+            """
+        }
+        if mode == .pronounce,
+           ModeRouter.isSpeed(card, deckHint: deckName),
+           let target = PronounceReferenceTargetParser.parse(card: card, deckHint: deckName) {
+            return """
+            <html><body>
+            <div class="said-original-label">SPEED SENTENCE</div>
+            <div class="said-original-question">\(escapeHTML(target.referenceText))</div>
+            </body></html>
+            """
+        }
+        return card.frontHTML
     }
 
     private func toggleRecording() {
@@ -349,6 +387,10 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
         guard !isRecording else { return }
         player.stop()
         if mode == .pronounce {
+            if let first = referenceMediaQueue.first {
+                playCardMedia(queue: [first], startingAt: 0, continueQueue: false)
+                return
+            }
             guard let attachment = pronounceSession.referenceAttachment else {
                 pronounceSession.loadReferenceAudio()
                 return
@@ -397,6 +439,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             setStatus(reference == nil ? "参考音不可用，可直接录音" : "参考音已就绪")
         case .recording:
             isRecording = true
+            easeBar.setEnabled(false)
             controlBar.setTitle("停止", for: .record)
             controlBar.setEnabled(false, for: .reference)
             controlBar.setEnabled(false, for: .playback)
@@ -405,6 +448,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             resultPanel.showStatus("正在录音…")
         case .recorded:
             isRecording = false
+            easeBar.setEnabled(card != nil)
             controlBar.setTitle("重录", for: .record)
             controlBar.setEnabled(true, for: .playback)
             controlBar.setEnabled(mode != .unsupported, for: .score)
@@ -427,6 +471,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             resultPanel.showStatus(message, isError: true, expand: true)
         case .cancelled:
             isRecording = false
+            easeBar.setEnabled(card != nil && !isAnswering)
         }
     }
 
@@ -535,6 +580,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             score.accuracy = value.accuracy
             score.fluency = value.fluency
             score.completeness = value.completeness
+            score.prosody = value.prosody
             score.words = value.words
             score.error = value.error
             if score.transcript.isEmpty { score.transcript = value.transcript }
@@ -568,6 +614,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     }
 
     private func setScoringUI(message: String) {
+        easeBar.setEnabled(false)
         controlBar.setEnabled(false, for: .score)
         controlBar.setEnabled(false, for: .record)
         controlBar.setEnabled(false, for: .playback)
@@ -576,6 +623,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     }
 
     private func restoreAfterScoring() {
+        easeBar.setEnabled(card != nil && !isAnswering)
         controlBar.setTitle("再次录音", for: .record)
         controlBar.setEnabled(true, for: .record)
         controlBar.setEnabled(
@@ -608,7 +656,8 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             return SpeakingWeakItem(
                 word: word.word,
                 score: word.accuracy,
-                detail: [word.error, phonemes].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
+                detail: [userFacingWordError(word.error), phonemes]
+                    .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
             )
         }
         var metrics = [
@@ -622,31 +671,39 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             transcript: score.transcript,
             metrics: metrics,
             sections: [],
-            weakItems: weak
+            weakItems: weak,
+            pronunciationWords: score.words
         )
     }
 
     private func ieltsContent(_ result: IELTSServiceResult) -> SpeakingResultContent {
         let pronunciation = result.pronunciation
-        let metrics = pronunciation.map {
-            [
-                SpeakingMetric(title: "准确", value: $0.accuracy),
-                SpeakingMetric(title: "流利", value: $0.fluency),
-                SpeakingMetric(title: "完整", value: $0.completeness)
+        let metrics = pronunciation.map { pronunciation -> [SpeakingMetric] in
+            var values = [
+                SpeakingMetric(title: "准确", value: pronunciation.accuracy),
+                SpeakingMetric(title: "流利", value: pronunciation.fluency),
+                SpeakingMetric(title: "完整", value: pronunciation.completeness)
             ]
+            if let prosody = pronunciation.prosody {
+                values.append(SpeakingMetric(title: "韵律", value: prosody))
+            }
+            return values
         } ?? []
         let weak: [SpeakingWeakItem]
         if let words = pronunciation?.words {
             weak = words.filter {
-                $0.accuracy < 80 || !$0.error.isEmpty
+                $0.accuracy < 80 || $0.error != nil
             }.prefix(12).map { word in
                 let phonemes = word.phonemes.filter { $0.accuracy < 80 }
-                    .map { "\(PronouncePhonemeNotation.ipa(for: $0.phoneme)) \(Int($0.accuracy))" }
+                    .map {
+                        "\($0.stressMark)\(PronouncePhonemeNotation.ipa(for: $0.symbol)) \(Int($0.accuracy))"
+                    }
                     .joined(separator: " · ")
                 return SpeakingWeakItem(
                     word: word.word,
                     score: word.accuracy,
-                    detail: [word.error, phonemes].filter { !$0.isEmpty }.joined(separator: " · ")
+                    detail: [userFacingWordError(word.error), phonemes]
+                        .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
                 )
             }
         } else {
@@ -656,75 +713,100 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             guard let error = result.stages[stage]?.error else { return nil }
             return "\(stageTitle(stage)): \(error)"
         }.joined(separator: "\n")
+        let sections = [
+            SpeakingResultSection(
+                title: "QWEN 示范回答",
+                body: result.feedback.modelAnswer,
+                style: .qwenModel
+            ),
+            SpeakingResultSection(
+                title: "QWEN 教练点评",
+                body: result.feedback.critique,
+                style: .qwenCoach
+            ),
+            SpeakingResultSection(
+                title: "QWEN 最小矫正",
+                body: result.feedback.minimalCorrection,
+                style: .qwenCorrection
+            ),
+            SpeakingResultSection(title: "部分失败", body: failures, style: .error)
+        ]
         return SpeakingResultContent(
             title: "IELTS \(result.request.part.displayName)",
             transcript: result.displayTranscript,
             metrics: metrics,
-            sections: [
-                SpeakingResultSection(title: "示范回答", body: result.feedback.modelAnswer),
-                SpeakingResultSection(title: "教练点评", body: result.feedback.critique),
-                SpeakingResultSection(title: "最小矫正", body: result.feedback.minimalCorrection),
-                SpeakingResultSection(title: "部分失败", body: failures)
-            ],
-            weakItems: weak
+            sections: sections,
+            weakItems: weak,
+            pronunciationWords: pronunciation?.words ?? []
         )
     }
 
     private func composeContent(_ result: ScoreResult) -> SpeakingResultContent {
-        SpeakingResultContent(
+        var metrics = [
+            SpeakingMetric(title: "准确", value: result.accuracy),
+            SpeakingMetric(title: "流利", value: result.fluency),
+            SpeakingMetric(title: "完整", value: result.completeness)
+        ]
+        if let prosody = result.prosody {
+            metrics.append(SpeakingMetric(title: "韵律", value: prosody))
+        }
+        let sections = [
+            SpeakingResultSection(
+                title: "QWEN 矫正",
+                body: result.llmFix,
+                style: .qwenCorrection
+            ),
+            SpeakingResultSection(
+                title: "QWEN 更自然表达",
+                body: result.llmBetter,
+                style: .qwenImprovement
+            ),
+            SpeakingResultSection(title: "提示", body: result.error ?? "", style: .error)
+        ]
+        return SpeakingResultContent(
             title: "Compose",
             transcript: result.transcript,
-            metrics: [
-                SpeakingMetric(title: "准确", value: result.accuracy),
-                SpeakingMetric(title: "流利", value: result.fluency),
-                SpeakingMetric(title: "完整", value: result.completeness)
-            ],
-            sections: [
-                SpeakingResultSection(title: "矫正", body: result.llmFix),
-                SpeakingResultSection(title: "更自然表达", body: result.llmBetter),
-                SpeakingResultSection(title: "提示", body: result.error ?? "")
-            ],
-            weakItems: weakItems(from: result.words)
+            metrics: metrics,
+            sections: sections,
+            weakItems: weakItems(from: result.words),
+            pronunciationWords: result.words
         )
     }
 
-    private func weakItems(from words: [[String: Any]]) -> [SpeakingWeakItem] {
-        words.compactMap { value in
-            let accuracy = number(value["accuracy"])
-            guard accuracy < 80 else { return nil }
-            let word = value["word"] as? String ?? ""
-            let error = value["error"] as? String ?? ""
-            let phonemes = (value["phonemes"] as? [[String: Any]] ?? []).compactMap { phoneme -> String? in
-                let score = number(phoneme["accuracy"])
-                guard score < 80 else { return nil }
-                let symbol = phoneme["phoneme"] as? String ?? ""
-                return "\(PronouncePhonemeNotation.ipa(for: symbol)) \(Int(score))"
+    private func weakItems(from words: [PronunciationWordScore]) -> [SpeakingWeakItem] {
+        words.filter { $0.accuracy < 80 || $0.error != nil }.prefix(12).map { value in
+            let phonemes = value.phonemes.filter { $0.accuracy < 80 }.map {
+                "\($0.stressMark)\(PronouncePhonemeNotation.ipa(for: $0.symbol)) \(Int($0.accuracy))"
             }.joined(separator: " · ")
             return SpeakingWeakItem(
-                word: word,
-                score: accuracy,
-                detail: [error, phonemes].filter { !$0.isEmpty }.joined(separator: " · ")
+                word: value.word,
+                score: value.accuracy,
+                detail: [userFacingWordError(value.error), phonemes]
+                    .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
             )
         }
     }
 
-    private func number(_ value: Any?) -> Double {
-        if let number = value as? NSNumber { return number.doubleValue }
-        if let value = value as? Double { return value }
-        if let value = value as? Int { return Double(value) }
-        return 0
+    private func userFacingWordError(_ error: String?) -> String? {
+        switch error {
+        case "Omission": return "遗漏"
+        case "Insertion": return "多读"
+        case "Mispronunciation": return "发音错误"
+        case .some(let value) where !value.isEmpty && value != "None": return value
+        default: return nil
+        }
     }
 
     private func answer(_ ease: AnkiEase) {
         guard let card = card, !isAnswering else { return }
         isAnswering = true
         setAnswerControlsEnabled(false)
-        let elapsed = Int(Date().timeIntervalSince(sessionStart) * 1000)
+        let elapsed = max(0, Int(Date().timeIntervalSince(sessionStart) * 1000))
         do {
             try AnkiStore.shared.requireCollection().answer(
                 cardId: card.cardId,
                 ease: ease,
-                timeMs: max(elapsed, 1000)
+                timeMs: elapsed
             )
             undoControl.isEnabled = true
             loadNext()
@@ -793,11 +875,19 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     }
 
     @objc private func applicationDidEnterBackground() {
+        reloadAfterBackground = true
+        easeBar.setEnabled(false)
         cleanupReviewSession(stopWebView: false)
         controlBar.setTitle("录音", for: .record)
         controlBar.setEnabled(!playbackMediaQueue.isEmpty, for: .playback)
         controlBar.setEnabled(false, for: .score)
         setStatus("已暂停录音、播放与评分任务")
+    }
+
+    @objc private func applicationDidBecomeActive() {
+        guard reloadAfterBackground else { return }
+        reloadAfterBackground = false
+        loadNext()
     }
 
     private func cleanupReviewSession(stopWebView: Bool) {
