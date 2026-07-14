@@ -176,7 +176,7 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		5837BE029447A0925A164F24 /* SpeakingAnki */ = {
+		5837BE029447A0925A164F24 /* Said */ = {
 			isa = PBXGroup;
 			children = (
 				DC1808FFD4D147876D523703 /* Anki */,
@@ -189,7 +189,7 @@
 				5A3F1A0C93D966DEA3CE9C2B /* Theme */,
 				82C3CC010F582DE8BCC99169 /* Views */,
 			);
-			path = SpeakingAnki;
+			path = Said;
 			sourceTree = "<group>";
 		};
 		5A3F1A0C93D966DEA3CE9C2B /* Theme */ = {
@@ -246,7 +246,7 @@
 			isa = PBXGroup;
 			children = (
 				7E781DBA596A9D3AC8EF3BF7 /* Packages */,
-				5837BE029447A0925A164F24 /* SpeakingAnki */,
+				5837BE029447A0925A164F24 /* Said */,
 				254A65CAAAB7AE3517B8FBC3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -502,7 +502,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = C8XVZJLC2D;
 				ENABLE_DEBUG_DYLIB = NO;
-				INFOPLIST_FILE = SpeakingAnki/Supporting/Info.plist;
+				INFOPLIST_FILE = Said/Supporting/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "$(inherited) -lsqlite3 -lz";
@@ -526,7 +526,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = C8XVZJLC2D;
 				ENABLE_DEBUG_DYLIB = NO;
-				INFOPLIST_FILE = SpeakingAnki/Supporting/Info.plist;
+				INFOPLIST_FILE = Said/Supporting/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "$(inherited) -lsqlite3 -lz";

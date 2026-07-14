@@ -18,7 +18,7 @@
 ## 生成工程（产品名 Said）
 
 ```bash
-cd /Users/misaka10704/Documents/Workspace/SpeakingAnkiIOS
+cd /Users/misaka10704/Documents/Workspace/Said
 xcodegen generate
 open Said.xcodeproj
 ```

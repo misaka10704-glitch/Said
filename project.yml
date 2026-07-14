@@ -24,7 +24,7 @@ targets:
     platform: iOS
     deploymentTarget: "12.0"
     sources:
-      - path: SpeakingAnki
+      - path: Said
     dependencies:
       - package: SaidAnkiBackend
         product: SaidAnkiBackend
@@ -33,7 +33,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.misaka10704.Said
-        INFOPLIST_FILE: SpeakingAnki/Supporting/Info.plist
+        INFOPLIST_FILE: Said/Supporting/Info.plist
         PRODUCT_NAME: Said
         DEVELOPMENT_TEAM: C8XVZJLC2D
         CODE_SIGN_STYLE: Automatic
@@ -49,7 +49,7 @@ targets:
         OTHER_LDFLAGS: "$(inherited) -lsqlite3 -lz"
         "OTHER_LDFLAGS[sdk=iphoneos*]": "$(inherited) -Wl,-force_load,$(PROJECT_DIR)/AnkiBackend/AnkiRust.xcframework/ios-arm64/libanki_bridge_ios.a -lsqlite3 -lz"
     info:
-      path: SpeakingAnki/Supporting/Info.plist
+      path: Said/Supporting/Info.plist
       properties:
         CFBundleDisplayName: Said
         CFBundleShortVersionString: "1.0"

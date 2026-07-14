@@ -1,7 +1,7 @@
 # 进度往返（.apkg）
 
 1. 桌面 Anki：导出 Pronounce / Compose 牌组为 `.apkg`（勾选包含调度信息）。
-2. 通过 AirDrop / 文件 App 拷到 iPad，在 SpeakingAnki 点「导入」。
+2. 通过 AirDrop / 文件 App 拷到 iPad，在 Said 点「导入」。
 3. 在 App 内复习；每次 Again/Hard/Good/Easy 写入 `cards` + `revlog`。
 4. 点「导出」，将 `.apkg` 传回 Mac。
 5. **先备份**桌面集合，再导入该包合并进度。
