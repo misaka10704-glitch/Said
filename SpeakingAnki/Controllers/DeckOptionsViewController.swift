@@ -1,4 +1,5 @@
 import UIKit
+import SaidAnkiBackend
 
 final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
   private enum LimitScope: Int { case preset, deck, today }
@@ -7,7 +8,10 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
   private let provider: DeckOptionsDataProviding
   private let scrollView = UIScrollView()
   private let contentStack = UIStackView()
+  private var contentMaxWidthConstraint: NSLayoutConstraint?
   private let metadataLabel = UILabel()
+  private let selectPresetButton = DSButton(style: .secondary)
+  private let newPresetButton = DSButton(style: .secondary)
   private let fsrsStatusLabel = UILabel()
   private let retentionSlider = UISlider()
   private let retentionValueLabel = UILabel()
@@ -33,6 +37,11 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
   private let buryNewSwitch = UISwitch()
   private let buryReviewSwitch = UISwitch()
   private let buryLearningSwitch = UISwitch()
+  private let curtainSwitch = UISwitch()
+  private let centerSentenceSwitch = UISwitch()
+  private let sentenceSizeSlider = UISlider()
+  private let sentenceSizeValueLabel = UILabel()
+  private let cardTemplateButton = DSButton(style: .secondary)
   private let activityIndicator = UIActivityIndicatorView(style: .gray)
   private var options: DeckOptions?
   private var sections: [DSFormSection] = []
@@ -87,6 +96,10 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
     navigationItem.rightBarButtonItem?.isEnabled = false
     scrollView.alwaysBounceVertical = true
     scrollView.keyboardDismissMode = .interactive
+    // The scroll view already starts below the navigation bar via safeArea.
+    // Automatic adjustment applies that inset a second time and initially
+    // shifts the first section title beneath the bar.
+    scrollView.contentInsetAdjustmentBehavior = .never
     scrollView.translatesAutoresizingMaskIntoConstraints = false
     contentStack.axis = .vertical
     contentStack.spacing = 12
@@ -95,11 +108,50 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
     metadataLabel.numberOfLines = 0
     metadataLabel.font = DSTheme.bodyFont(size: 14)
     primaryLabels.append(metadataLabel)
-    let presetSection = makeSection("当前预设")
+    let presetSection = makeSection("预设")
     presetSection.content.stackView.addArrangedSubview(metadataLabel)
+    let presetActions = UIStackView(arrangedSubviews: [selectPresetButton, newPresetButton])
+    presetActions.axis = .horizontal
+    presetActions.spacing = 8
+    presetActions.distribution = .fillEqually
+    selectPresetButton.setTitle("选择预设", for: .normal)
+    selectPresetButton.addTarget(self, action: #selector(selectPreset), for: .touchUpInside)
+    newPresetButton.setTitle("新建预设", for: .normal)
+    newPresetButton.addTarget(self, action: #selector(createPreset), for: .touchUpInside)
+    presetSection.content.stackView.addArrangedSubview(presetActions)
     contentStack.addArrangedSubview(presetSection)
 
-    let fsrsSection = makeSection("FSRS")
+    let practiceSection = makeSection(
+      "Said 口语设置",
+      detail: "仅应用于当前牌组，不会改变 Anki 的排程预设。"
+    )
+    configurePracticePreferences()
+    practiceSection.content.stackView.addArrangedSubview(
+      labeledControlRow(title: "默认黑幕", control: curtainSwitch))
+    practiceSection.content.stackView.addArrangedSubview(separator())
+    practiceSection.content.stackView.addArrangedSubview(
+      labeledControlRow(title: "正面句子居中", control: centerSentenceSwitch))
+    practiceSection.content.stackView.addArrangedSubview(separator())
+    sentenceSizeValueLabel.font = DSTheme.bodyFont(size: 14)
+    sentenceSizeValueLabel.textAlignment = .right
+    primaryLabels.append(sentenceSizeValueLabel)
+    let sentenceSizeHeader = UIStackView(arrangedSubviews: [
+      makeRowTitle("正面句子字号"), sentenceSizeValueLabel
+    ])
+    sentenceSizeHeader.axis = .horizontal
+    sentenceSizeHeader.alignment = .center
+    practiceSection.content.stackView.addArrangedSubview(sentenceSizeHeader)
+    practiceSection.content.stackView.addArrangedSubview(sentenceSizeSlider)
+    practiceSection.content.stackView.addArrangedSubview(separator())
+    cardTemplateButton.addTarget(self, action: #selector(selectCardTemplate), for: .touchUpInside)
+    practiceSection.content.stackView.addArrangedSubview(cardTemplateButton)
+    let addCardButton = DSButton(style: .primary)
+    addCardButton.setTitle("添加卡片", for: .normal)
+    addCardButton.addTarget(self, action: #selector(openAddCard), for: .touchUpInside)
+    practiceSection.content.stackView.addArrangedSubview(addCardButton)
+    contentStack.addArrangedSubview(practiceSection)
+
+    let fsrsSection = makeSection("FSRS 与记忆模型")
     fsrsStatusLabel.font = DSTheme.bodyFont(size: 14)
     primaryLabels.append(fsrsStatusLabel)
     fsrsSection.content.stackView.addArrangedSubview(fsrsStatusLabel)
@@ -129,7 +181,10 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
       hintLabel("FSRS 关闭时这些值只显示，不会伪装为已启用。期望记忆率保存为本牌组覆盖。"))
     contentStack.addArrangedSubview(fsrsSection)
 
-    let limitsSection = makeSection("每日限额", detail: "本牌组或仅今天留空表示继承上一级。")
+    let limitsSection = makeSection(
+      "每日限额",
+      detail: "预设会影响所有使用该预设的牌组；本牌组与仅今天留空时继承预设。"
+    )
     limitScope.selectedSegmentIndex = LimitScope.preset.rawValue
     limitScope.addTarget(self, action: #selector(limitScopeChanged), for: .valueChanged)
     limitsSection.content.stackView.addArrangedSubview(limitScope)
@@ -146,7 +201,7 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
     limitsSection.content.stackView.addArrangedSubview(effectiveLimitsLabel)
     contentStack.addArrangedSubview(limitsSection)
 
-    let learningSection = makeSection("新卡与学习")
+    let learningSection = makeSection("新卡与学习（预设）")
     configureStepsField(learnStepsField, placeholder: "1 10")
     configureNumberField(goodIntervalField, placeholder: "1")
     configureNumberField(easyIntervalField, placeholder: "4")
@@ -157,7 +212,7 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
     ], to: learningSection.content.stackView)
     contentStack.addArrangedSubview(learningSection)
 
-    let lapseSection = makeSection("失误与水蛭")
+    let lapseSection = makeSection("失误与水蛭（预设）")
     configureStepsField(relearnStepsField, placeholder: "10")
     configureNumberField(minimumLapseField, placeholder: "1")
     configureNumberField(leechThresholdField, placeholder: "8")
@@ -173,7 +228,7 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
     ], to: lapseSection.content.stackView)
     contentStack.addArrangedSubview(lapseSection)
 
-    let orderSection = makeSection("显示顺序")
+    let orderSection = makeSection("显示顺序（预设）")
     configureChoiceButton(insertOrderButton, action: #selector(selectInsertOrder))
     configureChoiceButton(gatherOrderButton, action: #selector(selectGatherOrder))
     configureChoiceButton(sortOrderButton, action: #selector(selectSortOrder))
@@ -191,13 +246,19 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
     ], to: orderSection.content.stackView)
     contentStack.addArrangedSubview(orderSection)
 
-    let burySection = makeSection("搁置关联卡片")
+    let burySection = makeSection("搁置关联卡片（预设）")
     addRows([
       ("搁置新卡关联卡", buryNewSwitch),
       ("搁置复习关联卡", buryReviewSwitch),
       ("搁置跨日学习关联卡", buryLearningSwitch),
     ], to: burySection.content.stackView)
     contentStack.addArrangedSubview(burySection)
+
+    // Match Anki Desktop's mental model: schedule settings come first and
+    // app-specific study presentation tools live in their own final section.
+    contentStack.removeArrangedSubview(practiceSection)
+    practiceSection.removeFromSuperview()
+    contentStack.addArrangedSubview(practiceSection)
 
     for field in allTextFields {
       field.addTarget(self, action: #selector(textFieldChanged(_:)), for: .editingChanged)
@@ -216,7 +277,9 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
       scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
       contentStack.topAnchor.constraint(
-        equalTo: scrollView.contentLayoutGuide.topAnchor, constant: DSTheme.contentPadding),
+        // Keep the first section label clear of the split-view navigation bar
+        // even when UIKit restores an initial negative scroll offset.
+        equalTo: scrollView.contentLayoutGuide.topAnchor, constant: DSTheme.contentPadding * 2),
       contentStack.leadingAnchor.constraint(
         greaterThanOrEqualTo: scrollView.contentLayoutGuide.leadingAnchor,
         constant: DSTheme.contentPadding),
@@ -226,11 +289,185 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
       contentStack.centerXAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerXAnchor),
       contentStack.bottomAnchor.constraint(
         equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -DSTheme.contentPadding),
-      contentStack.widthAnchor.constraint(lessThanOrEqualToConstant: DSTheme.contentMaxWidth),
       contentStack.widthAnchor.constraint(
         equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -DSTheme.contentPadding * 2
-      ).withPriority(750),
+      ),
     ])
+    contentMaxWidthConstraint = contentStack.widthAnchor.constraint(
+      lessThanOrEqualToConstant: DSTheme.contentMaxWidth)
+    contentMaxWidthConstraint?.isActive = true
+  }
+
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    // In a split view the detail pane can be narrower than it is tall even
+    // while the device is horizontal, so use the containing window instead.
+    let windowBounds = view.window?.bounds ?? UIScreen.main.bounds
+    let isLandscape = windowBounds.width > windowBounds.height
+    let availableWidth = max(0, view.bounds.width - DSTheme.contentPadding * 2)
+    contentMaxWidthConstraint?.constant = isLandscape
+      ? availableWidth
+      : min(DSTheme.contentMaxWidth, availableWidth)
+  }
+
+  @objc private func openAddCard() {
+    navigationController?.pushViewController(
+      AddSpeakingCardViewController(
+        deckID: deckID,
+        deckName: options?.deckName ?? "当前牌组"
+      ),
+      animated: true
+    )
+  }
+
+  @objc private func selectPreset() {
+    guard !isDirty else {
+      showAlert("请先保存或放弃当前修改，再切换预设。")
+      return
+    }
+    activityIndicator.startAnimating()
+    provider.loadPresets(deckID: deckID) { [weak self] result in
+      DispatchQueue.main.async {
+        guard let self = self else { return }
+        self.activityIndicator.stopAnimating()
+        switch result {
+        case .success(let presets):
+          let sheet = UIAlertController(
+            title: "选择预设",
+            message: "切换后，当前牌组会使用该预设的学习与排程设置。",
+            preferredStyle: .actionSheet
+          )
+          for preset in presets {
+            let suffix = preset.id == self.options?.configID ? "（当前）" : ""
+            sheet.addAction(UIAlertAction(
+              title: "\(preset.name)\(suffix) · \(preset.useCount) 个牌组",
+              style: .default
+            ) { _ in
+              guard preset.id != self.options?.configID else { return }
+              self.assignPreset(preset)
+            })
+          }
+          sheet.addAction(UIAlertAction(title: "取消", style: .cancel))
+          sheet.popoverPresentationController?.sourceView = self.selectPresetButton
+          sheet.popoverPresentationController?.sourceRect = self.selectPresetButton.bounds
+          self.present(sheet, animated: true)
+        case .failure(let error):
+          self.showAlert(error.localizedDescription)
+        }
+      }
+    }
+  }
+
+  private func assignPreset(_ preset: SaidDeckPreset) {
+    activityIndicator.startAnimating()
+    provider.selectPreset(deckID: deckID, presetID: preset.id) { [weak self] result in
+      DispatchQueue.main.async {
+        guard let self = self else { return }
+        self.activityIndicator.stopAnimating()
+        switch result {
+        case .success:
+          self.loadOptions()
+        case .failure(let error):
+          self.showAlert(error.localizedDescription)
+        }
+      }
+    }
+  }
+
+  @objc private func createPreset() {
+    guard !isDirty else {
+      showAlert("请先保存或放弃当前修改，再新建预设。")
+      return
+    }
+    let alert = UIAlertController(
+      title: "新建预设",
+      message: "会复制当前预设的全部学习与排程设置，并自动分配给当前牌组。",
+      preferredStyle: .alert
+    )
+    alert.addTextField {
+      $0.placeholder = "预设名称"
+      $0.clearButtonMode = .whileEditing
+    }
+    alert.addAction(UIAlertAction(title: "取消", style: .cancel))
+    alert.addAction(UIAlertAction(title: "创建", style: .default) { [weak self, weak alert] _ in
+      guard let self = self else { return }
+      let name = alert?.textFields?.first?.text ?? ""
+      self.activityIndicator.startAnimating()
+      self.provider.clonePreset(deckID: self.deckID, name: name) { [weak self] result in
+        DispatchQueue.main.async {
+          guard let self = self else { return }
+          self.activityIndicator.stopAnimating()
+          switch result {
+          case .success:
+            self.loadOptions()
+          case .failure(let error):
+            self.showAlert(error.localizedDescription)
+          }
+        }
+      }
+    })
+    present(alert, animated: true)
+  }
+
+  @objc private func selectCardTemplate() {
+    DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+      let result = Result { try AnkiStore.shared.requireCollection().allNoteTypes() }
+      DispatchQueue.main.async {
+        guard let self = self else { return }
+        switch result {
+        case .success(let types):
+          let alert = UIAlertController(
+            title: "选择卡片模板",
+            message: "之后从此牌组添加卡片会直接使用该模板。",
+            preferredStyle: .actionSheet
+          )
+          for type in types {
+            alert.addAction(UIAlertAction(title: type.name, style: .default) { _ in
+              var preferences = DeckPracticePreferencesStore.shared.preferences(for: self.deckID)
+              preferences.noteTypeID = type.id
+              DeckPracticePreferencesStore.shared.save(preferences, for: self.deckID)
+              self.cardTemplateButton.setTitle("卡片模板：\(type.name)", for: .normal)
+            })
+          }
+          alert.addAction(UIAlertAction(title: "取消", style: .cancel))
+          alert.popoverPresentationController?.sourceView = self.view
+          alert.popoverPresentationController?.sourceRect = CGRect(
+            x: self.view.bounds.midX, y: self.view.bounds.midY, width: 1, height: 1
+          )
+          self.present(alert, animated: true)
+        case .failure(let error):
+          self.showAlert(error.localizedDescription)
+        }
+      }
+    }
+  }
+
+  private func configurePracticePreferences() {
+    let preferences = DeckPracticePreferencesStore.shared.preferences(for: deckID)
+    curtainSwitch.isOn = preferences.curtainEnabled
+    centerSentenceSwitch.isOn = preferences.centerSentence
+    sentenceSizeSlider.minimumValue = 16
+    sentenceSizeSlider.maximumValue = 32
+    sentenceSizeSlider.value = Float(preferences.sentenceFontSize)
+    sentenceSizeValueLabel.text = "\(Int(sentenceSizeSlider.value.rounded())) pt"
+    cardTemplateButton.setTitle(
+      preferences.noteTypeID == nil ? "选择卡片模板" : "卡片模板：已选择",
+      for: .normal
+    )
+    [curtainSwitch, centerSentenceSwitch].forEach {
+      $0.addTarget(self, action: #selector(savePracticePreferences), for: .valueChanged)
+    }
+    sentenceSizeSlider.addTarget(
+      self, action: #selector(savePracticePreferences), for: .valueChanged)
+  }
+
+  @objc private func savePracticePreferences() {
+    sentenceSizeValueLabel.text = "\(Int(sentenceSizeSlider.value.rounded())) pt"
+    var preferences = DeckPracticePreferencesStore.shared.preferences(for: deckID)
+    preferences.curtainEnabled = curtainSwitch.isOn
+    preferences.centerSentence = centerSentenceSwitch.isOn
+    preferences.sentenceFontSize = Double(sentenceSizeSlider.value)
+    DeckPracticePreferencesStore.shared.save(preferences, for: deckID)
   }
 
   func applyTheme() {
@@ -238,8 +475,9 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
     view.backgroundColor = colors.background
     scrollView.backgroundColor = colors.background
     retentionSlider.tintColor = colors.accent
+    sentenceSizeSlider.tintColor = colors.accent
     retentionValueLabel.textColor = colors.accent
-    for control in [buryNewSwitch, buryReviewSwitch, buryLearningSwitch] {
+    for control in [buryNewSwitch, buryReviewSwitch, buryLearningSwitch, curtainSwitch, centerSentenceSwitch] {
       control.onTintColor = colors.accent
     }
     for section in sections { section.applyTheme() }
@@ -275,9 +513,13 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
 
   private func apply(_ value: DeckOptions) {
     isApplyingOptions = true
-    title = value.deckName
+    title = "牌组选项"
+    navigationItem.prompt = value.deckName
     metadataLabel.text =
-      "\(value.presetName) · 使用 \(value.presetUseCount) 个牌组\nConfig ID: \(value.configID)"
+      "当前使用“\(value.presetName)”预设"
+      + (value.presetUseCount > 1
+        ? " · 与另外 \(value.presetUseCount - 1) 个牌组共享"
+        : " · 仅此牌组使用")
     fsrsStatusLabel.text = value.fsrsEnabled ? "FSRS：已启用" : "FSRS：未启用"
     retentionSlider.value = Float(value.desiredRetention)
     retentionSlider.isEnabled = value.fsrsEnabled
@@ -495,7 +737,9 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
         switch result {
         case .success:
           self.options = updated
-          self.navigationController?.popViewController(animated: true)
+          // Deck Options on Anki Desktop stays open after saving: users often
+          // adjust a preset and its per-deck limits in the same session.
+          self.apply(updated)
         case .failure(let error):
           self.navigationItem.rightBarButtonItem?.isEnabled = true
           self.showAlert(error.localizedDescription)
@@ -605,6 +849,14 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
     label.font = DSTheme.bodyFont(size: 12)
     label.numberOfLines = 0
     tertiaryLabels.append(label)
+    return label
+  }
+
+  private func makeRowTitle(_ text: String) -> UILabel {
+    let label = UILabel()
+    label.text = text
+    label.font = DSTheme.bodyFont(size: 14)
+    primaryLabels.append(label)
     return label
   }
 

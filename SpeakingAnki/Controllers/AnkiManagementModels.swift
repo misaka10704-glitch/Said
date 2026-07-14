@@ -174,6 +174,9 @@ struct DeckOptions {
 protocol DeckOptionsDataProviding: AnyObject {
     func loadOptions(deckID: Int64, completion: @escaping (Result<DeckOptions, Error>) -> Void)
     func saveOptions(_ options: DeckOptions, completion: @escaping (Result<Void, Error>) -> Void)
+    func loadPresets(deckID: Int64, completion: @escaping (Result<[SaidDeckPreset], Error>) -> Void)
+    func selectPreset(deckID: Int64, presetID: Int64, completion: @escaping (Result<Void, Error>) -> Void)
+    func clonePreset(deckID: Int64, name: String, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 struct DeckManagementNode: Equatable {
@@ -890,6 +893,46 @@ final class OfficialBrowserProvider: BrowserDataProviding, NoteEditorDataProvidi
         queue.async {
             do {
                 try self.collection().saveDeckOptions(options)
+                completion(.success(()))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+
+    func loadPresets(
+        deckID: Int64,
+        completion: @escaping (Result<[SaidDeckPreset], Error>) -> Void
+    ) {
+        queue.async {
+            do { completion(.success(try self.collection().deckPresets(for: deckID))) }
+            catch { completion(.failure(error)) }
+        }
+    }
+
+    func selectPreset(
+        deckID: Int64,
+        presetID: Int64,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        queue.async {
+            do {
+                try self.collection().selectDeckPreset(deckID: deckID, presetID: presetID)
+                completion(.success(()))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+
+    func clonePreset(
+        deckID: Int64,
+        name: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        queue.async {
+            do {
+                try self.collection().cloneDeckPreset(deckID: deckID, name: name)
                 completion(.success(()))
             } catch {
                 completion(.failure(error))

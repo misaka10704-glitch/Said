@@ -423,6 +423,97 @@ final class OfficialAnkiCollection {
         try services.update(note)
     }
 
+    func addTags(_ tags: [String], toNoteID noteID: Int64) throws {
+        let normalized = tags
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        guard !normalized.isEmpty else { return }
+        try services.addTags(normalized, toNoteIDs: [noteID])
+    }
+
+    func noteTypes(inDeck deckID: Int64) throws -> [SaidNotetype] {
+        let decks = try listDecks()
+        guard let deck = decks.first(where: { $0.id == deckID }) else {
+            throw AnkiError.notFound
+        }
+        let escapedName = deck.name
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+        let cardIDs = try services.searchCards("deck:\"\(escapedName)\"")
+        var seen = Set<Int64>()
+        var types: [SaidNotetype] = []
+        for cardID in cardIDs {
+            let note = try services.note(id: services.card(id: cardID).noteID)
+            guard seen.insert(note.notetypeID).inserted else { continue }
+            types.append(try services.notetype(id: note.notetypeID))
+        }
+        return types.sorted {
+            $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+        }
+    }
+
+    /// Reusable templates are collection-wide in Anki. A target subdeck may be
+    /// empty, so it must not prevent users from selecting the existing Words
+    /// (or any other) note type stored elsewhere in the collection.
+    func allNoteTypes() throws -> [SaidNotetype] {
+        let cardIDs = try services.searchCards("")
+        var seen = Set<Int64>()
+        var types: [SaidNotetype] = []
+        for cardID in cardIDs {
+            let note = try services.note(id: services.card(id: cardID).noteID)
+            guard seen.insert(note.notetypeID).inserted else { continue }
+            types.append(try services.notetype(id: note.notetypeID))
+        }
+        return types.sorted {
+            $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+        }
+    }
+
+    func referenceTexts(inDeck deckID: Int64) throws -> [String] {
+        let decks = try listDecks()
+        guard let deck = decks.first(where: { $0.id == deckID }) else {
+            throw AnkiError.notFound
+        }
+        let escapedName = deck.name
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+        let cardIDs = try services.searchCards("deck:\"\(escapedName)\"")
+        var seen = Set<String>()
+        var results: [String] = []
+        for cardID in cardIDs {
+            let note = try services.note(id: services.card(id: cardID).noteID)
+            let type = try services.notetype(id: note.notetypeID)
+            let pairs = Dictionary(uniqueKeysWithValues: zip(type.fieldNames, note.fields))
+            let text = ["English", "Sentence", "Text", "Phrase", "Word", "Front"]
+                .compactMap { pairs[$0] }
+                .first(where: { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty })
+                ?? note.fields.first
+                ?? ""
+            let plain = plainText(text).trimmingCharacters(in: .whitespacesAndNewlines)
+            if !plain.isEmpty, seen.insert(plain).inserted {
+                results.append(plain)
+            }
+        }
+        return results
+    }
+
+    @discardableResult
+    func addNote(
+        deckID: Int64,
+        notetypeID: Int64,
+        fields: [String],
+        tags: [String]
+    ) throws -> Int64 {
+        let noteID = try services.addNote(
+            notetypeID: notetypeID,
+            deckID: deckID,
+            fields: fields,
+            tags: tags
+        )
+        resetCollectionCaches()
+        return noteID
+    }
+
     func deckOptions(id: Int64) throws -> DeckOptions {
         let value = try services.deckOptions(deckID: id)
         loadedDeckOptions[id] = value
@@ -496,6 +587,20 @@ final class OfficialAnkiCollection {
             buryInterdayLearning: options.buryInterdayLearningSiblings
         )
         loadedDeckOptions.removeValue(forKey: options.deckID)
+    }
+
+    func deckPresets(for deckID: Int64) throws -> [SaidDeckPreset] {
+        try services.deckPresets(deckID: deckID)
+    }
+
+    func selectDeckPreset(deckID: Int64, presetID: Int64) throws {
+        try services.selectDeckPreset(deckID: deckID, presetID: presetID)
+        loadedDeckOptions.removeValue(forKey: deckID)
+    }
+
+    func cloneDeckPreset(deckID: Int64, name: String) throws {
+        try services.cloneDeckPreset(deckID: deckID, name: name)
+        loadedDeckOptions.removeValue(forKey: deckID)
     }
 
     func statistics(days: UInt32, deckID: Int64?) throws -> SaidStatistics {

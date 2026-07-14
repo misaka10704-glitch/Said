@@ -6,8 +6,9 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
   private let provider: NoteEditorDataProviding
   private let scrollView = UIScrollView()
   private let contentStack = UIStackView()
+  private var contentMaxWidthConstraint: NSLayoutConstraint?
   private let fieldsStack = UIStackView()
-  private let tagsField = UITextField()
+  private let tagsField = DSTextField(placeholder: "标签一 嵌套::标签")
   private let modelLabel = UILabel()
   private let activityIndicator = UIActivityIndicatorView(style: .gray)
   private let mediaButton = DSButton(style: .secondary)
@@ -63,6 +64,7 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
 
     scrollView.keyboardDismissMode = .interactive
     scrollView.alwaysBounceVertical = true
+    scrollView.contentInsetAdjustmentBehavior = .never
     scrollView.translatesAutoresizingMaskIntoConstraints = false
     contentStack.axis = .vertical
     contentStack.spacing = 16
@@ -77,11 +79,8 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
     contentStack.addArrangedSubview(infoSection)
     contentStack.addArrangedSubview(fieldsStack)
 
-    tagsField.font = DSTheme.bodyFont(size: 15)
     tagsField.autocapitalizationType = .none
     tagsField.autocorrectionType = .no
-    tagsField.placeholder = "标签一 嵌套::标签"
-    tagsField.heightAnchor.constraint(equalToConstant: 42).isActive = true
     tagsSection.addRow(tagsField, separated: false)
     contentStack.addArrangedSubview(tagsSection)
 
@@ -116,11 +115,24 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
       contentStack.centerXAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerXAnchor),
       contentStack.bottomAnchor.constraint(
         equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -DSTheme.contentPadding),
-      contentStack.widthAnchor.constraint(lessThanOrEqualToConstant: DSTheme.contentMaxWidth),
       contentStack.widthAnchor.constraint(
         equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -DSTheme.contentPadding * 2
-      ).withPriority(750),
+      ),
     ])
+    contentMaxWidthConstraint = contentStack.widthAnchor.constraint(
+      lessThanOrEqualToConstant: DSTheme.contentMaxWidth)
+    contentMaxWidthConstraint?.isActive = true
+  }
+
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    // Editing text on an iPad should use the available horizontal workspace
+    // instead of keeping phone-sized fields centred in a wide landscape view.
+    let windowBounds = view.window?.bounds ?? UIScreen.main.bounds
+    let availableWidth = max(0, view.bounds.width - DSTheme.contentPadding * 2)
+    contentMaxWidthConstraint?.constant = windowBounds.width > windowBounds.height
+      ? availableWidth
+      : min(DSTheme.contentMaxWidth, availableWidth)
   }
 
   private func configureToolButton(_ button: DSButton, title: String, selector: Selector) {
@@ -138,11 +150,7 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
     for label in sectionLabels { label.textColor = colors.textSecondary }
     tagsSection.applyTheme()
     mediaSection.applyTheme()
-    tagsField.backgroundColor = colors.inputBackground
-    tagsField.textColor = colors.textPrimary
-    tagsField.layer.borderColor = colors.inputBorder.cgColor
-    tagsField.layer.borderWidth = 1
-    tagsField.keyboardAppearance = ThemeManager.shared.mode == .dark ? .dark : .light
+    tagsField.applyTheme()
     for editor in fieldEditors {
       editor.backgroundColor = colors.inputBackground
       editor.textColor = colors.textPrimary
@@ -195,6 +203,9 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
       editor.layer.borderColor = DSTheme.c.inputBorder.cgColor
       editor.layer.cornerRadius = 10
       editor.textContainerInset = UIEdgeInsets(top: 10, left: 8, bottom: 10, right: 8)
+      // Let the outer editor page scroll; a scrollable text view nested inside
+      // it makes long fields feel cramped and difficult to read on iPad.
+      editor.isScrollEnabled = false
       editor.heightAnchor.constraint(greaterThanOrEqualToConstant: 112).isActive = true
       container.addRow(editor, separated: false)
       fieldsStack.addArrangedSubview(container)

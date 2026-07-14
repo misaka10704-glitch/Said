@@ -389,6 +389,7 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
     private let contentStack = UIStackView()
     private var dynamicViews: [UIView] = []
     private var renderedContent: SpeakingResultContent?
+    private var ieltsColumns: UIStackView?
     private var statusIsError = false
     private(set) var isCollapsed = true
 
@@ -428,27 +429,22 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
         statusIsError = false
         clearDynamicViews()
         statusLabel.isHidden = true
+        if result.title.hasPrefix("IELTS") {
+            renderIELTS(result)
+            setCollapsed(isCollapsed, notify: true)
+            return
+        }
         addText(result.title, font: DSTheme.titleFont(size: 15), color: DSTheme.c.textPrimary)
         if !result.transcript.isEmpty {
             addSection(title: "AZURE TRANSCRIPT", body: result.transcript, style: .azure)
         }
         if !result.metrics.isEmpty {
             let metrics = UIStackView()
-            metrics.axis = .vertical
-            metrics.spacing = 8
-            for start in stride(from: 0, to: result.metrics.count, by: 2) {
-                let row = UIStackView()
-                row.axis = .horizontal
-                row.distribution = .fillEqually
-                row.spacing = 8
-                for index in start..<min(start + 2, result.metrics.count) {
-                    row.addArrangedSubview(metricView(result.metrics[index]))
-                }
-                if row.arrangedSubviews.count == 1 {
-                    row.addArrangedSubview(UIView())
-                }
-                metrics.addArrangedSubview(row)
-            }
+            metrics.axis = .horizontal
+            metrics.distribution = .fillEqually
+            metrics.alignment = .fill
+            metrics.spacing = 6
+            result.metrics.forEach { metrics.addArrangedSubview(metricView($0)) }
             addDynamic(metrics)
         }
         result.sections.filter { !$0.body.isEmpty }.forEach {
@@ -467,11 +463,73 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
             )
             addPronunciationDetails(result.pronunciationWords)
         }
-        if !result.weakItems.isEmpty {
+        if result.pronunciationWords.isEmpty, !result.weakItems.isEmpty {
             addText("弱项词与音素", font: DSTheme.titleFont(size: 12), color: DSTheme.c.textTertiary)
             result.weakItems.forEach { addWeakItem($0) }
         }
-        setCollapsed(false, notify: true)
+        setCollapsed(isCollapsed, notify: true)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateIELTSColumnsLayout()
+    }
+
+    private func renderIELTS(_ result: SpeakingResultContent) {
+        addText(result.title, font: DSTheme.titleFont(size: 15), color: DSTheme.c.textPrimary)
+
+        let azure = UIStackView()
+        azure.axis = .vertical
+        azure.spacing = 8
+        let qwen = UIStackView()
+        qwen.axis = .vertical
+        qwen.spacing = 8
+
+        if !result.transcript.isEmpty {
+            addSection(title: "AZURE TRANSCRIPT", body: result.transcript, style: .azure, to: azure)
+        }
+        if !result.metrics.isEmpty {
+            let metrics = UIStackView()
+            metrics.axis = .horizontal
+            metrics.distribution = .fillEqually
+            metrics.alignment = .fill
+            metrics.spacing = 6
+            result.metrics.forEach { metrics.addArrangedSubview(metricView($0)) }
+            add(metrics, to: azure)
+        }
+        if !result.pronunciationWords.isEmpty {
+            addText(
+                "AZURE 发音明细",
+                font: DSTheme.titleFont(size: 12),
+                color: DSTheme.voiceBlue,
+                to: azure
+            )
+            addPronunciationDetails(result.pronunciationWords, to: azure)
+        } else if !result.weakItems.isEmpty {
+            addText("弱项词与音素", font: DSTheme.titleFont(size: 12), color: DSTheme.c.textTertiary, to: azure)
+            result.weakItems.forEach { addWeakItem($0, to: azure) }
+        }
+
+        result.sections.filter { !$0.body.isEmpty }.forEach {
+            addSection(title: $0.title, body: $0.body, style: $0.style, to: qwen)
+        }
+
+        let columns = UIStackView(arrangedSubviews: [azure, qwen])
+        columns.spacing = 12
+        ieltsColumns = columns
+        updateIELTSColumnsLayout()
+        addDynamic(columns)
+    }
+
+    private func updateIELTSColumnsLayout() {
+        guard let columns = ieltsColumns else { return }
+        let windowBounds = window?.bounds ?? bounds
+        let landscape = windowBounds.width > windowBounds.height
+        columns.axis = landscape ? .horizontal : .vertical
+        columns.distribution = landscape ? .fillEqually : .fill
+        // In landscape, filling the cross-axis stretches the shorter Qwen
+        // column to Azure's height and can expand its first answer card.
+        columns.alignment = landscape ? .top : .fill
     }
 
     func setCollapsed(_ collapsed: Bool, notify: Bool) {
@@ -545,6 +603,7 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
             $0.removeFromSuperview()
         }
         dynamicViews.removeAll()
+        ieltsColumns = nil
     }
 
     private func addDynamic(_ view: UIView) {
@@ -552,54 +611,85 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
         contentStack.addArrangedSubview(view)
     }
 
-    private func addText(_ text: String, font: UIFont, color: UIColor) {
+    private func addText(
+        _ text: String,
+        font: UIFont,
+        color: UIColor,
+        to target: UIStackView? = nil
+    ) {
         let label = UILabel()
         label.text = text
         label.font = font
         label.textColor = color
         label.numberOfLines = 0
-        addDynamic(label)
+        add(label, to: target)
+    }
+
+    private func add(_ view: UIView, to target: UIStackView?) {
+        if let target = target {
+            target.addArrangedSubview(view)
+        } else {
+            addDynamic(view)
+        }
     }
 
     private func addSection(
         title: String,
         body: String,
-        style: SpeakingResultSectionStyle = .neutral
+        style: SpeakingResultSectionStyle = .neutral,
+        to target: UIStackView? = nil
     ) {
         let color = sectionColor(style)
+        let isCompactQwen: Bool
+        switch style {
+        case .qwenModel, .qwenCoach, .qwenCorrection, .qwenImprovement:
+            isCompactQwen = true
+        default:
+            isCompactQwen = false
+        }
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = DSTheme.titleFont(size: 11)
         titleLabel.textColor = color
         let bodyLabel = UILabel()
-        bodyLabel.text = body
+        // AI responses can include a leading newline.  It becomes particularly
+        // conspicuous in the two-column IELTS layout, so remove only outer
+        // whitespace while keeping paragraph breaks inside the answer.
+        bodyLabel.text = body.trimmingCharacters(in: .whitespacesAndNewlines)
         bodyLabel.font = DSTheme.bodyFont(size: 14)
         bodyLabel.textColor = style == .neutral ? DSTheme.c.textSecondary : color
         bodyLabel.numberOfLines = 0
         let stack = UIStackView(arrangedSubviews: [titleLabel, bodyLabel])
         stack.axis = .vertical
-        stack.spacing = 4
+        stack.spacing = isCompactQwen ? 2 : 4
         if style == .neutral {
-            addDynamic(stack)
+            add(stack, to: target)
             return
         }
         let wrapper = UIView()
         wrapper.backgroundColor = color.withAlphaComponent(
-            ThemeManager.shared.mode == .dark ? 0.12 : 0.08
+            ThemeManager.shared.mode == .dark
+                ? (isCompactQwen ? 0.08 : 0.12)
+                : (isCompactQwen ? 0.05 : 0.08)
         )
-        wrapper.layer.cornerRadius = 8
+        wrapper.layer.cornerRadius = isCompactQwen ? 6 : 8
         stack.translatesAutoresizingMaskIntoConstraints = false
         wrapper.addSubview(stack)
+        let verticalInset: CGFloat = isCompactQwen ? 5 : 8
+        let horizontalInset: CGFloat = isCompactQwen ? 7 : 9
         NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: wrapper.topAnchor, constant: 8),
-            stack.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor, constant: 9),
-            stack.trailingAnchor.constraint(equalTo: wrapper.trailingAnchor, constant: -9),
-            stack.bottomAnchor.constraint(equalTo: wrapper.bottomAnchor, constant: -8)
+            stack.topAnchor.constraint(equalTo: wrapper.topAnchor, constant: verticalInset),
+            stack.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor, constant: horizontalInset),
+            stack.trailingAnchor.constraint(equalTo: wrapper.trailingAnchor, constant: -horizontalInset),
+            stack.bottomAnchor.constraint(equalTo: wrapper.bottomAnchor, constant: -verticalInset)
         ])
-        addDynamic(wrapper)
+        add(wrapper, to: target)
     }
 
-    private func addPronunciationDetails(_ words: [PronunciationWordScore]) {
+    private func addPronunciationDetails(
+        _ words: [PronunciationWordScore],
+        to target: UIStackView? = nil
+    ) {
         let horizontalScroll = UIScrollView()
         horizontalScroll.alwaysBounceHorizontal = true
         horizontalScroll.showsHorizontalScrollIndicator = true
@@ -633,7 +723,7 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
             row.leadingAnchor.constraint(greaterThanOrEqualTo: container.leadingAnchor, constant: 8),
             row.trailingAnchor.constraint(lessThanOrEqualTo: container.trailingAnchor, constant: -8)
         ])
-        addDynamic(horizontalScroll)
+        add(horizontalScroll, to: target)
     }
 
     private func pronunciationWordView(_ word: PronunciationWordScore) -> UIView {
@@ -754,7 +844,9 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
         stack.axis = .vertical
         stack.spacing = 2
         let wrapper = UIView()
-        wrapper.backgroundColor = DSTheme.c.surfaceHover
+        wrapper.backgroundColor = scoreColor(metric.value).withAlphaComponent(
+            ThemeManager.shared.mode == .dark ? 0.22 : 0.12
+        )
         wrapper.layer.cornerRadius = 9
         stack.translatesAutoresizingMaskIntoConstraints = false
         wrapper.addSubview(stack)
@@ -767,7 +859,7 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
         return wrapper
     }
 
-    private func addWeakItem(_ item: SpeakingWeakItem) {
+    private func addWeakItem(_ item: SpeakingWeakItem, to target: UIStackView? = nil) {
         let label = UILabel()
         let detail = item.detail.isEmpty ? "" : "\n\(item.detail)"
         label.text = "\(item.word)  \(Int(item.score))\(detail)"
@@ -785,7 +877,7 @@ final class SpeakingResultPanel: UIView, ThemeRefreshable {
             label.trailingAnchor.constraint(equalTo: wrapper.trailingAnchor, constant: -9),
             label.bottomAnchor.constraint(equalTo: wrapper.bottomAnchor, constant: -7)
         ])
-        addDynamic(wrapper)
+        add(wrapper, to: target)
     }
 
     private func sectionColor(_ style: SpeakingResultSectionStyle) -> UIColor {

@@ -39,6 +39,7 @@ extension Notification.Name {
 final class ThemeManager {
     static let shared = ThemeManager()
     private let storageKey = "said_appearance_mode"
+    private let interfaceScaleKey = "said_interface_scale"
 
     private init() {}
 
@@ -59,6 +60,18 @@ final class ThemeManager {
 
     var colors: ThemeColors {
         mode == .light ? DSTheme.light : DSTheme.dark
+    }
+
+    var interfaceScale: CGFloat {
+        get {
+            let value = UserDefaults.standard.object(forKey: interfaceScaleKey) as? Double ?? 1
+            return CGFloat(min(1.3, max(0.85, value)))
+        }
+        set {
+            let value = Double(min(1.3, max(0.85, newValue)))
+            UserDefaults.standard.set(value, forKey: interfaceScaleKey)
+            NotificationCenter.default.post(name: .saidThemeDidChange, object: nil)
+        }
     }
 }
 
@@ -153,16 +166,16 @@ enum DSTheme {
     static let rowHeight = List.rowHeight
 
     static func bodyFont(size: CGFloat = 16) -> UIFont {
-        UIFont.systemFont(ofSize: size)
+        UIFont.systemFont(ofSize: size * ThemeManager.shared.interfaceScale)
     }
 
     static func titleFont(size: CGFloat = 16) -> UIFont {
-        UIFont.systemFont(ofSize: size, weight: .medium)
+        UIFont.systemFont(ofSize: size * ThemeManager.shared.interfaceScale, weight: .medium)
     }
 
     static func monoFont(size: CGFloat = 14) -> UIFont {
-        UIFont(name: "Menlo-Regular", size: size)
-            ?? UIFont.monospacedDigitSystemFont(ofSize: size, weight: .regular)
+        UIFont(name: "Menlo-Regular", size: size * ThemeManager.shared.interfaceScale)
+            ?? UIFont.monospacedDigitSystemFont(ofSize: size * ThemeManager.shared.interfaceScale, weight: .regular)
     }
 
     static func practiceAccent(deckName: String) -> UIColor {

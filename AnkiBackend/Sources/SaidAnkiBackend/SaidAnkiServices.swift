@@ -29,6 +29,12 @@ public struct SaidDeckDetail: Equatable, Sendable {
     public let totalIncludingChildren: Int
 }
 
+public struct SaidDeckPreset: Equatable, Sendable {
+    public let id: Int64
+    public let name: String
+    public let useCount: Int
+}
+
 public struct SaidDeckDeletionResult: Equatable, Sendable {
     /// Number of cards deleted by rslib. Child decks are included.
     /// Cards in filtered decks are returned to their original decks instead.
@@ -657,6 +663,36 @@ public final class SaidAnkiServices {
         )
     }
 
+    /// Creates a note with rslib so field validation, duplicate detection and
+    /// scheduling remain owned by Anki instead of a parallel local database.
+    @discardableResult
+    public func addNote(
+        notetypeID: Int64,
+        deckID: Int64,
+        fields: [String],
+        tags: [String]
+    ) throws -> Int64 {
+        var notetypeRequest = Anki_Notetypes_NotetypeId()
+        notetypeRequest.ntid = notetypeID
+        var note: Anki_Notes_Note = try backend.invoke(
+            service: RustAnkiBackend.Service.notes,
+            method: RustAnkiBackend.NotesMethod.newNote,
+            request: notetypeRequest
+        )
+        note.fields = fields
+        note.tags = tags
+
+        var request = Anki_Notes_AddNoteRequest()
+        request.note = note
+        request.deckID = deckID
+        let response: Anki_Notes_AddNoteResponse = try backend.invoke(
+            service: RustAnkiBackend.Service.notes,
+            method: RustAnkiBackend.NotesMethod.addNote,
+            request: request
+        )
+        return response.noteID
+    }
+
     public func buryOrSuspend(cardIDs: [Int64], suspend: Bool) throws {
         var request = Anki_Scheduler_BuryOrSuspendCardsRequest()
         request.cardIds = cardIDs
@@ -770,6 +806,79 @@ public final class SaidAnkiServices {
             buryReviews: config.buryReviews,
             buryInterdayLearning: config.buryInterdayLearning,
             source: try response.serializedData()
+        )
+    }
+
+    public func deckPresets(deckID: Int64) throws -> [SaidDeckPreset] {
+        let source = try deckConfigsForUpdate(deckID: deckID)
+        return source.allConfig.map {
+            SaidDeckPreset(
+                id: $0.config.id,
+                name: $0.config.name,
+                useCount: Int($0.useCount)
+            )
+        }.sorted {
+            $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+        }
+    }
+
+    public func selectDeckPreset(deckID: Int64, presetID: Int64) throws {
+        let source = try deckConfigsForUpdate(deckID: deckID)
+        guard let preset = source.allConfig.first(where: { $0.config.id == presetID })?.config else {
+            throw BackendError(kind: .notFoundError, message: "Deck preset is unavailable")
+        }
+        try applyPresetChange(deckID: deckID, source: source, selectedPreset: preset)
+    }
+
+    public func cloneDeckPreset(deckID: Int64, name: String) throws {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
+            throw BackendError(kind: .invalidInput, message: "Preset name cannot be empty")
+        }
+        let source = try deckConfigsForUpdate(deckID: deckID)
+        guard var clone = source.allConfig.first(where: {
+            $0.config.id == source.currentDeck.configID
+        })?.config else {
+            throw BackendError(kind: .notFoundError, message: "Current deck preset is unavailable")
+        }
+        // Config ID 0 asks rslib to allocate a new preset ID. The final config
+        // in the request becomes the selected preset for the target deck.
+        clone.id = 0
+        clone.name = trimmedName
+        try applyPresetChange(deckID: deckID, source: source, selectedPreset: clone)
+    }
+
+    private func deckConfigsForUpdate(
+        deckID: Int64
+    ) throws -> Anki_DeckConfig_DeckConfigsForUpdate {
+        var request = Anki_Decks_DeckId()
+        request.did = deckID
+        return try backend.invoke(
+            service: RustAnkiBackend.Service.deckConfig,
+            method: RustAnkiBackend.DeckConfigMethod.getDeckConfigsForUpdate,
+            request: request
+        )
+    }
+
+    private func applyPresetChange(
+        deckID: Int64,
+        source: Anki_DeckConfig_DeckConfigsForUpdate,
+        selectedPreset: Anki_DeckConfig_DeckConfig
+    ) throws {
+        var request = Anki_DeckConfig_UpdateDeckConfigsRequest()
+        request.targetDeckID = deckID
+        request.configs = [selectedPreset]
+        request.mode = .normal
+        request.limits = source.currentDeck.limits
+        request.cardStateCustomizer = source.cardStateCustomizer
+        request.newCardsIgnoreReviewLimit = source.newCardsIgnoreReviewLimit
+        request.fsrs = source.fsrs
+        request.applyAllParentLimits = source.applyAllParentLimits
+        request.fsrsHealthCheck = source.fsrsHealthCheck
+        try backend.callVoid(
+            service: RustAnkiBackend.Service.deckConfig,
+            method: RustAnkiBackend.DeckConfigMethod.updateDeckConfigs,
+            request: request
         )
     }
 

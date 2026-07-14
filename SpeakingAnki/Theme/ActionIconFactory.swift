@@ -5,6 +5,7 @@ enum ActionIconFactory {
     enum Kind: String {
         case decks
         case browse
+        case cardWalkthrough
         case stats
         case sync
         case settings
@@ -142,6 +143,29 @@ enum ActionIconFactory {
             handle.addLine(to: CGPoint(x: rect.maxX - 2.5, y: rect.maxY - 2.5))
             handle.lineWidth = 1.7
             handle.stroke()
+
+        case .cardWalkthrough:
+            let card = UIBezierPath(roundedRect: CGRect(
+                x: rect.minX + 2,
+                y: rect.minY + 3,
+                width: pointSize * 0.62,
+                height: pointSize * 0.70
+            ), cornerRadius: 2)
+            card.lineWidth = 1.55
+            card.stroke()
+            stroke([
+                CGPoint(x: rect.minX + 5, y: rect.minY + 7),
+                CGPoint(x: rect.minX + pointSize * 0.48, y: rect.minY + 7)
+            ])
+            stroke([
+                CGPoint(x: rect.minX + pointSize * 0.55, y: rect.midY),
+                CGPoint(x: rect.maxX - 2, y: rect.midY),
+                CGPoint(x: rect.maxX - 5, y: rect.midY - 3)
+            ], width: 1.7)
+            stroke([
+                CGPoint(x: rect.maxX - 2, y: rect.midY),
+                CGPoint(x: rect.maxX - 5, y: rect.midY + 3)
+            ], width: 1.7)
 
         case .stats:
             let bars = UIBezierPath()

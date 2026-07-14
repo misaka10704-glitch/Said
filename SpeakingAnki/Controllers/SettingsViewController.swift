@@ -9,7 +9,9 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
   private let dashKeyField = DSTextField(placeholder: "DashScope API 密钥", secure: true)
   private let dashBaseField = DSTextField(placeholder: "DashScope Base URL")
   private let appearanceControl = UISegmentedControl(items: ["浅色", "深色"])
+  private let interfaceScaleControl = UISlider()
   private let dataMaintenanceButton = DSButton(style: .secondary)
+  private let edgeTTSBatchButton = DSButton(style: .secondary)
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -53,6 +55,14 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
     appearanceControl.heightAnchor.constraint(equalToConstant: 34).isActive = true
     appearanceSection.addRow(
       DSFormLayout.labeledControlRow(title: "主题", control: appearanceControl),
+      separated: true
+    )
+    interfaceScaleControl.minimumValue = 0.85
+    interfaceScaleControl.maximumValue = 1.3
+    interfaceScaleControl.value = Float(ThemeManager.shared.interfaceScale)
+    interfaceScaleControl.addTarget(self, action: #selector(interfaceScaleChanged), for: .valueChanged)
+    appearanceSection.addRow(
+      DSFormLayout.labeledControlRow(title: "界面大小", control: interfaceScaleControl),
       separated: false
     )
     stack.addArrangedSubview(appearanceSection)
@@ -69,6 +79,15 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
     )
     dataSection.addRow(dataMaintenanceButton, separated: false)
     stack.addArrangedSubview(dataSection)
+
+    let ttsSection = DSFormSection(
+      title: "Edge TTS 参考音",
+      detail: "按牌组批量预生成参考音。已有本地缓存会自动跳过，复习时无需等待生成。"
+    )
+    edgeTTSBatchButton.setTitle("批量生成参考音", for: .normal)
+    edgeTTSBatchButton.addTarget(self, action: #selector(openEdgeTTSBatch), for: .touchUpInside)
+    ttsSection.addRow(edgeTTSBatchButton, separated: false)
+    stack.addArrangedSubview(ttsSection)
 
     let azureSection = DSFormSection(title: "Azure Speech")
     azureSection.addRow(azureKeyField, separated: false)
@@ -140,11 +159,13 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
     appearanceControl.setTitleTextAttributes([.foregroundColor: colors.textSecondary], for: .normal)
     appearanceControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
     dataMaintenanceButton.setTitleColor(colors.accent, for: .normal)
+    edgeTTSBatchButton.setTitleColor(colors.accent, for: .normal)
 
     for field in [azureKeyField, azureRegionField, dashKeyField, dashBaseField] {
       field.applyTheme()
     }
     dataMaintenanceButton.applyTheme()
+    edgeTTSBatchButton.applyTheme()
     refreshTheme(in: stack)
 
     for label in stack.arrangedSubviews.compactMap({ $0 as? UILabel }) {
@@ -208,8 +229,16 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
     ThemeManager.shared.mode = modes[appearanceControl.selectedSegmentIndex]
   }
 
+  @objc private func interfaceScaleChanged() {
+    ThemeManager.shared.interfaceScale = CGFloat(interfaceScaleControl.value)
+  }
+
   @objc private func openDataMaintenance() {
     navigationController?.pushViewController(DataMaintenanceViewController(), animated: true)
+  }
+
+  @objc private func openEdgeTTSBatch() {
+    navigationController?.pushViewController(EdgeTTSBatchViewController(), animated: true)
   }
 
   @objc private func save() {

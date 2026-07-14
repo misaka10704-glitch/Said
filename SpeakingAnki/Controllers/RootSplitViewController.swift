@@ -231,12 +231,14 @@ final class RootSplitViewController: UIViewController, ThemeRefreshable, UIGestu
     }
 
     private func makeSidebarButton() -> UIBarButtonItem {
-        ActionIconFactory.barItem(
-            kind: .sidebar,
-            target: self,
-            action: #selector(toggleSidebar),
-            accessibility: "Toggle sidebar"
-        )
+        let button = UIButton(type: .system)
+        button.setImage(ActionIconFactory.image(.sidebar, pointSize: 18), for: .normal)
+        button.tintColor = DSTheme.c.accent
+        button.accessibilityLabel = "切换侧栏"
+        button.addTarget(self, action: #selector(toggleSidebar), for: .touchUpInside)
+        button.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        return UIBarButtonItem(customView: button)
     }
 
     private func updateSidebarButton() {

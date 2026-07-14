@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A1100010000000000000001 /* AddSpeakingCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100010000000000000011 /* AddSpeakingCardViewController.swift */; };
+		0A1100020000000000000002 /* DeckPracticePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100020000000000000012 /* DeckPracticePreferencesViewController.swift */; };
+		0A1100030000000000000003 /* EdgeTTSBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100030000000000000013 /* EdgeTTSBatchViewController.swift */; };
+		0A1100040000000000000004 /* DeckPracticePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100040000000000000014 /* DeckPracticePreferences.swift */; };
+		0A1100050000000000000005 /* SpeakingResultHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100050000000000000015 /* SpeakingResultHistoryStore.swift */; };
 		0479BB3B768AD447FAAABE96 /* SpeakingPracticeVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C00A5F6E5BA63D71102F5E7 /* SpeakingPracticeVisuals.swift */; };
 		13FFDD45A9583F5B5EA2A613 /* PronounceHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1C0312A5CD8F7A0EBF8637 /* PronounceHistoryStore.swift */; };
 		188AF1A354BF8543C769D5C4 /* DeckOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303C8B325F6A4F54A53037FB /* DeckOptionsViewController.swift */; };
@@ -61,6 +66,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A1100010000000000000011 /* AddSpeakingCardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSpeakingCardViewController.swift; sourceTree = "<group>"; };
+		0A1100020000000000000012 /* DeckPracticePreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckPracticePreferencesViewController.swift; sourceTree = "<group>"; };
+		0A1100030000000000000013 /* EdgeTTSBatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeTTSBatchViewController.swift; sourceTree = "<group>"; };
+		0A1100040000000000000014 /* DeckPracticePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckPracticePreferences.swift; sourceTree = "<group>"; };
+		0A1100050000000000000015 /* SpeakingResultHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakingResultHistoryStore.swift; sourceTree = "<group>"; };
 		0380B48A86AEF151CD5147BB /* AnkiManagementModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiManagementModels.swift; sourceTree = "<group>"; };
 		0418318FFCF0C042434A1C2F /* CardModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModels.swift; sourceTree = "<group>"; };
 		058B7EBC561CFE34F23DA22B /* BrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserViewController.swift; sourceTree = "<group>"; };
@@ -194,12 +204,15 @@
 		7A36F9006D0E8CF3D7AE3631 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				0A1100010000000000000011 /* AddSpeakingCardViewController.swift */,
 				0380B48A86AEF151CD5147BB /* AnkiManagementModels.swift */,
 				058B7EBC561CFE34F23DA22B /* BrowserViewController.swift */,
 				215E7CCF4AFD88DBA7B95153 /* DataMaintenanceViewController.swift */,
 				4B0B84169C570F00C540E476 /* DeckCustomStudyViewController.swift */,
+				0A1100020000000000000012 /* DeckPracticePreferencesViewController.swift */,
 				9873D354EAE12E57862B610E /* DeckListViewController.swift */,
 				303C8B325F6A4F54A53037FB /* DeckOptionsViewController.swift */,
+				0A1100030000000000000013 /* EdgeTTSBatchViewController.swift */,
 				5D208DC73608777D31765828 /* DeckParentPickerViewController.swift */,
 				FB73F04851DBE9D9685473F0 /* NoteEditorViewController.swift */,
 				7638E779FB034A175B8842A1 /* ReviewViewController.swift */,
@@ -244,6 +257,7 @@
 				C8EFAD87F6102462BE9D9F16 /* AudioRecorder.swift */,
 				6CFA8B633862B720C2D3231E /* AzureSpeechResponse.swift */,
 				757564E4736C63920421021F /* AzureSpeechService.swift */,
+				0A1100040000000000000014 /* DeckPracticePreferences.swift */,
 				53308E6E8B4D5916DE136FAE /* EdgeTTSService.swift */,
 				AA9DA61A2869CC63D9C084AF /* IELTSNativeService.swift */,
 				F828CB2238CFCCFF2BB67F52 /* IELTSServiceModels.swift */,
@@ -252,6 +266,7 @@
 				7960DB303E60B5EFD5E1EE3E /* PronounceAssessment.swift */,
 				F1FF9F1B96D3BFDE163B9A33 /* PronounceAttachments.swift */,
 				FF1C0312A5CD8F7A0EBF8637 /* PronounceHistoryStore.swift */,
+				0A1100050000000000000015 /* SpeakingResultHistoryStore.swift */,
 				74191EDBBAE2515D5AB147EF /* PronounceSessionController.swift */,
 				53987C0559D242BBEB0864A2 /* QwenService.swift */,
 			);
@@ -362,6 +377,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A1100010000000000000001 /* AddSpeakingCardViewController.swift in Sources */,
 				DB71FB431283D42A70FD5F2C /* ActionIconFactory.swift in Sources */,
 				A1D315802FFFBE9F3F3ECC55 /* AnkiBackend.swift in Sources */,
 				37E8B079FAA7AACC55615330 /* AnkiCollection.swift in Sources */,
@@ -379,8 +395,11 @@
 				6D8CD4E55D23642196A10DBF /* DSTheme.swift in Sources */,
 				B8C6016B0DA50F637CF2D043 /* DataMaintenanceViewController.swift in Sources */,
 				EFFA62CCE5D27A8B6274D2F7 /* DeckCustomStudyViewController.swift in Sources */,
+				0A1100020000000000000002 /* DeckPracticePreferencesViewController.swift in Sources */,
+				0A1100040000000000000004 /* DeckPracticePreferences.swift in Sources */,
 				7E263BB69A3208D84CD37813 /* DeckListViewController.swift in Sources */,
 				188AF1A354BF8543C769D5C4 /* DeckOptionsViewController.swift in Sources */,
+				0A1100030000000000000003 /* EdgeTTSBatchViewController.swift in Sources */,
 				E47A3DBDD097513F7EEF3740 /* DeckParentPickerViewController.swift in Sources */,
 				831088E6E1C1E9CCF421829F /* EdgeTTSService.swift in Sources */,
 				2BA5C93EB22380897B6DCA57 /* IELTSNativeService.swift in Sources */,
@@ -395,6 +414,7 @@
 				34F86216C450FFDCA62F0035 /* PronounceAttachments.swift in Sources */,
 				5DCDC9F23B91E23C666FD835 /* PronounceDomain.swift in Sources */,
 				13FFDD45A9583F5B5EA2A613 /* PronounceHistoryStore.swift in Sources */,
+				0A1100050000000000000005 /* SpeakingResultHistoryStore.swift in Sources */,
 				87086CEB92247639CEC68A2B /* PronounceMode.swift in Sources */,
 				22A3B75B26FA49B106B61331 /* PronounceSessionController.swift in Sources */,
 				91BCC458E2742401FBE140C6 /* QwenService.swift in Sources */,

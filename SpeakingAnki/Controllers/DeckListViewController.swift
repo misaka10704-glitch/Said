@@ -83,19 +83,25 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
     }
 
     private func configureNavigationItems() {
-        let add = ActionIconFactory.barItem(
-            kind: .createDeck,
-            target: self,
-            action: #selector(showAddMenu(_:)),
-            accessibility: "创建牌组"
-        )
-        let importItem = ActionIconFactory.barItem(
-            kind: .importFile,
-            target: self,
-            action: #selector(importApkg),
-            accessibility: "导入 APKG"
-        )
-        navigationItem.rightBarButtonItems = [add, importItem]
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.spacing = 8
+        for (icon, selector, label) in [
+            (ActionIconFactory.Kind.createDeck, #selector(showAddMenu(_:)), "创建牌组"),
+            (ActionIconFactory.Kind.importFile, #selector(importApkg), "导入 APKG")
+        ] {
+            let button = UIButton(type: .system)
+            let pointSize: CGFloat = icon == .importFile ? 14 : 18
+            button.setImage(ActionIconFactory.image(icon, pointSize: pointSize), for: .normal)
+            button.tintColor = DSTheme.c.accent
+            button.accessibilityLabel = label
+            button.addTarget(self, action: selector, for: .touchUpInside)
+            button.widthAnchor.constraint(equalToConstant: 32).isActive = true
+            button.heightAnchor.constraint(equalToConstant: 32).isActive = true
+            stack.addArrangedSubview(button)
+        }
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stack)
     }
 
     private func configureTable() {
@@ -172,7 +178,7 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
         tableView.reloadData()
     }
 
-    @objc private func showAddMenu(_ sender: UIBarButtonItem) {
+    @objc private func showAddMenu(_ sender: Any) {
         SaidMenu.present(
             from: self,
             title: "添加",
@@ -187,10 +193,12 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
                     self?.importApkg()
                 },
             ],
-            barButtonItem: sender,
+            sourceView: sender as? UIView ?? view,
+            sourceRect: (sender as? UIView)?.bounds,
             preferVertical: true
         )
     }
+
 
     private func promptCreateDeck(parent: DeckManagementNode?) {
         guard parent?.filtered != true else {

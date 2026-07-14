@@ -73,6 +73,19 @@ final class EdgeTTSService: EdgeTTSProviding {
         return PronounceCancellation { operation.cancel() }
     }
 
+    /// Used by the batch pre-generator so its progress represents network
+    /// work still needed, rather than every card in a deck.
+    func hasCachedAudio(
+        text: String,
+        voice: String = EdgeTTSService.defaultVoice
+    ) -> Bool {
+        let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalized.isEmpty else { return false }
+        let destination = cacheDirectory
+            .appendingPathComponent("ref_\(Self.sha256("\(voice)\n\(normalized)")).mp3")
+        return Self.isUsableAudioFile(destination)
+    }
+
     private static func sha256(_ value: String) -> String {
         let data = Data(value.utf8)
         var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))

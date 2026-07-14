@@ -22,11 +22,18 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
         return button
     }()
     private lazy var undoButton = UIBarButtonItem(customView: undoControl)
+    private lazy var tagButton = UIBarButtonItem(
+        title: "标签",
+        style: .plain,
+        target: self,
+        action: #selector(addTagsToCurrentCard)
+    )
 
     private let pronounceSession = PronounceSessionController()
     private let player = AudioPlayer()
     private let edgeTTS = EdgeTTSService.shared
     private let ieltsService = IELTSNativeService()
+    private let resultHistory = SpeakingResultHistoryStore.shared
 
     private var card: AnkiCardSnapshot?
     private var mode: PracticeMode = .unsupported
@@ -48,6 +55,9 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     private var cardSpeechText = ""
     private var activeEdgeTTSTask: PronounceCancellable?
     private var activeIELTSTask: IELTSServiceTask?
+    private var deckPreferences: DeckPracticePreferences {
+        DeckPracticePreferencesStore.shared.preferences(for: deckId)
+    }
 
     private var resultHeight: NSLayoutConstraint!
     private var webPreferredHeight: NSLayoutConstraint!
@@ -66,7 +76,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     override func viewDidLoad() {
         super.viewDidLoad()
         title = deckName
-        navigationItem.rightBarButtonItem = undoButton
+        navigationItem.rightBarButtonItems = [tagButton, undoButton]
         undoControl.isEnabled = false
         buildLayout()
         bindActions()
@@ -130,7 +140,8 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        let compactCardHeight: CGFloat = view.bounds.height < 700 ? 132 : (view.bounds.height < 850 ? 170 : 210)
+        let scale = ThemeManager.shared.interfaceScale
+        let compactCardHeight: CGFloat = (view.bounds.height < 700 ? 132 : (view.bounds.height < 850 ? 170 : 210)) * scale
         if webPreferredHeight.constant != compactCardHeight {
             webPreferredHeight.constant = compactCardHeight
         }
@@ -214,6 +225,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
         }
         easeBar.onEase = { [weak self] ease in self?.answer(ease) }
         resultPanel.onCollapseChange = { [weak self] collapsed in
+            UserDefaults.standard.set(collapsed, forKey: "said_result_panel_collapsed")
             self?.setResultCollapsed(collapsed)
         }
         cardView.onReveal = { [weak self] in
@@ -244,6 +256,8 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
         showEaseBar(true)
         easeBar.setIntervals([:])
         resultPanel.reset()
+        // Each new card starts expanded; collapse is a deliberate per-card action,
+        // never an automatic space-saving transition.
         setResultCollapsed(false, animated: false)
         cardView.conceal()
         controlBar.setTitle("录音", for: .record)
@@ -265,6 +279,11 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             }
             card = next
             mode = ModeRouter.mode(for: next, deckHint: deckName)
+            if deckPreferences.curtainEnabled {
+                cardView.conceal()
+            } else {
+                cardView.reveal()
+            }
             easeBar.setIntervals(next.nextIntervals)
             setAnswerControlsEnabled(true)
             setStatus("\(modeTitle(mode))  ·  \(next.modelName)")
@@ -283,6 +302,11 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
                 pronounceSession.configureRecording(card: next)
                 controlBar.setEnabled(referenceAvailable, for: .reference)
                 controlBar.setEnabled(!playbackMediaQueue.isEmpty, for: .playback)
+            }
+            resultHistory.latest(cardID: next.cardId) { [weak self] snapshot in
+                guard let self = self, self.card?.cardId == next.cardId, let snapshot = snapshot else { return }
+                self.resultPanel.render(snapshot.content())
+                self.setResultCollapsed(false, animated: false)
             }
         } catch {
             card = nil
@@ -445,7 +469,6 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             controlBar.setEnabled(false, for: .playback)
             controlBar.setEnabled(false, for: .score)
             setStatus("录音中…")
-            resultPanel.showStatus("正在录音…")
         case .recorded:
             isRecording = false
             easeBar.setEnabled(card != nil)
@@ -454,7 +477,6 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             controlBar.setEnabled(mode != .unsupported, for: .score)
             controlBar.setEnabled(referenceAvailable, for: .reference)
             setStatus("录音完成，可回放或评分")
-            resultPanel.showStatus("录音已就绪，评分后显示详细结果")
         case .scoring:
             isRecording = false
             setScoringUI(message: "Azure 发音评分中…")
@@ -462,7 +484,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             isRecording = false
             restoreAfterScoring()
             attachCurrentRecordingIfNeeded()
-            resultPanel.render(pronounceContent(entry))
+            renderAndPersist(pronounceContent(entry))
             setStatus("Pronounce 评分完成，可再次录音或选择 Anki 难度")
         case .failed(let message, _):
             isRecording = false
@@ -526,7 +548,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             self.activeIELTSTask = nil
             self.restoreAfterScoring()
             self.attachCurrentRecordingIfNeeded()
-            self.resultPanel.render(self.ieltsContent(result))
+            self.renderAndPersist(self.ieltsContent(result))
             let suffix = result.failedStages.isEmpty ? "" : "（部分服务失败）"
             self.setStatus("IELTS \(part.displayName) 完成\(suffix)，可再次录音或选择 Anki 难度")
         })
@@ -608,7 +630,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
             }
             self.restoreAfterScoring()
             self.attachCurrentRecordingIfNeeded()
-            self.resultPanel.render(self.composeContent(score))
+            self.renderAndPersist(self.composeContent(score))
             self.setStatus("Compose 完成，可再次录音或选择 Anki 难度")
         }
     }
@@ -619,7 +641,6 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
         controlBar.setEnabled(false, for: .record)
         controlBar.setEnabled(false, for: .playback)
         setStatus(message)
-        resultPanel.showStatus(message, expand: true)
     }
 
     private func restoreAfterScoring() {
@@ -646,6 +667,37 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
         }
     }
 
+    @objc private func addTagsToCurrentCard() {
+        guard let card = card else { return }
+        let alert = UIAlertController(
+            title: "为当前卡片添加标签",
+            message: "用空格分隔多个标签。",
+            preferredStyle: .alert
+        )
+        alert.addTextField { $0.placeholder = "例如 pronunciation travel" }
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel))
+        alert.addAction(UIAlertAction(title: "添加", style: .default) { [weak self, weak alert] _ in
+            let tags = alert?.textFields?.first?.text?
+                .split(whereSeparator: { $0.isWhitespace })
+                .map(String.init) ?? []
+            guard !tags.isEmpty else { return }
+            do {
+                try AnkiStore.shared.requireCollection().addTags(tags, toNoteID: card.noteId)
+                self?.setStatus("已添加标签：\(tags.joined(separator: " "))")
+            } catch {
+                self?.setStatus("添加标签失败：\(error.localizedDescription)", error: true)
+            }
+        })
+        present(alert, animated: true)
+    }
+
+    private func renderAndPersist(_ content: SpeakingResultContent) {
+        resultPanel.render(content)
+        if let card = card {
+            resultHistory.save(cardID: card.cardId, content: content)
+        }
+    }
+
     private func pronounceContent(_ entry: PronounceHistoryEntry) -> SpeakingResultContent {
         let score = entry.score
         let weak = score.weakestWords.prefix(12).map { word in
@@ -667,7 +719,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
         ]
         if let prosody = score.prosody { metrics.append(SpeakingMetric(title: "韵律", value: prosody)) }
         return SpeakingResultContent(
-            title: "Pronounce · \(entry.target.referenceText)",
+            title: "Pronounce 评分结果",
             transcript: score.transcript,
             metrics: metrics,
             sections: [],
@@ -935,21 +987,25 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
 
     private func cardThemeStyle() -> String {
         let colors = DSTheme.c
+        let preferences = deckPreferences
+        let sentenceAlignment = preferences.centerSentence ? "center" : "left"
+        let sentenceSize = CGFloat(preferences.sentenceFontSize) * ThemeManager.shared.interfaceScale
         return """
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
         :root { color-scheme: \(ThemeManager.shared.mode == .dark ? "dark" : "light"); }
         html, body { background: \(hex(colors.surface)) !important; color: \(hex(colors.textPrimary)) !important;
           font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-        body { margin: 0; padding: 12px 16px; box-sizing: border-box; min-height: 100%; }
+        body { margin: 0; padding: 12px 16px; box-sizing: border-box; min-height: 100%;
+          text-align: \(sentenceAlignment); font-size: \(sentenceSize)px; }
         a { color: \(hex(colors.accent)); }
         .said-replay { display:inline-block; padding:7px 11px; margin:4px; border-radius:8px;
           background:\(hex(colors.surfaceHover)); color:\(hex(colors.accent)); text-decoration:none; }
         .said-missing-audio { color:\(hex(colors.textTertiary)); font-size:13px; }
         .said-original-label { margin-top:16px; color:\(hex(colors.textTertiary)); font-size:11px;
           font-weight:600; letter-spacing:.5px; text-align:center; }
-        .said-original-question { margin:7px auto 4px; max-width:720px; font-size:21px;
-          line-height:1.45; font-weight:600; text-align:center; }
+        .said-original-question { margin:7px auto 4px; max-width:720px; font-size:\(sentenceSize)px;
+          line-height:1.45; font-weight:600; text-align:\(sentenceAlignment); }
         </style>
         """
     }
