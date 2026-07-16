@@ -354,29 +354,65 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     }
 
     private func reviewHTML(for card: AnkiCardSnapshot) -> String {
+        let chinese = NoteFieldMapper.chineseText(for: card)
         if mode == .ielts {
             let question = IELTSSpeakingMode.question(for: card)
-            guard !question.isEmpty else { return card.frontHTML }
-            // Do not reveal the original front template: it also contains topic,
-            // level and usage instructions. The Question field is the source of truth.
-            return """
-            <html><body>
-            <div class="said-original-label">ORIGINAL QUESTION</div>
-            <div class="said-original-question">\(escapeHTML(question))</div>
-            </body></html>
+            guard !question.isEmpty else { return injectChinese(into: card.frontHTML, chinese: chinese) }
+            return cardFaceHTML(
+                label: "ORIGINAL QUESTION",
+                english: question,
+                chinese: chinese
+            )
+        }
+        if mode == .pronounce {
+            if ModeRouter.isSpeed(card, deckHint: deckName),
+               let target = PronounceReferenceTargetParser.parse(card: card, deckHint: deckName) {
+                return cardFaceHTML(
+                    label: "SPEED SENTENCE",
+                    english: target.referenceText,
+                    chinese: chinese
+                )
+            }
+            if let target = PronounceReferenceTargetParser.parse(card: card, deckHint: deckName),
+               target.granularity != .phoneme {
+                let label = target.granularity == .sentence ? "SENTENCE" : "PHRASE"
+                return cardFaceHTML(
+                    label: label,
+                    english: target.referenceText,
+                    chinese: chinese
+                )
+            }
+        }
+        return injectChinese(into: card.frontHTML, chinese: chinese)
+    }
+
+    private func cardFaceHTML(label: String, english: String, chinese: String?) -> String {
+        var body = """
+        <div class="said-original-label">\(escapeHTML(label))</div>
+        <div class="said-original-question">\(escapeHTML(english))</div>
+        """
+        if let chinese = chinese, !chinese.isEmpty {
+            body += """
+            <div class="said-chinese-translation">\(escapeHTML(chinese))</div>
             """
         }
-        if mode == .pronounce,
-           ModeRouter.isSpeed(card, deckHint: deckName),
-           let target = PronounceReferenceTargetParser.parse(card: card, deckHint: deckName) {
-            return """
-            <html><body>
-            <div class="said-original-label">SPEED SENTENCE</div>
-            <div class="said-original-question">\(escapeHTML(target.referenceText))</div>
-            </body></html>
-            """
+        return "<html><body>\(body)</body></html>"
+    }
+
+    private func injectChinese(into html: String, chinese: String?) -> String {
+        guard let chinese = chinese?.trimmingCharacters(in: .whitespacesAndNewlines), !chinese.isEmpty else {
+            return html
         }
-        return card.frontHTML
+        if html.contains(chinese) { return html }
+        let snippet = """
+        <div class="said-chinese-translation">\(escapeHTML(chinese))</div>
+        """
+        if let bodyEnd = html.range(of: "</body>", options: .caseInsensitive) {
+            var updated = html
+            updated.insert(contentsOf: snippet, at: bodyEnd.lowerBound)
+            return updated
+        }
+        return html + snippet
     }
 
     private func toggleRecording() {
@@ -1006,6 +1042,8 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
           font-weight:600; letter-spacing:.5px; text-align:center; }
         .said-original-question { margin:7px auto 4px; max-width:720px; font-size:\(sentenceSize)px;
           line-height:1.45; font-weight:600; text-align:\(sentenceAlignment); }
+        .said-chinese-translation { margin:10px auto 4px; max-width:720px; font-size:\(max(15, sentenceSize - 2))px;
+          line-height:1.45; font-weight:500; color:\(hex(DSTheme.easeGood)); text-align:\(sentenceAlignment); }
         </style>
         """
     }

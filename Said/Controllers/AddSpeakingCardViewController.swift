@@ -98,7 +98,7 @@ final class AddSpeakingCardViewController: UIViewController, ThemeRefreshable {
             showMessage("请输入单词、短语或句子。")
             return
         }
-        guard let primaryIndex = primaryContentFieldIndex(in: type) else {
+        guard let primaryIndex = NoteFieldMapper.primaryContentFieldIndex(in: type.fieldNames) else {
             showMessage("模板没有可识别的内容字段。请在“牌组选项”换一个模板。")
             return
         }
@@ -111,7 +111,7 @@ final class AddSpeakingCardViewController: UIViewController, ThemeRefreshable {
                     deckID: self?.deckID ?? 0,
                     notetypeID: type.id,
                     fields: values,
-                    tags: []
+                    tags: [SaidNoteTags.needsTranslation]
                 )
             }
             DispatchQueue.main.async {
@@ -125,14 +125,6 @@ final class AddSpeakingCardViewController: UIViewController, ThemeRefreshable {
                     self.showMessage(error.localizedDescription)
                 }
             }
-        }
-    }
-
-    private func primaryContentFieldIndex(in type: SaidNotetype) -> Int? {
-        let names = ["word", "phrase", "english", "sentence", "text", "front", "单词", "短语", "句子"]
-        return type.fieldNames.firstIndex { field in
-            let value = field.lowercased()
-            return names.contains { value == $0 || value.contains($0) }
         }
     }
 

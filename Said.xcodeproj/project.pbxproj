@@ -10,6 +10,9 @@
 		0A1100010000000000000001 /* AddSpeakingCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100010000000000000011 /* AddSpeakingCardViewController.swift */; };
 		0A1100020000000000000002 /* DeckPracticePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100020000000000000012 /* DeckPracticePreferencesViewController.swift */; };
 		0A1100030000000000000003 /* EdgeTTSBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100030000000000000013 /* EdgeTTSBatchViewController.swift */; };
+		0A1100060000000000000006 /* TranslationBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100060000000000000016 /* TranslationBatchViewController.swift */; };
+		0A1100070000000000000007 /* TranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100070000000000000017 /* TranslationService.swift */; };
+		0A1100080000000000000008 /* NoteFieldMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100080000000000000018 /* NoteFieldMapper.swift */; };
 		0A1100040000000000000004 /* DeckPracticePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100040000000000000014 /* DeckPracticePreferences.swift */; };
 		0A1100050000000000000005 /* SpeakingResultHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1100050000000000000015 /* SpeakingResultHistoryStore.swift */; };
 		0479BB3B768AD447FAAABE96 /* SpeakingPracticeVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C00A5F6E5BA63D71102F5E7 /* SpeakingPracticeVisuals.swift */; };
@@ -69,6 +72,9 @@
 		0A1100010000000000000011 /* AddSpeakingCardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSpeakingCardViewController.swift; sourceTree = "<group>"; };
 		0A1100020000000000000012 /* DeckPracticePreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckPracticePreferencesViewController.swift; sourceTree = "<group>"; };
 		0A1100030000000000000013 /* EdgeTTSBatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeTTSBatchViewController.swift; sourceTree = "<group>"; };
+		0A1100060000000000000016 /* TranslationBatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationBatchViewController.swift; sourceTree = "<group>"; };
+		0A1100070000000000000017 /* TranslationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationService.swift; sourceTree = "<group>"; };
+		0A1100080000000000000018 /* NoteFieldMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteFieldMapper.swift; sourceTree = "<group>"; };
 		0A1100040000000000000014 /* DeckPracticePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckPracticePreferences.swift; sourceTree = "<group>"; };
 		0A1100050000000000000015 /* SpeakingResultHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakingResultHistoryStore.swift; sourceTree = "<group>"; };
 		0380B48A86AEF151CD5147BB /* AnkiManagementModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiManagementModels.swift; sourceTree = "<group>"; };
@@ -213,6 +219,7 @@
 				9873D354EAE12E57862B610E /* DeckListViewController.swift */,
 				303C8B325F6A4F54A53037FB /* DeckOptionsViewController.swift */,
 				0A1100030000000000000013 /* EdgeTTSBatchViewController.swift */,
+				0A1100060000000000000016 /* TranslationBatchViewController.swift */,
 				5D208DC73608777D31765828 /* DeckParentPickerViewController.swift */,
 				FB73F04851DBE9D9685473F0 /* NoteEditorViewController.swift */,
 				7638E779FB034A175B8842A1 /* ReviewViewController.swift */,
@@ -259,6 +266,7 @@
 				757564E4736C63920421021F /* AzureSpeechService.swift */,
 				0A1100040000000000000014 /* DeckPracticePreferences.swift */,
 				53308E6E8B4D5916DE136FAE /* EdgeTTSService.swift */,
+				0A1100070000000000000017 /* TranslationService.swift */,
 				AA9DA61A2869CC63D9C084AF /* IELTSNativeService.swift */,
 				F828CB2238CFCCFF2BB67F52 /* IELTSServiceModels.swift */,
 				0ECC0D80B5469545DFA945E2 /* KeychainStore.swift */,
@@ -291,6 +299,7 @@
 				6C085E1140C637189ED3E7D7 /* AnkiScheduler.swift */,
 				ED307B5CBCA9876C842D3EC2 /* AnkiStore.swift */,
 				0418318FFCF0C042434A1C2F /* CardModels.swift */,
+				0A1100080000000000000018 /* NoteFieldMapper.swift */,
 				32A8109037EBC7222C91FE49 /* OfficialAnkiCollection.swift */,
 				6A88181C33E9FA2CA5C55919 /* SimpleZip.swift */,
 			);
@@ -400,8 +409,10 @@
 				7E263BB69A3208D84CD37813 /* DeckListViewController.swift in Sources */,
 				188AF1A354BF8543C769D5C4 /* DeckOptionsViewController.swift in Sources */,
 				0A1100030000000000000003 /* EdgeTTSBatchViewController.swift in Sources */,
+				0A1100060000000000000006 /* TranslationBatchViewController.swift in Sources */,
 				E47A3DBDD097513F7EEF3740 /* DeckParentPickerViewController.swift in Sources */,
 				831088E6E1C1E9CCF421829F /* EdgeTTSService.swift in Sources */,
+				0A1100070000000000000007 /* TranslationService.swift in Sources */,
 				2BA5C93EB22380897B6DCA57 /* IELTSNativeService.swift in Sources */,
 				D9C1B275419E8141AB9B2409 /* IELTSServiceModels.swift in Sources */,
 				9C07D3D74C270A23AABE1CCE /* IELTSSpeakingMode.swift in Sources */,
@@ -410,6 +421,7 @@
 				906DE9F250BBB033F73000FC /* ModeRouter.swift in Sources */,
 				20B5E2128ADAA627863FBFE3 /* NoteEditorViewController.swift in Sources */,
 				71A9F6EC681B360D3E8CE902 /* OfficialAnkiCollection.swift in Sources */,
+				0A1100080000000000000008 /* NoteFieldMapper.swift in Sources */,
 				8C7D9D8FE2C7C7ED5F379A81 /* PronounceAssessment.swift in Sources */,
 				34F86216C450FFDCA62F0035 /* PronounceAttachments.swift in Sources */,
 				5DCDC9F23B91E23C666FD835 /* PronounceDomain.swift in Sources */,

@@ -12,6 +12,7 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
   private let interfaceScaleControl = UISlider()
   private let dataMaintenanceButton = DSButton(style: .secondary)
   private let edgeTTSBatchButton = DSButton(style: .secondary)
+  private let translationBatchButton = DSButton(style: .secondary)
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -89,12 +90,22 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
     ttsSection.addRow(edgeTTSBatchButton, separated: false)
     stack.addArrangedSubview(ttsSection)
 
+    let translationSection = DSFormSection(
+      title: "中文翻译",
+      detail: "按牌组批量翻译本 App 新增的卡片。已有中文的正常显示；仅带 trans 标签的笔记会进入翻译队列。"
+    )
+    translationBatchButton.setTitle("批量翻译中文", for: .normal)
+    translationBatchButton.addTarget(
+      self, action: #selector(openTranslationBatch), for: .touchUpInside)
+    translationSection.addRow(translationBatchButton, separated: false)
+    stack.addArrangedSubview(translationSection)
+
     let azureSection = DSFormSection(title: "Azure Speech")
     azureSection.addRow(azureKeyField, separated: false)
     azureSection.addRow(azureRegionField)
     stack.addArrangedSubview(azureSection)
 
-    let dashSection = DSFormSection(title: "Qwen / DashScope（口语表达模式）")
+    let dashSection = DSFormSection(title: "Qwen / DashScope（口语表达与翻译）")
     dashSection.addRow(dashKeyField, separated: false)
     dashSection.addRow(dashBaseField)
     stack.addArrangedSubview(dashSection)
@@ -160,12 +171,14 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
     appearanceControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
     dataMaintenanceButton.setTitleColor(colors.accent, for: .normal)
     edgeTTSBatchButton.setTitleColor(colors.accent, for: .normal)
+    translationBatchButton.setTitleColor(colors.accent, for: .normal)
 
     for field in [azureKeyField, azureRegionField, dashKeyField, dashBaseField] {
       field.applyTheme()
     }
     dataMaintenanceButton.applyTheme()
     edgeTTSBatchButton.applyTheme()
+    translationBatchButton.applyTheme()
     refreshTheme(in: stack)
 
     for label in stack.arrangedSubviews.compactMap({ $0 as? UILabel }) {
@@ -239,6 +252,10 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
 
   @objc private func openEdgeTTSBatch() {
     navigationController?.pushViewController(EdgeTTSBatchViewController(), animated: true)
+  }
+
+  @objc private func openTranslationBatch() {
+    navigationController?.pushViewController(TranslationBatchViewController(), animated: true)
   }
 
   @objc private func save() {

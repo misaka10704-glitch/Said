@@ -13,6 +13,17 @@ struct OfficialDeckDeletionResult: Equatable {
     let backupCreated: Bool
 }
 
+struct TranslationNoteCandidate: Equatable {
+    let noteID: Int64
+    let sourceText: String
+    let targetFieldIndex: Int
+}
+
+struct DeckTranslationSummary: Equatable {
+    let total: Int
+    let missing: Int
+}
+
 /// Compatibility adapter that keeps the existing UIKit reviewer model while
 /// delegating collection, rendering and scheduling to official Anki rslib.
 final class OfficialAnkiCollection {
@@ -469,15 +480,135 @@ final class OfficialAnkiCollection {
         }
     }
 
-    func referenceTexts(inDeck deckID: Int64) throws -> [String] {
-        let decks = try listDecks()
-        guard let deck = decks.first(where: { $0.id == deckID }) else {
+    func translationSummary(inDeck deckID: Int64) throws -> DeckTranslationSummary {
+        let noteIDs = try taggedNoteIDs(inDeck: deckID)
+        var pending = 0
+        for noteID in noteIDs {
+            if try translationCandidate(noteID: noteID) != nil {
+                pending += 1
+            }
+        }
+        return DeckTranslationSummary(total: noteIDs.count, missing: pending)
+    }
+
+    func translationCandidates(inDeck deckID: Int64) throws -> [TranslationNoteCandidate] {
+        try taggedNoteIDs(inDeck: deckID).compactMap { try translationCandidate(noteID: $0) }
+    }
+
+    func applyTranslation(noteID: Int64, targetFieldIndex: Int, translation: String) throws {
+        var note = try services.note(id: noteID)
+        guard note.fields.indices.contains(targetFieldIndex) else {
+            throw AnkiError.openFailed("Translation field is no longer available.")
+        }
+        let trimmed = translation.trimmingCharacters(in: .whitespacesAndNewlines)
+        if NoteFieldMapper.shouldEmbedWordMeaning(in: note.fields[targetFieldIndex]) {
+            note.fields[targetFieldIndex] = NoteFieldMapper.mergeWordMeaning(
+                trimmed,
+                into: note.fields[targetFieldIndex]
+            )
+        } else {
+            note.fields[targetFieldIndex] = trimmed
+        }
+        note.tags = SaidNoteTags.removingNeedsTranslation(from: note.tags)
+        try services.update(note)
+    }
+
+    private func translationCandidate(noteID: Int64) throws -> TranslationNoteCandidate? {
+        let note = try services.note(id: noteID)
+        guard SaidNoteTags.hasNeedsTranslation(note.tags) else { return nil }
+        let type = try services.notetype(id: note.notetypeID)
+        guard
+            let sourceIndex = NoteFieldMapper.sourceFieldIndex(
+                in: type.fieldNames,
+                fields: note.fields
+            ),
+            let targetIndex = NoteFieldMapper.translationTargetIndex(
+                in: type.fieldNames,
+                sourceIndex: sourceIndex,
+                fields: note.fields
+            ),
+            sourceIndex != targetIndex,
+            sourceIndex < note.fields.count,
+            targetIndex < note.fields.count
+        else { return nil }
+
+        let sourcePlain = PronounceReferenceTargetParser.stripField(note.fields[sourceIndex])
+        guard !sourcePlain.isEmpty else { return nil }
+        guard NoteFieldMapper.lacksChineseTranslation(note.fields[targetIndex]) else { return nil }
+        return TranslationNoteCandidate(
+            noteID: noteID,
+            sourceText: sourcePlain,
+            targetFieldIndex: targetIndex
+        )
+    }
+
+    private func taggedNoteIDs(inDeck deckID: Int64) throws -> [Int64] {
+        let deckIDs = try descendantDeckIDs(for: deckID)
+        var noteIDs = Set<Int64>()
+
+        for query in [
+            "tag:trans",
+            "tag:said::needs_translation",
+            "tag:needs_translation",
+        ] {
+            for noteID in try services.searchNotes(query) {
+                if try noteIsInDeckTree(noteID, deckIDs: deckIDs) {
+                    noteIDs.insert(noteID)
+                }
+            }
+        }
+
+        for cardID in try cardIDs(inDeck: deckID) {
+            let noteID = try services.card(id: cardID).noteID
+            let note = try services.note(id: noteID)
+            if SaidNoteTags.hasNeedsTranslation(note.tags) {
+                noteIDs.insert(noteID)
+            }
+        }
+
+        return noteIDs.sorted()
+    }
+
+    private func descendantDeckIDs(for deckID: Int64) throws -> Set<Int64> {
+        let tree = try services.deckTree()
+        guard let ids = findDescendantDeckIDs(rootID: deckID, in: tree) else {
             throw AnkiError.notFound
         }
-        let escapedName = deck.name
-            .replacingOccurrences(of: "\\", with: "\\\\")
-            .replacingOccurrences(of: "\"", with: "\\\"")
-        let cardIDs = try services.searchCards("deck:\"\(escapedName)\"")
+        return ids
+    }
+
+    private func findDescendantDeckIDs(rootID: Int64, in nodes: [SaidDeck]) -> Set<Int64>? {
+        for node in nodes {
+            if node.id == rootID {
+                var ids: Set<Int64> = [node.id]
+                collectDescendantDeckIDs(from: node.children, into: &ids)
+                return ids
+            }
+            if let found = findDescendantDeckIDs(rootID: rootID, in: node.children) {
+                return found
+            }
+        }
+        return nil
+    }
+
+    private func collectDescendantDeckIDs(from nodes: [SaidDeck], into ids: inout Set<Int64>) {
+        for node in nodes {
+            ids.insert(node.id)
+            collectDescendantDeckIDs(from: node.children, into: &ids)
+        }
+    }
+
+    private func noteIsInDeckTree(_ noteID: Int64, deckIDs: Set<Int64>) throws -> Bool {
+        for cardID in try services.searchCards("nid:\(noteID)") {
+            if deckIDs.contains(try services.card(id: cardID).deckID) {
+                return true
+            }
+        }
+        return false
+    }
+
+    func referenceTexts(inDeck deckID: Int64) throws -> [String] {
+        let cardIDs = try cardIDs(inDeck: deckID)
         var seen = Set<String>()
         var results: [String] = []
         for cardID in cardIDs {
@@ -510,6 +641,9 @@ final class OfficialAnkiCollection {
             fields: fields,
             tags: tags
         )
+        if !tags.isEmpty {
+            try services.addTags(tags, toNoteIDs: [noteID])
+        }
         resetCollectionCaches()
         return noteID
     }
@@ -702,6 +836,24 @@ final class OfficialAnkiCollection {
             note.fields[index] += note.fields[index].isEmpty ? soundTag : "<br>\(soundTag)"
             try services.update(note)
         }
+    }
+
+    private func cardIDs(inDeck deckID: Int64) throws -> [Int64] {
+        let deckIDs = try descendantDeckIDs(for: deckID)
+        let idList = deckIDs.sorted().map(String.init).joined(separator: ",")
+        if !idList.isEmpty {
+            let byDeckID = try services.searchCards("did:\(idList)")
+            if !byDeckID.isEmpty { return byDeckID }
+        }
+
+        let decks = try listDecks()
+        guard let deck = decks.first(where: { $0.id == deckID }) else {
+            throw AnkiError.notFound
+        }
+        let escapedName = deck.name
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+        return try services.searchCards("deck:\"\(escapedName)\"")
     }
 
     private func flatten(_ nodes: [SaidDeck], into output: inout [AnkiDeckInfo]) {
