@@ -193,6 +193,8 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
   private var spinner: UIActivityIndicatorView?
 
   private let actions = [
+    "导出完整备份（含媒体与配置）",
+    "从完整备份恢复",
     "立即备份集合",
     "官方数据库检查",
     "导入 APKG / COLPKG / CSV",
@@ -313,22 +315,24 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
       return
     }
     switch indexPath.row {
-    case 0: createBackup()
-    case 1: checkDatabase()
-    case 2: pickImportFile()
-    case 3:
+    case 0: exportFullBackup()
+    case 1: pickFullBackupImport()
+    case 2: createBackup()
+    case 3: checkDatabase()
+    case 4: pickImportFile()
+    case 5:
       export(
         .apkg(options: .deviceMigration(), filePrefix: "Said_migration"),
         fileExtension: "apkg"
       )
-    case 4:
+    case 6:
       export(
         .apkg(options: .desktopSync(deckID: nil, includeScheduling: true), filePrefix: "Said_sync"),
         fileExtension: "apkg"
       )
-    case 5: chooseColpkgExport(sourceView: tableView.cellForRow(at: indexPath))
-    case 6: export(.noteCSV, fileExtension: "csv")
-    case 7: export(.cardCSV, fileExtension: "csv")
+    case 7: chooseColpkgExport(sourceView: tableView.cellForRow(at: indexPath))
+    case 8: export(.noteCSV, fileExtension: "csv")
+    case 9: export(.cardCSV, fileExtension: "csv")
     default: break
     }
   }
@@ -404,8 +408,11 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
       let localURL = folder.appendingPathComponent(source.lastPathComponent)
       try FileManager.default.copyItem(at: source, to: localURL)
       pendingImportedFile = localURL
-      if localURL.pathExtension.lowercased() == "colpkg" {
+      let ext = localURL.pathExtension.lowercased()
+      if ext == "colpkg" {
         beginRestore(from: localURL)
+      } else if ext == SaidAppBackupService.fileExtension {
+        beginFullBackupRestore(from: localURL)
       } else {
         importFile(localURL)
       }
@@ -487,6 +494,110 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
         }
       })
     present(second, animated: true)
+  }
+
+  private func pickFullBackupImport() {
+    let picker = UIDocumentPickerViewController(documentTypes: ["public.data", "public.archive"], in: .import)
+    picker.delegate = self
+    picker.allowsMultipleSelection = false
+    present(picker, animated: true)
+  }
+
+  private func exportFullBackup() {
+    do {
+      let folder = FileManager.default.temporaryDirectory
+        .appendingPathComponent("said-full-backup-\(UUID().uuidString)", isDirectory: true)
+      try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+      let stamp = Self.backupStampFormatter.string(from: Date())
+      let url = folder.appendingPathComponent("SaidBackup_\(stamp).\(SaidAppBackupService.fileExtension)")
+      setBusy(true)
+      DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+        do {
+          _ = try SaidAppBackupService.export(to: url)
+          DispatchQueue.main.async {
+            guard let self = self else { return }
+            self.setBusy(false)
+            let activity = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            activity.completionWithItemsHandler = { _, _, _, _ in
+              try? FileManager.default.removeItem(at: folder)
+            }
+            if let popover = activity.popoverPresentationController {
+              popover.sourceView = self.view
+              popover.sourceRect = CGRect(
+                x: self.view.bounds.midX,
+                y: self.view.bounds.midY,
+                width: 1,
+                height: 1
+              )
+            }
+            self.present(activity, animated: true)
+          }
+        } catch {
+          DispatchQueue.main.async {
+            guard let self = self else { return }
+            self.setBusy(false)
+            try? FileManager.default.removeItem(at: folder)
+            self.showMessage(error.localizedDescription)
+          }
+        }
+      }
+    } catch {
+      showMessage(error.localizedDescription)
+    }
+  }
+
+  private func beginFullBackupRestore(from url: URL) {
+    let alert = UIAlertController(
+      title: "从完整备份恢复？",
+      message: "将替换当前集合、偏好设置、钥匙串密钥、Edge TTS 参考音频与发音练习录音。此操作不可撤销。",
+      preferredStyle: .alert
+    )
+    alert.addAction(UIAlertAction(title: "取消", style: .cancel) { [weak self] _ in
+      self?.removePendingImport()
+    })
+    alert.addAction(UIAlertAction(title: "继续", style: .destructive) { [weak self] _ in
+      self?.confirmFullBackupRestore(from: url)
+    })
+    present(alert, animated: true)
+  }
+
+  private func confirmFullBackupRestore(from url: URL) {
+    let alert = UIAlertController(
+      title: "二次确认",
+      message: "请输入“恢复完整备份”以确认。",
+      preferredStyle: .alert
+    )
+    alert.addTextField { $0.autocorrectionType = .no }
+    alert.addAction(UIAlertAction(title: "取消", style: .cancel) { [weak self] _ in
+      self?.removePendingImport()
+    })
+    alert.addAction(UIAlertAction(title: "恢复", style: .destructive) { [weak self] _ in
+      guard let self = self else { return }
+      guard alert.textFields?.first?.text == "恢复完整备份" else {
+        self.removePendingImport()
+        self.showMessage("确认文字不匹配，未恢复。")
+        return
+      }
+      self.setBusy(true)
+      DispatchQueue.global(qos: .userInitiated).async {
+        do {
+          _ = try SaidAppBackupService.importBackup(from: url)
+          DispatchQueue.main.async {
+            self.setBusy(false)
+            self.removePendingImport()
+            self.showMessage("完整备份已恢复。建议返回牌组列表确认数据。")
+            self.reloadBackups()
+          }
+        } catch {
+          DispatchQueue.main.async {
+            self.setBusy(false)
+            self.removePendingImport()
+            self.showMessage(error.localizedDescription)
+          }
+        }
+      }
+    })
+    present(alert, animated: true)
   }
 
   private func chooseColpkgExport(sourceView: UIView?) {
@@ -585,6 +696,12 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
     let formatter = DateFormatter()
     formatter.dateStyle = .medium
     formatter.timeStyle = .short
+    return formatter
+  }()
+
+  private static let backupStampFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyyMMdd_HHmmss"
     return formatter
   }()
 }

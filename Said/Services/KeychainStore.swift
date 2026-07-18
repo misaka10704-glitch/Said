@@ -4,7 +4,7 @@ import Security
 enum KeychainStore {
     private static let service = "com.misaka10704.Said"
 
-    enum Key: String {
+    enum Key: String, CaseIterable {
         case azureSpeechKey = "AZURE_SPEECH_KEY"
         case azureSpeechRegion = "AZURE_SPEECH_REGION"
         case dashscopeKey = "DASHSCOPE_API_KEY"
@@ -52,6 +52,21 @@ enum KeychainStore {
             kSecAttrAccount as String: key.rawValue
         ]
         SecItemDelete(query as CFDictionary)
+    }
+
+    static func exportSnapshot() -> [String: String] {
+        var snapshot: [String: String] = [:]
+        for key in Key.allCases {
+            snapshot[key.rawValue] = get(key)
+        }
+        return snapshot
+    }
+
+    static func importSnapshot(_ snapshot: [String: String]) {
+        for key in Key.allCases {
+            guard let value = snapshot[key.rawValue] else { continue }
+            set(value, for: key)
+        }
     }
 
     private static func defaultValue(for key: Key) -> String {

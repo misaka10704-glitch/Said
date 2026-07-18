@@ -68,6 +68,8 @@
 		F8686531DDBC2004E19724A6 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7278BD9D4BD17223E001D0 /* SidebarViewController.swift */; };
 		FAF0810C2DCDA3CCE1FD1822 /* PronounceSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEA179E55E352D60F56738F /* PronounceSessionController.swift */; };
 		FF3B7D0A963AFC56FFE436F3 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 1A50012FBCC730FBD7D14FEC /* Starscream */; };
+		A1B2C3D401234567890ABCDE /* BackupBundleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D401234567890ABCDF /* BackupBundleHelper.swift */; };
+		A1B2C3D401234567890ABCE0 /* SaidAppBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D401234567890ABCE1 /* SaidAppBackupService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -144,6 +146,8 @@
 		F6EB766A87D5BB0D7D18B1FD /* TranslationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationService.swift; sourceTree = "<group>"; };
 		F7F0C5F5EFDCCC21BE2EB453 /* PronounceAssessment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceAssessment.swift; sourceTree = "<group>"; };
 		FFEA179E55E352D60F56738F /* PronounceSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceSessionController.swift; sourceTree = "<group>"; };
+		A1B2C3D401234567890ABCDF /* BackupBundleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupBundleHelper.swift; sourceTree = "<group>"; };
+		A1B2C3D401234567890ABCE1 /* SaidAppBackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaidAppBackupService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,6 +297,7 @@
 		E0FBA3A77FCBF5CE947331D1 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D401234567890ABCDF /* BackupBundleHelper.swift */,
 				AE34578D1FAECAB0827FA258 /* AudioRecorder.swift */,
 				6461C22D4A9E0124005C71D1 /* AzureSpeechResponse.swift */,
 				EED9FA3219989485A7787583 /* AzureSpeechService.swift */,
@@ -307,6 +312,7 @@
 				0380051720A13104BEFEA030 /* PronounceHistoryStore.swift */,
 				FFEA179E55E352D60F56738F /* PronounceSessionController.swift */,
 				971E751593E2213393282A99 /* QwenService.swift */,
+				A1B2C3D401234567890ABCE1 /* SaidAppBackupService.swift */,
 				D52E68DDD7FDA7DD93FABBCB /* SpeakingResultHistoryStore.swift */,
 				F6EB766A87D5BB0D7D18B1FD /* TranslationService.swift */,
 			);
@@ -468,6 +474,8 @@
 				6C7CEDAEEC759D3565558A3F /* IELTSServiceModels.swift in Sources */,
 				5FF6A5F847642E499D3A0582 /* IELTSSpeakingMode.swift in Sources */,
 				983D89F01A323CE54CEECD8C /* KeychainStore.swift in Sources */,
+				A1B2C3D401234567890ABCDE /* BackupBundleHelper.swift in Sources */,
+				A1B2C3D401234567890ABCE0 /* SaidAppBackupService.swift in Sources */,
 				3DC20CDDE31FAEE8F7EE8438 /* MemoryGuard.swift in Sources */,
 				BA3AFDC65663AB2A0CE75A34 /* ModeRouter.swift in Sources */,
 				6A16C1CDD8E0C55722E546CB /* NoteEditorViewController.swift in Sources */,
