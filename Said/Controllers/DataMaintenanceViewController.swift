@@ -205,9 +205,17 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
     "导出卡片 CSV",
   ]
 
+  private static let actionCellID = "MaintenanceActionCell"
+  private static let backupCellID = "MaintenanceBackupCell"
+  private static let emptyBackupCellID = "MaintenanceEmptyBackupCell"
+
   init(provider: LocalDataMaintenanceProviding = OfficialLocalDataMaintenanceProvider()) {
     self.provider = provider
-    super.init(style: .grouped)
+    if #available(iOS 13.0, *) {
+      super.init(style: .insetGrouped)
+    } else {
+      super.init(style: .grouped)
+    }
   }
 
   required init?(coder: NSCoder) {
@@ -217,9 +225,8 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
   override func viewDidLoad() {
     super.viewDidLoad()
     title = "本地数据维护"
-    tableView.register(UITableViewCell.self, forCellReuseIdentifier: "MaintenanceCell")
-    tableView.rowHeight = DSTheme.List.rowHeight
-    tableView.estimatedRowHeight = DSTheme.List.rowHeight
+    tableView.rowHeight = UITableView.automaticDimension
+    tableView.estimatedRowHeight = 52
     tableView.cellLayoutMarginsFollowReadableWidth = true
     tableView.layoutMargins = UIEdgeInsets(
       top: 0,
@@ -227,6 +234,9 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
       bottom: 0,
       right: DSTheme.contentPadding
     )
+    if #available(iOS 15.0, *) {
+      tableView.sectionHeaderTopPadding = 8
+    }
     NotificationCenter.default.addObserver(
       self,
       selector: #selector(themeDidChange),
@@ -234,6 +244,11 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
       object: nil
     )
     applyTheme()
+    reloadBackups()
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
     reloadBackups()
   }
 
@@ -261,7 +276,8 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
   }
 
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    section == 0 ? actions.count : backups.count
+    if section == 0 { return actions.count }
+    return backups.isEmpty ? 1 : backups.count
   }
 
   override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?
@@ -271,46 +287,131 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
 
   override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String?
   {
-    guard section == 1 else { return nil }
-    return "应用启动时会按 Anki 的备份间隔自动备份；手动备份会立即执行。备份不含媒体。"
+    switch section {
+    case 0:
+      return "「完整备份」包含媒体、偏好与密钥；下方「集合备份」仅含 Anki 集合数据，不含媒体。"
+    case 1:
+      return "应用启动时会按 Anki 的备份间隔自动备份；手动备份会立即执行。备份不含媒体。"
+    default:
+      return nil
+    }
   }
 
   override func tableView(
     _ tableView: UITableView,
     cellForRowAt indexPath: IndexPath
   ) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "MaintenanceCell", for: indexPath)
-    cell.backgroundColor = DSTheme.c.surface
-    cell.textLabel?.textColor = DSTheme.c.textPrimary
-    cell.detailTextLabel?.textColor = DSTheme.c.textSecondary
-    cell.accessoryType = .disclosureIndicator
     if indexPath.section == 0 {
-      cell.textLabel?.text = actions[indexPath.row]
-      cell.textLabel?.numberOfLines = 1
-    } else {
-      let backup = backups[indexPath.row]
-      cell.textLabel?.numberOfLines = 2
-      cell.textLabel?.text =
-        "\(Self.dateFormatter.string(from: backup.createdAt))\n\(ByteCountFormatter.string(fromByteCount: backup.byteCount, countStyle: .file))"
+      let cell = dequeueCell(
+        tableView,
+        identifier: Self.actionCellID,
+        style: .default,
+        indexPath: indexPath
+      )
+      configureActionCell(cell, row: indexPath.row)
+      return cell
     }
+
+    if backups.isEmpty {
+      let cell = dequeueCell(
+        tableView,
+        identifier: Self.emptyBackupCellID,
+        style: .default,
+        indexPath: indexPath
+      )
+      cell.textLabel?.text = "暂无本地集合备份"
+      cell.textLabel?.font = DSTheme.bodyFont(size: 15)
+      cell.textLabel?.textColor = DSTheme.c.textTertiary
+      cell.textLabel?.numberOfLines = 0
+      cell.detailTextLabel?.text = nil
+      cell.selectionStyle = .none
+      cell.accessoryType = .none
+      cell.backgroundColor = DSTheme.c.surface
+      return cell
+    }
+
+    let backup = backups[indexPath.row]
+    let cell = dequeueCell(
+      tableView,
+      identifier: Self.backupCellID,
+      style: .subtitle,
+      indexPath: indexPath
+    )
+    cell.textLabel?.text = Self.dateFormatter.string(from: backup.createdAt)
+    cell.textLabel?.font = DSTheme.bodyFont(size: 15)
+    cell.textLabel?.textColor = DSTheme.c.textPrimary
+    cell.textLabel?.numberOfLines = 1
+    cell.detailTextLabel?.text = ByteCountFormatter.string(
+      fromByteCount: backup.byteCount,
+      countStyle: .file
+    )
+    cell.detailTextLabel?.font = DSTheme.monoFont(size: 13)
+    cell.detailTextLabel?.textColor = DSTheme.c.textSecondary
+    cell.detailTextLabel?.numberOfLines = 1
+    cell.selectionStyle = .default
+    cell.accessoryType = .disclosureIndicator
+    cell.backgroundColor = DSTheme.c.surface
+    cell.accessibilityLabel = "备份 \(cell.textLabel?.text ?? "")，\(cell.detailTextLabel?.text ?? "")"
+    cell.accessibilityHint = "点按恢复此备份"
     return cell
+  }
+
+  private func dequeueCell(
+    _ tableView: UITableView,
+    identifier: String,
+    style: UITableViewCell.CellStyle,
+    indexPath: IndexPath
+  ) -> UITableViewCell {
+    if let cell = tableView.dequeueReusableCell(withIdentifier: identifier) {
+      return cell
+    }
+    return UITableViewCell(style: style, reuseIdentifier: identifier)
+  }
+
+  private func configureActionCell(_ cell: UITableViewCell, row: Int) {
+    cell.textLabel?.text = actions[row]
+    cell.textLabel?.font = DSTheme.bodyFont(size: 15)
+    cell.textLabel?.numberOfLines = 0
+    cell.detailTextLabel?.text = nil
+    cell.selectionStyle = .default
+    cell.accessoryType = .disclosureIndicator
+    cell.backgroundColor = DSTheme.c.surface
+    if isDestructiveAction(row) {
+      cell.textLabel?.textColor = DSTheme.c.destructive
+    } else {
+      cell.textLabel?.textColor = DSTheme.c.textPrimary
+    }
+  }
+
+  private func isDestructiveAction(_ row: Int) -> Bool {
+    row == 1
   }
 
   override func tableView(
     _ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int
   ) {
-    (view as? UITableViewHeaderFooterView)?.textLabel?.textColor = DSTheme.c.textSecondary
+    guard let header = view as? UITableViewHeaderFooterView else { return }
+    header.textLabel?.textColor = DSTheme.c.textSecondary
+    header.textLabel?.font = DSTheme.titleFont(size: 12)
   }
 
   override func tableView(
     _ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int
   ) {
-    (view as? UITableViewHeaderFooterView)?.textLabel?.textColor = DSTheme.c.textTertiary
+    guard let footer = view as? UITableViewHeaderFooterView else { return }
+    footer.textLabel?.textColor = DSTheme.c.textTertiary
+    footer.textLabel?.font = DSTheme.bodyFont(size: 12)
+  }
+
+  override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+    if indexPath.section == 1, backups.isEmpty { return false }
+    return true
   }
 
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     tableView.deselectRow(at: indexPath, animated: true)
     if indexPath.section == 1 {
+      guard !backups.isEmpty else { return }
       beginRestore(from: backups[indexPath.row].url)
       return
     }
@@ -670,7 +771,8 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
   private func setBusy(_ busy: Bool) {
     tableView.isUserInteractionEnabled = !busy
     if busy {
-      let indicator = UIActivityIndicatorView(style: .gray)
+      let indicator = DSTheme.makeActivityIndicator()
+      indicator.color = DSTheme.c.accent
       indicator.startAnimating()
       spinner = indicator
       navigationItem.rightBarButtonItem = UIBarButtonItem(customView: indicator)

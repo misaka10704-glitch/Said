@@ -22,13 +22,30 @@ enum DSNavigationBarStyle {
   static func apply(to navigationController: UINavigationController) {
     let colors = DSTheme.c
     let bar = navigationController.navigationBar
+
+    if #available(iOS 13.0, *) {
+      let appearance = UINavigationBarAppearance()
+      appearance.configureWithOpaqueBackground()
+      appearance.backgroundColor = colors.surface
+      appearance.titleTextAttributes = [.foregroundColor: colors.textPrimary]
+      appearance.shadowColor = colors.divider
+
+      bar.standardAppearance = appearance
+      bar.scrollEdgeAppearance = appearance
+      bar.compactAppearance = appearance
+      if #available(iOS 15.0, *) {
+        bar.compactScrollEdgeAppearance = appearance
+      }
+    } else {
+      bar.barTintColor = colors.surface
+      bar.titleTextAttributes = [.foregroundColor: colors.textPrimary]
+      bar.setBackgroundImage(pixelImage(color: colors.surface), for: .default)
+      bar.shadowImage = pixelImage(color: colors.divider)
+    }
+
     bar.isTranslucent = false
     bar.barStyle = colors.navBarStyle
-    bar.barTintColor = colors.surface
     bar.tintColor = colors.accent
-    bar.titleTextAttributes = [.foregroundColor: colors.textPrimary]
-    bar.setBackgroundImage(pixelImage(color: colors.surface), for: .default)
-    bar.shadowImage = pixelImage(color: colors.divider)
     navigationController.view.backgroundColor = colors.background
   }
 

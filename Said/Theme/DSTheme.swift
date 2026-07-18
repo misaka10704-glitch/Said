@@ -149,6 +149,11 @@ enum DSTheme {
         static var separatorHeight: CGFloat { 1 / UIScreen.main.scale }
     }
 
+    enum DeckCounts {
+        static let columnWidth: CGFloat = 30
+        static let columnSpacing: CGFloat = 2
+    }
+
     enum Form {
         static let controlHeight: CGFloat = 44
         static let compactControlHeight: CGFloat = 36
@@ -191,6 +196,13 @@ enum DSTheme {
 
     static func tintedSurface(_ color: UIColor, alpha: CGFloat = 0.14) -> UIColor {
         color.withAlphaComponent(alpha)
+    }
+
+    static func makeActivityIndicator() -> UIActivityIndicatorView {
+        if #available(iOS 13.0, *) {
+            return UIActivityIndicatorView(style: .medium)
+        }
+        return UIActivityIndicatorView(style: .gray)
     }
 }
 

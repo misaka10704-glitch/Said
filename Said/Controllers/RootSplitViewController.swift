@@ -25,10 +25,13 @@ final class RootSplitViewController: UIViewController, ThemeRefreshable, UIGestu
     private var isSidebarCollapsed = true
     private let managementProvider = OfficialBrowserProvider()
     private let syncProvider = OfficialSyncProvider()
+    private static let sidebarCollapsedKey = "said_sidebar_collapsed"
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        isSidebarCollapsed = UserDefaults.standard.bool(forKey: "said_sidebar_collapsed")
+        isSidebarCollapsed = Self.loadSidebarCollapsed(
+            forWidth: UIScreen.main.bounds.width
+        )
         sidebarViewController.delegate = self
         buildView()
         showSection(.decks)
@@ -252,7 +255,7 @@ final class RootSplitViewController: UIViewController, ThemeRefreshable, UIGestu
             kind: open ? .sidebarOpen : .sidebar,
             target: self,
             action: #selector(toggleSidebar),
-            accessibility: open ? "Close sidebar" : "Open sidebar"
+            accessibility: open ? "关闭侧栏" : "打开侧栏"
         )
         controller.navigationItem.leftItemsSupplementBackButton = false
         if controller === navigationController.viewControllers.first {
@@ -288,7 +291,7 @@ final class RootSplitViewController: UIViewController, ThemeRefreshable, UIGestu
         } else {
             contentLeadingCompactConstraint.isActive = false
             contentLeadingWideConstraint.isActive = true
-            isSidebarCollapsed = UserDefaults.standard.bool(forKey: "said_sidebar_collapsed")
+            isSidebarCollapsed = Self.loadSidebarCollapsed(forWidth: view.bounds.width)
             sidebarWidthConstraint.constant = DSTheme.sidebarWidth
             sidebarLeadingConstraint.constant = isSidebarCollapsed ? -DSTheme.sidebarWidth : 0
             dividerWidthConstraint.constant =
@@ -310,7 +313,7 @@ final class RootSplitViewController: UIViewController, ThemeRefreshable, UIGestu
         }
 
         isSidebarCollapsed.toggle()
-        UserDefaults.standard.set(isSidebarCollapsed, forKey: "said_sidebar_collapsed")
+        UserDefaults.standard.set(isSidebarCollapsed, forKey: Self.sidebarCollapsedKey)
         sidebarLeadingConstraint.constant = isSidebarCollapsed ? -DSTheme.sidebarWidth : 0
         dividerWidthConstraint.constant = isSidebarCollapsed ? 0 : 1 / UIScreen.main.scale
         updateSidebarButton()
@@ -413,6 +416,14 @@ final class RootSplitViewController: UIViewController, ThemeRefreshable, UIGestu
             return !isDrawerOpen && velocity.x > 0
         }
         return true
+    }
+
+    private static func loadSidebarCollapsed(forWidth width: CGFloat) -> Bool {
+        if UserDefaults.standard.object(forKey: sidebarCollapsedKey) != nil {
+            return UserDefaults.standard.bool(forKey: sidebarCollapsedKey)
+        }
+        // iPad / wide layouts: show the sidebar by default.
+        return width < DSTheme.compactBreakpoint
     }
 }
 

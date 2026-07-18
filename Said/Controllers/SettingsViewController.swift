@@ -10,6 +10,7 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
   private let dashBaseField = DSTextField(placeholder: "DashScope Base URL")
   private let appearanceControl = UISegmentedControl(items: ["浅色", "深色"])
   private let interfaceScaleControl = UISlider()
+  private let interfaceScaleLabel = UILabel()
   private let dataMaintenanceButton = DSButton(style: .secondary)
   private let edgeTTSBatchButton = DSButton(style: .secondary)
   private let translationBatchButton = DSButton(style: .secondary)
@@ -23,6 +24,7 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
     scroll.translatesAutoresizingMaskIntoConstraints = false
     scroll.keyboardDismissMode = .interactive
     scroll.alwaysBounceVertical = true
+    scroll.contentInsetAdjustmentBehavior = .automatic
     stack.axis = .vertical
     stack.spacing = 12
     stack.translatesAutoresizingMaskIntoConstraints = false
@@ -62,8 +64,18 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
     interfaceScaleControl.maximumValue = 1.3
     interfaceScaleControl.value = Float(ThemeManager.shared.interfaceScale)
     interfaceScaleControl.addTarget(self, action: #selector(interfaceScaleChanged), for: .valueChanged)
+    interfaceScaleLabel.font = DSTheme.monoFont(size: 13)
+    interfaceScaleLabel.textAlignment = .right
+    interfaceScaleLabel.setContentHuggingPriority(.required, for: .horizontal)
+    updateInterfaceScaleLabel()
+    let scaleRow = UIStackView()
+    scaleRow.axis = .horizontal
+    scaleRow.alignment = .center
+    scaleRow.spacing = 12
+    scaleRow.addArrangedSubview(interfaceScaleControl)
+    scaleRow.addArrangedSubview(interfaceScaleLabel)
     appearanceSection.addRow(
-      DSFormLayout.labeledControlRow(title: "界面大小", control: interfaceScaleControl),
+      DSFormLayout.labeledControlRow(title: "界面大小", control: scaleRow),
       separated: false
     )
     stack.addArrangedSubview(appearanceSection)
@@ -73,6 +85,7 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
       detail: "备份、恢复、数据库检查，以及 APKG、COLPKG 和 CSV 的导入导出。"
     )
     dataMaintenanceButton.setTitle("本地数据维护中心", for: .normal)
+    dataMaintenanceButton.accessibilityIdentifier = "settings.dataMaintenance"
     dataMaintenanceButton.addTarget(
       self,
       action: #selector(openDataMaintenance),
@@ -119,7 +132,6 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
       Mode A：Pronounce_Learning / 轻听 → 录音 + Azure 发音评分。
       Mode B：Speaking Compose → 录音 + Azure + Qwen Fix/Better。
       进度通过「导出 .apkg」带回桌面 Anki（先备份桌面库）。
-      目标系统：iOS 12 / iPad Air 1。
       """
     let noteSection = DSFormSection(title: "说明")
     noteSection.addRow(note, separated: false)
@@ -169,9 +181,7 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
     appearanceControl.tintColor = colors.accent
     appearanceControl.setTitleTextAttributes([.foregroundColor: colors.textSecondary], for: .normal)
     appearanceControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
-    dataMaintenanceButton.setTitleColor(colors.accent, for: .normal)
-    edgeTTSBatchButton.setTitleColor(colors.accent, for: .normal)
-    translationBatchButton.setTitleColor(colors.accent, for: .normal)
+    interfaceScaleLabel.textColor = colors.textSecondary
 
     for field in [azureKeyField, azureRegionField, dashKeyField, dashBaseField] {
       field.applyTheme()
@@ -244,6 +254,11 @@ final class SettingsViewController: UIViewController, ThemeRefreshable {
 
   @objc private func interfaceScaleChanged() {
     ThemeManager.shared.interfaceScale = CGFloat(interfaceScaleControl.value)
+    updateInterfaceScaleLabel()
+  }
+
+  private func updateInterfaceScaleLabel() {
+    interfaceScaleLabel.text = String(format: "%.0f%%", ThemeManager.shared.interfaceScale * 100)
   }
 
   @objc private func openDataMaintenance() {

@@ -10,7 +10,7 @@ final class StatisticsViewController: UIViewController, ThemeRefreshable {
   private let summaryStack = UIStackView()
   private let factsStack = UIStackView()
   private let chartsStack = UIStackView()
-  private let activityIndicator = UIActivityIndicatorView(style: .gray)
+  private let activityIndicator = DSTheme.makeActivityIndicator()
   private let statusLabel = UILabel()
   private var chartTitleLabels: [UILabel] = []
   private var deckChoices: [StatisticsDeckChoice] = []

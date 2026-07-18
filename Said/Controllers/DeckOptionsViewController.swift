@@ -42,7 +42,7 @@ final class DeckOptionsViewController: UIViewController, ThemeRefreshable {
   private let sentenceSizeSlider = UISlider()
   private let sentenceSizeValueLabel = UILabel()
   private let cardTemplateButton = DSButton(style: .secondary)
-  private let activityIndicator = UIActivityIndicatorView(style: .gray)
+  private let activityIndicator = DSTheme.makeActivityIndicator()
   private var options: DeckOptions?
   private var sections: [DSFormSection] = []
   private var primaryLabels: [UILabel] = []

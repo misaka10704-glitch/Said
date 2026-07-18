@@ -17,7 +17,7 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
         title: "还没有牌组",
         detail: "创建牌组或导入 APKG 后开始学习"
     )
-    private let loadingIndicator = UIActivityIndicatorView(style: .gray)
+    private let loadingIndicator = DSTheme.makeActivityIndicator()
     private let importQueue = DispatchQueue(label: "com.said.anki.deck-import", qos: .userInitiated)
     private var roots: [DeckManagementNode] = []
     private var rows: [Row] = []
@@ -56,7 +56,7 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         guard tableView.tableHeaderView != nil else { return }
-        let size = CGSize(width: tableView.bounds.width, height: 44)
+        let size = CGSize(width: tableView.bounds.width, height: 48)
         if tableView.tableHeaderView?.frame.size != size {
             summaryHeader.frame = CGRect(origin: .zero, size: size)
             tableView.tableHeaderView = summaryHeader
@@ -119,8 +119,11 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor),
+            tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            tableView.widthAnchor.constraint(lessThanOrEqualToConstant: DSTheme.contentMaxWidth),
+            tableView.widthAnchor.constraint(equalTo: view.widthAnchor).withPriority(750),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -309,7 +312,7 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
         isImporting = importing
         tableView.isUserInteractionEnabled = !importing
         if importing {
-            let spinner = UIActivityIndicatorView(style: .gray)
+            let spinner = DSTheme.makeActivityIndicator()
             spinner.startAnimating()
             navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: spinner)]
         } else {

@@ -17,7 +17,7 @@ final class DeckCustomStudyViewController: UIViewController, ThemeRefreshable,
     private let tagTableView = UITableView(frame: .zero, style: .plain)
     private let cramCard = UIView()
     private let startButton = DSButton(style: .primary)
-    private let activityIndicator = UIActivityIndicatorView(style: .gray)
+    private let activityIndicator = DSTheme.makeActivityIndicator()
     private var tagHeightConstraint: NSLayoutConstraint!
     private var defaults: DeckCustomStudyDefaults?
     private var tags: [DeckCustomStudyTag] = []

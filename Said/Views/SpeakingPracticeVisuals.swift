@@ -2,9 +2,9 @@ import UIKit
 
 final class DeckListSummaryHeaderView: UIView {
     private let summaryLabel = UILabel()
-    private let newLabel = UILabel()
-    private let learningLabel = UILabel()
-    private let reviewLabel = UILabel()
+    private let newColumn = DeckCountSummaryColumn(prefix: "新", color: DSTheme.voiceBlue)
+    private let learningColumn = DeckCountSummaryColumn(prefix: "学", color: DSTheme.learningAmber)
+    private let reviewColumn = DeckCountSummaryColumn(prefix: "复", color: DSTheme.brandCyan)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -20,38 +20,39 @@ final class DeckListSummaryHeaderView: UIView {
         let roots = nodes.count
         let all = flattened(nodes)
         summaryLabel.text = "\(roots) 个顶层牌组 · \(all.count) 个牌组"
-        newLabel.text = "新 \(nodes.reduce(0) { $0 + $1.newCount })"
-        learningLabel.text = "学 \(nodes.reduce(0) { $0 + $1.learningCount })"
-        reviewLabel.text = "复 \(nodes.reduce(0) { $0 + $1.reviewCount })"
+        newColumn.value = nodes.reduce(0) { $0 + $1.newCount }
+        learningColumn.value = nodes.reduce(0) { $0 + $1.learningCount }
+        reviewColumn.value = nodes.reduce(0) { $0 + $1.reviewCount }
         accessibilityLabel = [
             summaryLabel.text,
-            newLabel.text,
-            learningLabel.text,
-            reviewLabel.text
+            "新 \(newColumn.value)",
+            "学 \(learningColumn.value)",
+            "复 \(reviewColumn.value)"
         ].compactMap { $0 }.joined(separator: "，")
     }
 
     func applyTheme() {
         backgroundColor = DSTheme.c.background
         summaryLabel.textColor = DSTheme.c.textSecondary
-        newLabel.textColor = DSTheme.voiceBlue
-        learningLabel.textColor = DSTheme.learningAmber
-        reviewLabel.textColor = DSTheme.brandCyan
+        newColumn.applyTheme()
+        learningColumn.applyTheme()
+        reviewColumn.applyTheme()
     }
 
     private func build() {
         isAccessibilityElement = true
         summaryLabel.font = DSTheme.bodyFont(size: 13)
-        [newLabel, learningLabel, reviewLabel].forEach {
-            $0.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .semibold)
-        }
-        let counts = UIStackView(arrangedSubviews: [newLabel, learningLabel, reviewLabel])
+        summaryLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        let counts = UIStackView(arrangedSubviews: [newColumn, learningColumn, reviewColumn])
         counts.axis = .horizontal
-        counts.spacing = 15
+        counts.spacing = DSTheme.DeckCounts.columnSpacing
+        counts.alignment = .center
+
         let stack = UIStackView(arrangedSubviews: [summaryLabel, counts])
         stack.axis = .horizontal
         stack.alignment = .center
-        stack.distribution = .equalSpacing
+        stack.spacing = 12
         stack.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stack)
         NSLayoutConstraint.activate([
@@ -65,6 +66,53 @@ final class DeckListSummaryHeaderView: UIView {
 
     private func flattened(_ nodes: [DeckManagementNode]) -> [DeckManagementNode] {
         nodes.flatMap { [$0] + flattened($0.children) }
+    }
+}
+
+private final class DeckCountSummaryColumn: UIView {
+    private let prefixLabel = UILabel()
+    private let valueLabel = UILabel()
+    private let color: UIColor
+
+    var value: Int = 0 {
+        didSet {
+            valueLabel.text = "\(value)"
+            valueLabel.alpha = value == 0 ? 0.42 : 1
+        }
+    }
+
+    init(prefix: String, color: UIColor) {
+        self.color = color
+        super.init(frame: .zero)
+        prefixLabel.text = prefix
+        prefixLabel.font = DSTheme.bodyFont(size: 10)
+        prefixLabel.textAlignment = .center
+        valueLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .semibold)
+        valueLabel.textAlignment = .center
+
+        let stack = UIStackView(arrangedSubviews: [prefixLabel, valueLabel])
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = 0
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: topAnchor),
+            stack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stack.bottomAnchor.constraint(equalTo: bottomAnchor),
+            widthAnchor.constraint(equalToConstant: DSTheme.DeckCounts.columnWidth)
+        ])
+        applyTheme()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func applyTheme() {
+        prefixLabel.textColor = color.withAlphaComponent(0.85)
+        valueLabel.textColor = color
     }
 }
 
@@ -157,7 +205,7 @@ final class DeckTreeRowCell: UITableViewCell {
         [newLabel, learningLabel, reviewLabel].forEach {
             $0.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .semibold)
             $0.textAlignment = .right
-            $0.widthAnchor.constraint(equalToConstant: 30).isActive = true
+            $0.widthAnchor.constraint(equalToConstant: DSTheme.DeckCounts.columnWidth).isActive = true
         }
         moreButton.setTitle("•••", for: .normal)
         moreButton.titleLabel?.font = DSTheme.titleFont(size: 13)
@@ -170,7 +218,7 @@ final class DeckTreeRowCell: UITableViewCell {
         titleStack.spacing = 6
         let counts = UIStackView(arrangedSubviews: [newLabel, learningLabel, reviewLabel])
         counts.axis = .horizontal
-        counts.spacing = 2
+        counts.spacing = DSTheme.DeckCounts.columnSpacing
         counts.alignment = .center
         [disclosureButton, accentView, titleStack, counts, moreButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false

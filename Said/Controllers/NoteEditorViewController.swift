@@ -10,7 +10,7 @@ final class NoteEditorViewController: UIViewController, UIDocumentPickerDelegate
   private let fieldsStack = UIStackView()
   private let tagsField = DSTextField(placeholder: "标签一 嵌套::标签")
   private let modelLabel = UILabel()
-  private let activityIndicator = UIActivityIndicatorView(style: .gray)
+  private let activityIndicator = DSTheme.makeActivityIndicator()
   private let mediaButton = DSButton(style: .secondary)
   private let recordButton = DSButton(style: .secondary)
   private let toolRow = UIStackView()
