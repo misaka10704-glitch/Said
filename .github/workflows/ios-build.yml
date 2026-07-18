@@ -1,0 +1,46 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: ${{ matrix.route }}
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - route: ipad
+            scheme: Said-iPad
+            run_tests: true
+          - route: iphone
+            scheme: Said-iPhone
+            run_tests: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Build ${{ matrix.scheme }}
+        run: |
+          xcodebuild \
+            -scheme "${{ matrix.scheme }}" \
+            -destination 'generic/platform=iOS' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Unit tests (iPad route)
+        if: matrix.run_tests
+        run: |
+          xcodebuild \
+            -scheme Said-iPad \
+            -destination 'platform=iOS Simulator,name=iPad (A16)' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            test

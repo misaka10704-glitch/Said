@@ -14,11 +14,9 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     private lazy var undoControl: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(ActionIconFactory.image(.undo, pointSize: 16), for: .normal)
-        button.setTitle(" 撤销", for: .normal)
-        button.titleLabel?.font = DSTheme.titleFont(size: 13)
         button.accessibilityLabel = "撤销上一评分"
         button.addTarget(self, action: #selector(undoLastAnswer), for: .touchUpInside)
-        button.frame = CGRect(x: 0, y: 0, width: 64, height: 32)
+        button.frame = CGRect(x: 0, y: 0, width: 32, height: 32)
         return button
     }()
     private lazy var undoButton = UIBarButtonItem(customView: undoControl)
@@ -156,8 +154,6 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
         easeBar.applyTheme()
         resultPanel.applyTheme()
         undoControl.tintColor = colors.accent
-        undoControl.setTitleColor(colors.accent, for: .normal)
-        undoControl.setTitleColor(colors.textTertiary, for: .disabled)
         cardView.applyTheme()
         setNeedsStatusBarAppearanceUpdate()
         guard let card = card else { return }

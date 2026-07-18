@@ -27,3 +27,28 @@
 - Azure / DashScope 走 REST，避免新 SDK 抬高最低系统版本
 - 弱网：评分失败会显示错误，可重试；不会自动改调度
 - 大媒体：仅通过 `baseURL = collection.media` 加载当前卡引用的文件
+
+# 构建路线（源码相同）
+
+两套 target / scheme，共用 `Said/` 源码，最低系统均为 **iOS 12.0**：
+
+| 路线 | Scheme | 设备 | `TARGETED_DEVICE_FAMILY` |
+|------|--------|------|--------------------------|
+| iPad | `Said-iPad` | iPad（含 iPad Air 1） | `2` |
+| iPhone | `Said-iPhone` | iPhone | `1` |
+
+`Said` scheme 为 **iPad 路线** 的别名（兼容旧命令）。
+
+```bash
+# iPad 真机 / 模拟器
+xcodebuild -scheme Said-iPad -destination 'generic/platform=iOS' build
+
+# iPhone 真机 / 模拟器
+xcodebuild -scheme Said-iPhone -destination 'generic/platform=iOS' build
+
+# 或脚本
+./scripts/build-device.sh ipad
+./scripts/build-device.sh iphone Release
+```
+
+GitHub Actions（`ios-build.yml`）在 push/PR 时并行验证两条路线。

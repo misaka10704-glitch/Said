@@ -7,84 +7,146 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		063C1429FF113054DDFEA5A6 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE34578D1FAECAB0827FA258 /* AudioRecorder.swift */; };
-		0E5C4686CEA7147B0B85812F /* SyncViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1375F0D663F2A6F0D7AA4BB6 /* SyncViewController.swift */; };
-		0F1539C738827B0ABB04790F /* SpeakingPracticeVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F3E238C1ED8D7539D8BDD77 /* SpeakingPracticeVisuals.swift */; };
-		1C8B6E29EFCF18E6A9CCC760 /* SaidMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501DCB5B0975F5F127155488 /* SaidMenu.swift */; };
-		1CF28BF4C623B9D59EA2C457 /* CardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E2D33B3AA8CC3F278B9D50 /* CardModels.swift */; };
-		1D7D40E477D34078437E10CD /* DeckPracticePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547273C9F7E10AA8A701A05A /* DeckPracticePreferencesViewController.swift */; };
-		2AA1AD165E862C5AA6459283 /* AnkiCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6088960F7486E8BEAB4EDEB /* AnkiCollection.swift */; };
-		31D835C1CA4D541C50AA5CA8 /* ReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 284A744EE2F7844CC35B4217 /* ReviewViewController.swift */; };
-		353187D7001581983FD51A2E /* AnkiManagementModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE728905B16D20B19640875B /* AnkiManagementModels.swift */; };
-		359E25A5CFA3547EA1A4FB27 /* PronounceHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0380051720A13104BEFEA030 /* PronounceHistoryStore.swift */; };
-		38C2683B53C8A89BBAAB7826 /* AddSpeakingCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1559962A51C1D4FD521C48D8 /* AddSpeakingCardViewController.swift */; };
-		3DC20CDDE31FAEE8F7EE8438 /* MemoryGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDBCAEDADDC79DF467D38C7 /* MemoryGuard.swift */; };
-		4304E35BC31FFB488A5BB015 /* EdgeTTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90BED9C081C3F9BB4C045E2F /* EdgeTTSService.swift */; };
-		44F0069FC15327FD4CC0654D /* AnkiScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B91B3477F508627F69B9497 /* AnkiScheduler.swift */; };
-		47CECD8436623EFEE4879DF2 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB63BE53B648E2B43F000BC /* SettingsViewController.swift */; };
-		4D1F46EF61449F7BDA59EBC6 /* DSComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F32DFEAE95DF8B65932E57DE /* DSComponents.swift */; };
+		03119045B73CDD7D6ED46ACE /* SimpleZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4521950673C5944FA255C50F /* SimpleZip.swift */; };
+		07D6300411BD2CB96A14FD6B /* PronounceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F06BE14835A0D0D566A8F0C /* PronounceMode.swift */; };
+		0A6159FE40CD8748E118023E /* QwenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971E751593E2213393282A99 /* QwenService.swift */; };
+		1066DA2084EC4F1B4D307FBF /* PronounceDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D8C0033C35C04F77AF23A4 /* PronounceDomain.swift */; };
+		15657DE81CB5C2B5D161BC3D /* DeckPracticePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC3435D6C504DDD50DF4E3C /* DeckPracticePreferences.swift */; };
+		16C0D4079152BBEFCA1905A2 /* SaidLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 944A94806A303FC46D6A6080 /* SaidLogo.png */; };
+		17ED33176EC6FC57A751D2F1 /* IELTSServiceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986A2E72104124EFE0076F5D /* IELTSServiceModels.swift */; };
+		1A2D7E4A1A395BDADDF3CB1F /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5AA4842152319BA7FAF93C /* RootSplitViewController.swift */; };
+		1B0896E6F4A6A6422AE999ED /* AnkiCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6088960F7486E8BEAB4EDEB /* AnkiCollection.swift */; };
+		1B9349DD154B770D94AEBCD1 /* AzureSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED9FA3219989485A7787583 /* AzureSpeechService.swift */; };
+		1D93008F7B3E2EFE2F24E155 /* EdgeTTSBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB228A1AC065F97164B404AA /* EdgeTTSBatchViewController.swift */; };
+		1FDAC0986FE530FB8257F05B /* SimpleZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4521950673C5944FA255C50F /* SimpleZip.swift */; };
+		219F7133C6DF9EA14FEAD568 /* MemoryGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDBCAEDADDC79DF467D38C7 /* MemoryGuard.swift */; };
+		25EA21E7E44DF20B04E2AC0D /* AzureSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED9FA3219989485A7787583 /* AzureSpeechService.swift */; };
+		262BA5EDE9DFCBE4AC11C130 /* SpeakingPracticeVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F3E238C1ED8D7539D8BDD77 /* SpeakingPracticeVisuals.swift */; };
+		279C08CFBBA0C6DA62CEC25F /* PronounceHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0380051720A13104BEFEA030 /* PronounceHistoryStore.swift */; };
+		27DB543113D51C2986DC4017 /* PronounceSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEA179E55E352D60F56738F /* PronounceSessionController.swift */; };
+		2C6BCEACF34DE5867D257A48 /* AnkiBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD36F161E2EC3059ADF066CF /* AnkiBackend.swift */; };
+		2D1955F3C21FAEDFEF6B4A42 /* BackupBundleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA97FDB1B94E8D9B3DD266F5 /* BackupBundleHelper.swift */; };
+		35B0854A009652519BA3246E /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB63BE53B648E2B43F000BC /* SettingsViewController.swift */; };
+		387881BC52EB22BB4B5ED995 /* AnkiManagementModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE728905B16D20B19640875B /* AnkiManagementModels.swift */; };
+		39F51F4125C0F12C1BCA0AF9 /* DeckCustomStudyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4F739B475B9518B5FFD38D /* DeckCustomStudyViewController.swift */; };
+		3A43F8005BF659803CAEB110 /* DataMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B863DE671883CA5078B5F5 /* DataMaintenanceViewController.swift */; };
+		3ABAE73602D94755EA9A0760 /* DeckCustomStudyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4F739B475B9518B5FFD38D /* DeckCustomStudyViewController.swift */; };
+		3DDEF750410CF8C84BF2417C /* BackupBundleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA97FDB1B94E8D9B3DD266F5 /* BackupBundleHelper.swift */; };
+		3E295BF24DCEDBC603DB1DCB /* DeckPracticePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC3435D6C504DDD50DF4E3C /* DeckPracticePreferences.swift */; };
+		42A2515B561A21CD3FACF6E7 /* AzureSpeechResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6461C22D4A9E0124005C71D1 /* AzureSpeechResponse.swift */; };
+		43A3CECDFDCD368C53E0E7AB /* PronounceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F06BE14835A0D0D566A8F0C /* PronounceMode.swift */; };
+		43CAAB616FA1ED951BE157CC /* EdgeTTSBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB228A1AC065F97164B404AA /* EdgeTTSBatchViewController.swift */; };
+		47250DA15FDDC38636D823CC /* SyncViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1375F0D663F2A6F0D7AA4BB6 /* SyncViewController.swift */; };
 		4ED48B2FE1503240E17C3C02 /* MigrationNoteSanitizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E9A45F450AF9E58DC93DA2 /* MigrationNoteSanitizerTests.swift */; };
-		54E0C35AFF2F9D2239A73C69 /* TranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6EB766A87D5BB0D7D18B1FD /* TranslationService.swift */; };
-		5E4148275826C193BEBEA8DA /* AzureSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED9FA3219989485A7787583 /* AzureSpeechService.swift */; };
-		5FF6A5F847642E499D3A0582 /* IELTSSpeakingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D70E4AFEF1E5CCA64BF05B0 /* IELTSSpeakingMode.swift */; };
-		671476ADFE83D1F4B005D357 /* SaidApkgMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB73EA32CC2E7C667FC215C /* SaidApkgMigration.swift */; };
-		6A000CB5078296824838C087 /* PronounceAttachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7CAC929665736896CC7CA2 /* PronounceAttachments.swift */; };
-		6A16C1CDD8E0C55722E546CB /* NoteEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECC2466B34F2F4BCBA95208 /* NoteEditorViewController.swift */; };
-		6BD95BDDCDBF7C8271BCDA2D /* TranslationBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C810CFFF01BA59C8796D59F /* TranslationBatchViewController.swift */; };
-		6C7CEDAEEC759D3565558A3F /* IELTSServiceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986A2E72104124EFE0076F5D /* IELTSServiceModels.swift */; };
-		6FA81C54D81933DF3797CE16 /* QwenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971E751593E2213393282A99 /* QwenService.swift */; };
-		758A34D27BF87270B576CE60 /* PronounceAssessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F0C5F5EFDCCC21BE2EB453 /* PronounceAssessment.swift */; };
-		7B15CC7A41A158F23190A851 /* DeckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E33F51427CB26B76A10469D /* DeckListViewController.swift */; };
-		8AC5FB053DD5E0ED7C4892EF /* DeckPracticePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC3435D6C504DDD50DF4E3C /* DeckPracticePreferences.swift */; };
-		983D89F01A323CE54CEECD8C /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6349FE976A49BE071AF8604D /* KeychainStore.swift */; };
-		98B50315A2FF390AA9D38BFA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13993FAC6A2699B236979647 /* Assets.xcassets */; };
-		9A995244FC636C18D1B15AEE /* DeckOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB9CD7AFD92A136169D079B /* DeckOptionsViewController.swift */; };
-		9EB808221CA20E02D493FD8A /* SpeakingReviewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5351D0688C48B4121BDB800 /* SpeakingReviewComponents.swift */; };
-		A882C2B25168C1C8C30B058B /* DataMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B863DE671883CA5078B5F5 /* DataMaintenanceViewController.swift */; };
-		ADBA4EBB05F31B0701EE0731 /* AnkiBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD36F161E2EC3059ADF066CF /* AnkiBackend.swift */; };
-		AF2E079825639391D00A3ABC /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D8C2AD1879D2F4F398D308 /* StatisticsViewController.swift */; };
-		AF7369FC0995EF77E0F687D7 /* DeckCustomStudyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4F739B475B9518B5FFD38D /* DeckCustomStudyViewController.swift */; };
-		B4F3CF851F4BB2F2526954A6 /* DeckParentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29D5377A1C26BE98F19EE9A1 /* DeckParentPickerViewController.swift */; };
-		B7709DE9C5A2C407698F91AF /* OfficialAnkiCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A67C29D5C98EB785C81CB3 /* OfficialAnkiCollection.swift */; };
-		B801E86E9BEE0F0958ED9D2D /* IELTSNativeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B977A89474DC981EB362E1 /* IELTSNativeService.swift */; };
-		B94D9EB7D7341D86BBAB47B9 /* SpeakingResultHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52E68DDD7FDA7DD93FABBCB /* SpeakingResultHistoryStore.swift */; };
-		BA3AFDC65663AB2A0CE75A34 /* ModeRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1AF8D88E3AD3661B28287 /* ModeRouter.swift */; };
-		BD2C340E0656A0AA1C94C59F /* PronounceDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D8C0033C35C04F77AF23A4 /* PronounceDomain.swift */; };
-		BE3976B85B7D51A085C522B4 /* BrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998DBCA09F2C3E27FD861CDB /* BrowserViewController.swift */; };
-		BF3FF441E44C3A8E862DFD59 /* ComposeMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C84C91DA61895B7E98C1A9 /* ComposeMode.swift */; };
-		C371E612C56264704276A37F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D21643C31D9992BF08B3073 /* LaunchScreen.storyboard */; };
-		D7637F0CEAA5966F953A11CE /* DSTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F1FC68BB31D2035D38B812 /* DSTheme.swift */; };
-		D78620E8C9D253DBD5306CBF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A12FD858FEB7728A0CEE561 /* AppDelegate.swift */; };
-		D8EBBC1F782DABA6CF9F85F5 /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5AA4842152319BA7FAF93C /* RootSplitViewController.swift */; };
-		DB49DF2BBCAFCD7A9F8240F5 /* SaidAnkiBackend in Frameworks */ = {isa = PBXBuildFile; productRef = A9C4C56BB2A4DCC8DD3EDE09 /* SaidAnkiBackend */; };
-		DD7788BE8A98AEF307610F24 /* EdgeTTSBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB228A1AC065F97164B404AA /* EdgeTTSBatchViewController.swift */; };
-		E08A35A5AF46CC38F3B4FD8F /* AnkiStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4DAE712E0E0BE55D568241 /* AnkiStore.swift */; };
-		E09BD7BCB251D1508EFC5DAF /* PronounceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F06BE14835A0D0D566A8F0C /* PronounceMode.swift */; };
-		E631CBDE7BEA93D2812BD783 /* ActionIconFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8B30C4D90B9D28CB55FE54 /* ActionIconFactory.swift */; };
-		E996A1C5B54E9E4B1271F9F5 /* NoteFieldMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC7776E293EDA74BA92B666D /* NoteFieldMapper.swift */; };
-		E9BFE5F31B404959D61DD1A4 /* SaidLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 944A94806A303FC46D6A6080 /* SaidLogo.png */; };
-		ECED644E7187CF8F7CBFBF99 /* SimpleZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4521950673C5944FA255C50F /* SimpleZip.swift */; };
-		EE16656FAFAE430A5FCBE845 /* AzureSpeechResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6461C22D4A9E0124005C71D1 /* AzureSpeechResponse.swift */; };
-		F8686531DDBC2004E19724A6 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7278BD9D4BD17223E001D0 /* SidebarViewController.swift */; };
-		FAF0810C2DCDA3CCE1FD1822 /* PronounceSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEA179E55E352D60F56738F /* PronounceSessionController.swift */; };
-		FF3B7D0A963AFC56FFE436F3 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 1A50012FBCC730FBD7D14FEC /* Starscream */; };
-		A1B2C3D401234567890ABCDE /* BackupBundleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D401234567890ABCDF /* BackupBundleHelper.swift */; };
-		A1B2C3D401234567890ABCE0 /* SaidAppBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D401234567890ABCE1 /* SaidAppBackupService.swift */; };
+		545B89961D4C20942097B2B2 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7278BD9D4BD17223E001D0 /* SidebarViewController.swift */; };
+		54ACCA86FD6DE328A07EECBD /* IELTSServiceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986A2E72104124EFE0076F5D /* IELTSServiceModels.swift */; };
+		58554BE41E1265E4FBEA8C10 /* MemoryGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDBCAEDADDC79DF467D38C7 /* MemoryGuard.swift */; };
+		5D062BF7F5CDA2EB0E56E2EA /* SpeakingResultHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52E68DDD7FDA7DD93FABBCB /* SpeakingResultHistoryStore.swift */; };
+		5D1816FB0DAB08C81467860E /* QwenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971E751593E2213393282A99 /* QwenService.swift */; };
+		5DD6802E27A92C4E51B8B912 /* DeckParentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29D5377A1C26BE98F19EE9A1 /* DeckParentPickerViewController.swift */; };
+		5EB1D40E562E75538B0FF72A /* PronounceAssessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F0C5F5EFDCCC21BE2EB453 /* PronounceAssessment.swift */; };
+		5EB2B7D9CC2DC44AB64F8D3F /* CardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E2D33B3AA8CC3F278B9D50 /* CardModels.swift */; };
+		5FCA8528F1DA27298716244D /* AnkiCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6088960F7486E8BEAB4EDEB /* AnkiCollection.swift */; };
+		611005C79919F05981517F5C /* SaidMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501DCB5B0975F5F127155488 /* SaidMenu.swift */; };
+		6121C64E6DCC75FCEDE34319 /* NoteFieldMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC7776E293EDA74BA92B666D /* NoteFieldMapper.swift */; };
+		622754D2D7BF9AF60A9F4E0D /* DeckOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB9CD7AFD92A136169D079B /* DeckOptionsViewController.swift */; };
+		6388AE6036FB802E38EA4BFF /* SaidApkgMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB73EA32CC2E7C667FC215C /* SaidApkgMigration.swift */; };
+		63B9259ED383AD640E3E4AAF /* TranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6EB766A87D5BB0D7D18B1FD /* TranslationService.swift */; };
+		64EF552B34BE751BC77E027B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A12FD858FEB7728A0CEE561 /* AppDelegate.swift */; };
+		66541D44D1397832B94DEEAB /* AddSpeakingCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1559962A51C1D4FD521C48D8 /* AddSpeakingCardViewController.swift */; };
+		667F03A96192417BF9432004 /* SpeakingReviewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5351D0688C48B4121BDB800 /* SpeakingReviewComponents.swift */; };
+		678962E66BEC335052963E73 /* BrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998DBCA09F2C3E27FD861CDB /* BrowserViewController.swift */; };
+		68637903D3A83EE4BA36BF86 /* DeckPracticePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547273C9F7E10AA8A701A05A /* DeckPracticePreferencesViewController.swift */; };
+		69302AE38D22C237FF8CCF69 /* NoteFieldMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC7776E293EDA74BA92B666D /* NoteFieldMapper.swift */; };
+		6BDE172A549EB1507CBC7A4C /* ReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 284A744EE2F7844CC35B4217 /* ReviewViewController.swift */; };
+		6D98A339451726CD23063C7C /* ComposeMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C84C91DA61895B7E98C1A9 /* ComposeMode.swift */; };
+		6DDCF0375B6A73F0CEAB3773 /* NoteEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECC2466B34F2F4BCBA95208 /* NoteEditorViewController.swift */; };
+		6E59245A059AAFEB6DBFBFA4 /* SaidAnkiBackend in Frameworks */ = {isa = PBXBuildFile; productRef = 47A43A8046B88DD7ABE38631 /* SaidAnkiBackend */; };
+		6EA9020FB7DDE91F02A0A134 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13993FAC6A2699B236979647 /* Assets.xcassets */; };
+		6EC1A01675AA22E83B5393F6 /* ModeRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1AF8D88E3AD3661B28287 /* ModeRouter.swift */; };
+		71142AC81AB53F801597DBAA /* DeckParentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29D5377A1C26BE98F19EE9A1 /* DeckParentPickerViewController.swift */; };
+		7A8DF8D531983DB7BD3F3683 /* NoteEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECC2466B34F2F4BCBA95208 /* NoteEditorViewController.swift */; };
+		7CB2035FE9B081982C73558B /* IELTSSpeakingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D70E4AFEF1E5CCA64BF05B0 /* IELTSSpeakingMode.swift */; };
+		81C725F60536C630998CA5F7 /* ReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 284A744EE2F7844CC35B4217 /* ReviewViewController.swift */; };
+		87B8F84D18FFC8D8A63494DB /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE34578D1FAECAB0827FA258 /* AudioRecorder.swift */; };
+		88BDD34C69D723B0D4BD0784 /* DeckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E33F51427CB26B76A10469D /* DeckListViewController.swift */; };
+		8B7A612322DA2504707670F6 /* DeckOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB9CD7AFD92A136169D079B /* DeckOptionsViewController.swift */; };
+		8CC81F1DDAD9977E40DA5DED /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D8C2AD1879D2F4F398D308 /* StatisticsViewController.swift */; };
+		8D13B176B35335E49B660F0F /* CardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E2D33B3AA8CC3F278B9D50 /* CardModels.swift */; };
+		8E59092E9BCC7DE286696D85 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6349FE976A49BE071AF8604D /* KeychainStore.swift */; };
+		951090CD3A87BED37C6B76B7 /* IELTSNativeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B977A89474DC981EB362E1 /* IELTSNativeService.swift */; };
+		996FCEB8D7E392A8DACDA57F /* PronounceHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0380051720A13104BEFEA030 /* PronounceHistoryStore.swift */; };
+		99D144AD4E92664A2C1FD76C /* DataMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B863DE671883CA5078B5F5 /* DataMaintenanceViewController.swift */; };
+		9A726FEB89864009410C9865 /* SaidMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501DCB5B0975F5F127155488 /* SaidMenu.swift */; };
+		9A74FD577FF9EB788C4FF379 /* EdgeTTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90BED9C081C3F9BB4C045E2F /* EdgeTTSService.swift */; };
+		A2FED9C3ADD2BAC834DFCD6C /* DeckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E33F51427CB26B76A10469D /* DeckListViewController.swift */; };
+		A38D3EB48F2C38C8205BBCB4 /* PronounceAttachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7CAC929665736896CC7CA2 /* PronounceAttachments.swift */; };
+		A469191B85F05F9EFA566FD1 /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5AA4842152319BA7FAF93C /* RootSplitViewController.swift */; };
+		A52879DFFF820D557A082547 /* SaidAppBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DD3FEF283077CB7D8298E4 /* SaidAppBackupService.swift */; };
+		A5A7B0F6823E794C53B59057 /* ActionIconFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8B30C4D90B9D28CB55FE54 /* ActionIconFactory.swift */; };
+		A5CEF7BADEF7596056288632 /* ComposeMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C84C91DA61895B7E98C1A9 /* ComposeMode.swift */; };
+		A7B2EA8FC40539DED2110A18 /* IELTSSpeakingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D70E4AFEF1E5CCA64BF05B0 /* IELTSSpeakingMode.swift */; };
+		A7F2DD7B21095EB095E71669 /* SpeakingPracticeVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F3E238C1ED8D7539D8BDD77 /* SpeakingPracticeVisuals.swift */; };
+		A90AE2CD41B48C9C980544D4 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB63BE53B648E2B43F000BC /* SettingsViewController.swift */; };
+		AB0D5004A1C5BFB0FDA097E2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D21643C31D9992BF08B3073 /* LaunchScreen.storyboard */; };
+		AE48F71377B690305EDE08EA /* PronounceDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D8C0033C35C04F77AF23A4 /* PronounceDomain.swift */; };
+		AF711219F2376FC4C4E1C1BA /* AddSpeakingCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1559962A51C1D4FD521C48D8 /* AddSpeakingCardViewController.swift */; };
+		B095C9292FF8C0E81280FD08 /* SaidAppBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DD3FEF283077CB7D8298E4 /* SaidAppBackupService.swift */; };
+		B3B39BB0A120E681C9DEEC77 /* DeckPracticePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547273C9F7E10AA8A701A05A /* DeckPracticePreferencesViewController.swift */; };
+		B499F0E93871219E7FFFDD8F /* SyncViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1375F0D663F2A6F0D7AA4BB6 /* SyncViewController.swift */; };
+		B4FCE4F83D978F9723B05669 /* AnkiStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4DAE712E0E0BE55D568241 /* AnkiStore.swift */; };
+		B977383670F024D3188F9795 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE34578D1FAECAB0827FA258 /* AudioRecorder.swift */; };
+		B9CF1EA7AC153B7BCF8D0B53 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D8C2AD1879D2F4F398D308 /* StatisticsViewController.swift */; };
+		B9FC4BC47A2AAC23EB2BF1AC /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6349FE976A49BE071AF8604D /* KeychainStore.swift */; };
+		BA1031D78C7FD217644EE87A /* AzureSpeechResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6461C22D4A9E0124005C71D1 /* AzureSpeechResponse.swift */; };
+		BB6924099F234797582B0935 /* TranslationBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C810CFFF01BA59C8796D59F /* TranslationBatchViewController.swift */; };
+		BDADC6C815606DE8310AC8ED /* DSComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F32DFEAE95DF8B65932E57DE /* DSComponents.swift */; };
+		C1F0D3E9E736FE69317C7809 /* OfficialAnkiCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A67C29D5C98EB785C81CB3 /* OfficialAnkiCollection.swift */; };
+		C8710DEB5F31C3A7F54D2321 /* PronounceAttachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7CAC929665736896CC7CA2 /* PronounceAttachments.swift */; };
+		C9CDE97112DE542CCDD91936 /* AnkiStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4DAE712E0E0BE55D568241 /* AnkiStore.swift */; };
+		CB83730783D80612C1C1C9EC /* TranslationBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C810CFFF01BA59C8796D59F /* TranslationBatchViewController.swift */; };
+		CC4EEE5DE5EB0BABF914A3E6 /* SaidLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 944A94806A303FC46D6A6080 /* SaidLogo.png */; };
+		CD1D087071C33E8565F4AEB0 /* AnkiManagementModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE728905B16D20B19640875B /* AnkiManagementModels.swift */; };
+		CD336E7AFE46BEA83E2A05D9 /* OfficialAnkiCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A67C29D5C98EB785C81CB3 /* OfficialAnkiCollection.swift */; };
+		CE6BEDEEB0D257AFFFED5D25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A12FD858FEB7728A0CEE561 /* AppDelegate.swift */; };
+		D03559F37F27F180DBD00DBE /* DSTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F1FC68BB31D2035D38B812 /* DSTheme.swift */; };
+		D5A9C79D07EC5CE256476DFB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13993FAC6A2699B236979647 /* Assets.xcassets */; };
+		D744AA69027B640283DA5322 /* DSComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F32DFEAE95DF8B65932E57DE /* DSComponents.swift */; };
+		D80B4E9F38E24168BBAF6DA6 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7278BD9D4BD17223E001D0 /* SidebarViewController.swift */; };
+		D89F430602A8DA0884418D41 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D21643C31D9992BF08B3073 /* LaunchScreen.storyboard */; };
+		DC33148FFAF637F7C6A02730 /* AnkiBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD36F161E2EC3059ADF066CF /* AnkiBackend.swift */; };
+		DF24884CBC73940A07A9123E /* DSTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F1FC68BB31D2035D38B812 /* DSTheme.swift */; };
+		E0C48BB5E309FE48F294C191 /* PronounceSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEA179E55E352D60F56738F /* PronounceSessionController.swift */; };
+		E5E1DDB0DD07C53721FF4E41 /* EdgeTTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90BED9C081C3F9BB4C045E2F /* EdgeTTSService.swift */; };
+		E60204ACDDAF9ADCF6F51F71 /* BrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998DBCA09F2C3E27FD861CDB /* BrowserViewController.swift */; };
+		E853229582B411C4BF020DF5 /* AnkiScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B91B3477F508627F69B9497 /* AnkiScheduler.swift */; };
+		EA11B17706FDB4B127D3816F /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 5724DAE0A73CD59A4B4B7130 /* Starscream */; };
+		EADFAAC403F4CB98922ECE0C /* SpeakingReviewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5351D0688C48B4121BDB800 /* SpeakingReviewComponents.swift */; };
+		F42E624B07D80BD66CCA729A /* ActionIconFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8B30C4D90B9D28CB55FE54 /* ActionIconFactory.swift */; };
+		F4B6989054AA446A07384F6E /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 2C385EBE4A6F903761BB29E0 /* Starscream */; };
+		F4F13B7FEB0DAD72607C3B30 /* SaidApkgMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB73EA32CC2E7C667FC215C /* SaidApkgMigration.swift */; };
+		F79C4008E340E26F7A934917 /* SaidAnkiBackend in Frameworks */ = {isa = PBXBuildFile; productRef = 77D306093966B98F3892C995 /* SaidAnkiBackend */; };
+		FA598E9F319FFEC3B193D9E0 /* PronounceAssessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F0C5F5EFDCCC21BE2EB453 /* PronounceAssessment.swift */; };
+		FA71A11CFE4DA6F7D1C6264D /* AnkiScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B91B3477F508627F69B9497 /* AnkiScheduler.swift */; };
+		FBD1C6BF6493B216DD34566E /* ModeRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1AF8D88E3AD3661B28287 /* ModeRouter.swift */; };
+		FBEC9F9BC41AB0F8208E9F48 /* IELTSNativeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B977A89474DC981EB362E1 /* IELTSNativeService.swift */; };
+		FD4A63EFA3B40D20AF73469C /* TranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6EB766A87D5BB0D7D18B1FD /* TranslationService.swift */; };
+		FFA72871F28F3C9B8558DF43 /* SpeakingResultHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52E68DDD7FDA7DD93FABBCB /* SpeakingResultHistoryStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1E554B19320EB42CDD08ED43 /* PBXContainerItemProxy */ = {
+		D63A4AADC96416DBD0AE20F9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A9261C0B681C0DA739A3762D /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = BB51F8390AE36D28C27E9DA4;
-			remoteInfo = Said;
+			remoteGlobalIDString = 7DC8D540FB25A16DFE050912;
+			remoteInfo = "Said-iPad";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0380051720A13104BEFEA030 /* PronounceHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceHistoryStore.swift; sourceTree = "<group>"; };
-		07BF6B50487EC2D56525DC6B /* Said.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Said.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		071D8134C0168DDC6CAC849A /* Said-iPad.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "Said-iPad.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B91B3477F508627F69B9497 /* AnkiScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiScheduler.swift; sourceTree = "<group>"; };
 		0CB9CD7AFD92A136169D079B /* DeckOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckOptionsViewController.swift; sourceTree = "<group>"; };
 		0E33F51427CB26B76A10469D /* DeckListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckListViewController.swift; sourceTree = "<group>"; };
@@ -102,6 +164,7 @@
 		3A5AA4842152319BA7FAF93C /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
 		4521950673C5944FA255C50F /* SimpleZip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleZip.swift; sourceTree = "<group>"; };
 		4A12FD858FEB7728A0CEE561 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4D8D282B431B13333607E84D /* Said-iPhone.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "Said-iPhone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		501DCB5B0975F5F127155488 /* SaidMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaidMenu.swift; sourceTree = "<group>"; };
 		50A67C29D5C98EB785C81CB3 /* OfficialAnkiCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficialAnkiCollection.swift; sourceTree = "<group>"; };
 		547273C9F7E10AA8A701A05A /* DeckPracticePreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckPracticePreferencesViewController.swift; sourceTree = "<group>"; };
@@ -111,6 +174,7 @@
 		6461C22D4A9E0124005C71D1 /* AzureSpeechResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AzureSpeechResponse.swift; sourceTree = "<group>"; };
 		68D8C2AD1879D2F4F398D308 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 		7BB73EA32CC2E7C667FC215C /* SaidApkgMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaidApkgMigration.swift; sourceTree = "<group>"; };
+		83DD3FEF283077CB7D8298E4 /* SaidAppBackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaidAppBackupService.swift; sourceTree = "<group>"; };
 		87D8C0033C35C04F77AF23A4 /* PronounceDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceDomain.swift; sourceTree = "<group>"; };
 		8C810CFFF01BA59C8796D59F /* TranslationBatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationBatchViewController.swift; sourceTree = "<group>"; };
 		8DC7E97E9E6AFC29A85C41B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -138,6 +202,7 @@
 		E0F1FC68BB31D2035D38B812 /* DSTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSTheme.swift; sourceTree = "<group>"; };
 		E4B863DE671883CA5078B5F5 /* DataMaintenanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataMaintenanceViewController.swift; sourceTree = "<group>"; };
 		E5351D0688C48B4121BDB800 /* SpeakingReviewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakingReviewComponents.swift; sourceTree = "<group>"; };
+		EA97FDB1B94E8D9B3DD266F5 /* BackupBundleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupBundleHelper.swift; sourceTree = "<group>"; };
 		EE728905B16D20B19640875B /* AnkiManagementModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiManagementModels.swift; sourceTree = "<group>"; };
 		EED9FA3219989485A7787583 /* AzureSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AzureSpeechService.swift; sourceTree = "<group>"; };
 		EF7CAC929665736896CC7CA2 /* PronounceAttachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceAttachments.swift; sourceTree = "<group>"; };
@@ -146,17 +211,24 @@
 		F6EB766A87D5BB0D7D18B1FD /* TranslationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationService.swift; sourceTree = "<group>"; };
 		F7F0C5F5EFDCCC21BE2EB453 /* PronounceAssessment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceAssessment.swift; sourceTree = "<group>"; };
 		FFEA179E55E352D60F56738F /* PronounceSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronounceSessionController.swift; sourceTree = "<group>"; };
-		A1B2C3D401234567890ABCDF /* BackupBundleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupBundleHelper.swift; sourceTree = "<group>"; };
-		A1B2C3D401234567890ABCE1 /* SaidAppBackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaidAppBackupService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		FB84478B3BA18DBCBC39099A /* Frameworks */ = {
+		096D898E388357FD8FF5FEBC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB49DF2BBCAFCD7A9F8240F5 /* SaidAnkiBackend in Frameworks */,
-				FF3B7D0A963AFC56FFE436F3 /* Starscream in Frameworks */,
+				F79C4008E340E26F7A934917 /* SaidAnkiBackend in Frameworks */,
+				F4B6989054AA446A07384F6E /* Starscream in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		13215E7E8E31B3B1483D336D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E59245A059AAFEB6DBFBFA4 /* SaidAnkiBackend in Frameworks */,
+				EA11B17706FDB4B127D3816F /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,7 +287,8 @@
 		254A65CAAAB7AE3517B8FBC3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				07BF6B50487EC2D56525DC6B /* Said.app */,
+				071D8134C0168DDC6CAC849A /* Said-iPad.app */,
+				4D8D282B431B13333607E84D /* Said-iPhone.app */,
 				A32F3358A5A7D495178CAD73 /* SaidTests.xctest */,
 			);
 			name = Products;
@@ -297,10 +370,10 @@
 		E0FBA3A77FCBF5CE947331D1 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D401234567890ABCDF /* BackupBundleHelper.swift */,
 				AE34578D1FAECAB0827FA258 /* AudioRecorder.swift */,
 				6461C22D4A9E0124005C71D1 /* AzureSpeechResponse.swift */,
 				EED9FA3219989485A7787583 /* AzureSpeechService.swift */,
+				EA97FDB1B94E8D9B3DD266F5 /* BackupBundleHelper.swift */,
 				8FC3435D6C504DDD50DF4E3C /* DeckPracticePreferences.swift */,
 				90BED9C081C3F9BB4C045E2F /* EdgeTTSService.swift */,
 				F4B977A89474DC981EB362E1 /* IELTSNativeService.swift */,
@@ -312,7 +385,7 @@
 				0380051720A13104BEFEA030 /* PronounceHistoryStore.swift */,
 				FFEA179E55E352D60F56738F /* PronounceSessionController.swift */,
 				971E751593E2213393282A99 /* QwenService.swift */,
-				A1B2C3D401234567890ABCE1 /* SaidAppBackupService.swift */,
+				83DD3FEF283077CB7D8298E4 /* SaidAppBackupService.swift */,
 				D52E68DDD7FDA7DD93FABBCB /* SpeakingResultHistoryStore.swift */,
 				F6EB766A87D5BB0D7D18B1FD /* TranslationService.swift */,
 			);
@@ -350,7 +423,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				35C34A3EF19692E2520C3750 /* PBXTargetDependency */,
+				C0D1609A0E498A11A47B0A60 /* PBXTargetDependency */,
 			);
 			name = SaidTests;
 			packageProductDependencies = (
@@ -359,25 +432,46 @@
 			productReference = A32F3358A5A7D495178CAD73 /* SaidTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		BB51F8390AE36D28C27E9DA4 /* Said */ = {
+		7DC8D540FB25A16DFE050912 /* Said-iPad */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A786A49FBD5FB9E24EFC851E /* Build configuration list for PBXNativeTarget "Said" */;
+			buildConfigurationList = F36A75C87CD348FCE5A00503 /* Build configuration list for PBXNativeTarget "Said-iPad" */;
 			buildPhases = (
-				D548D973E9289DA98688AE98 /* Sources */,
-				A4014EA3C1856C2B41B07565 /* Resources */,
-				FB84478B3BA18DBCBC39099A /* Frameworks */,
+				4F6C0599056298A93535AB7B /* Sources */,
+				8D3D1C3173B39A37C4A4E363 /* Resources */,
+				096D898E388357FD8FF5FEBC /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = Said;
+			name = "Said-iPad";
 			packageProductDependencies = (
-				A9C4C56BB2A4DCC8DD3EDE09 /* SaidAnkiBackend */,
-				1A50012FBCC730FBD7D14FEC /* Starscream */,
+				77D306093966B98F3892C995 /* SaidAnkiBackend */,
+				2C385EBE4A6F903761BB29E0 /* Starscream */,
 			);
-			productName = Said;
-			productReference = 07BF6B50487EC2D56525DC6B /* Said.app */;
+			productName = "Said-iPad";
+			productReference = 071D8134C0168DDC6CAC849A /* Said-iPad.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E909AB1409C1C0DC86AA61F5 /* Said-iPhone */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41DF76F120B399369B6FFB4A /* Build configuration list for PBXNativeTarget "Said-iPhone" */;
+			buildPhases = (
+				55729A5A1443606ED4ECDF9D /* Sources */,
+				16DDF2F6738782BCD0B2B07E /* Resources */,
+				13215E7E8E31B3B1483D336D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Said-iPhone";
+			packageProductDependencies = (
+				47A43A8046B88DD7ABE38631 /* SaidAnkiBackend */,
+				5724DAE0A73CD59A4B4B7130 /* Starscream */,
+			);
+			productName = "Said-iPhone";
+			productReference = 4D8D282B431B13333607E84D /* Said-iPhone.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -389,7 +483,11 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
-					BB51F8390AE36D28C27E9DA4 = {
+					7DC8D540FB25A16DFE050912 = {
+						DevelopmentTeam = C8XVZJLC2D;
+						ProvisioningStyle = Automatic;
+					};
+					E909AB1409C1C0DC86AA61F5 = {
 						DevelopmentTeam = C8XVZJLC2D;
 						ProvisioningStyle = Automatic;
 					};
@@ -413,26 +511,165 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BB51F8390AE36D28C27E9DA4 /* Said */,
+				7DC8D540FB25A16DFE050912 /* Said-iPad */,
+				E909AB1409C1C0DC86AA61F5 /* Said-iPhone */,
 				481EDFD1BDF5CA4C5222B98C /* SaidTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A4014EA3C1856C2B41B07565 /* Resources */ = {
+		16DDF2F6738782BCD0B2B07E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				98B50315A2FF390AA9D38BFA /* Assets.xcassets in Resources */,
-				C371E612C56264704276A37F /* LaunchScreen.storyboard in Resources */,
-				E9BFE5F31B404959D61DD1A4 /* SaidLogo.png in Resources */,
+				6EA9020FB7DDE91F02A0A134 /* Assets.xcassets in Resources */,
+				AB0D5004A1C5BFB0FDA097E2 /* LaunchScreen.storyboard in Resources */,
+				16C0D4079152BBEFCA1905A2 /* SaidLogo.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D3D1C3173B39A37C4A4E363 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5A9C79D07EC5CE256476DFB /* Assets.xcassets in Resources */,
+				D89F430602A8DA0884418D41 /* LaunchScreen.storyboard in Resources */,
+				CC4EEE5DE5EB0BABF914A3E6 /* SaidLogo.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4F6C0599056298A93535AB7B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5A7B0F6823E794C53B59057 /* ActionIconFactory.swift in Sources */,
+				66541D44D1397832B94DEEAB /* AddSpeakingCardViewController.swift in Sources */,
+				2C6BCEACF34DE5867D257A48 /* AnkiBackend.swift in Sources */,
+				5FCA8528F1DA27298716244D /* AnkiCollection.swift in Sources */,
+				CD1D087071C33E8565F4AEB0 /* AnkiManagementModels.swift in Sources */,
+				E853229582B411C4BF020DF5 /* AnkiScheduler.swift in Sources */,
+				B4FCE4F83D978F9723B05669 /* AnkiStore.swift in Sources */,
+				64EF552B34BE751BC77E027B /* AppDelegate.swift in Sources */,
+				87B8F84D18FFC8D8A63494DB /* AudioRecorder.swift in Sources */,
+				BA1031D78C7FD217644EE87A /* AzureSpeechResponse.swift in Sources */,
+				25EA21E7E44DF20B04E2AC0D /* AzureSpeechService.swift in Sources */,
+				2D1955F3C21FAEDFEF6B4A42 /* BackupBundleHelper.swift in Sources */,
+				E60204ACDDAF9ADCF6F51F71 /* BrowserViewController.swift in Sources */,
+				5EB2B7D9CC2DC44AB64F8D3F /* CardModels.swift in Sources */,
+				6D98A339451726CD23063C7C /* ComposeMode.swift in Sources */,
+				BDADC6C815606DE8310AC8ED /* DSComponents.swift in Sources */,
+				D03559F37F27F180DBD00DBE /* DSTheme.swift in Sources */,
+				99D144AD4E92664A2C1FD76C /* DataMaintenanceViewController.swift in Sources */,
+				39F51F4125C0F12C1BCA0AF9 /* DeckCustomStudyViewController.swift in Sources */,
+				A2FED9C3ADD2BAC834DFCD6C /* DeckListViewController.swift in Sources */,
+				622754D2D7BF9AF60A9F4E0D /* DeckOptionsViewController.swift in Sources */,
+				5DD6802E27A92C4E51B8B912 /* DeckParentPickerViewController.swift in Sources */,
+				15657DE81CB5C2B5D161BC3D /* DeckPracticePreferences.swift in Sources */,
+				68637903D3A83EE4BA36BF86 /* DeckPracticePreferencesViewController.swift in Sources */,
+				1D93008F7B3E2EFE2F24E155 /* EdgeTTSBatchViewController.swift in Sources */,
+				9A74FD577FF9EB788C4FF379 /* EdgeTTSService.swift in Sources */,
+				FBEC9F9BC41AB0F8208E9F48 /* IELTSNativeService.swift in Sources */,
+				54ACCA86FD6DE328A07EECBD /* IELTSServiceModels.swift in Sources */,
+				7CB2035FE9B081982C73558B /* IELTSSpeakingMode.swift in Sources */,
+				B9FC4BC47A2AAC23EB2BF1AC /* KeychainStore.swift in Sources */,
+				219F7133C6DF9EA14FEAD568 /* MemoryGuard.swift in Sources */,
+				FBD1C6BF6493B216DD34566E /* ModeRouter.swift in Sources */,
+				6DDCF0375B6A73F0CEAB3773 /* NoteEditorViewController.swift in Sources */,
+				69302AE38D22C237FF8CCF69 /* NoteFieldMapper.swift in Sources */,
+				CD336E7AFE46BEA83E2A05D9 /* OfficialAnkiCollection.swift in Sources */,
+				FA598E9F319FFEC3B193D9E0 /* PronounceAssessment.swift in Sources */,
+				A38D3EB48F2C38C8205BBCB4 /* PronounceAttachments.swift in Sources */,
+				1066DA2084EC4F1B4D307FBF /* PronounceDomain.swift in Sources */,
+				996FCEB8D7E392A8DACDA57F /* PronounceHistoryStore.swift in Sources */,
+				07D6300411BD2CB96A14FD6B /* PronounceMode.swift in Sources */,
+				E0C48BB5E309FE48F294C191 /* PronounceSessionController.swift in Sources */,
+				0A6159FE40CD8748E118023E /* QwenService.swift in Sources */,
+				6BDE172A549EB1507CBC7A4C /* ReviewViewController.swift in Sources */,
+				1A2D7E4A1A395BDADDF3CB1F /* RootSplitViewController.swift in Sources */,
+				F4F13B7FEB0DAD72607C3B30 /* SaidApkgMigration.swift in Sources */,
+				A52879DFFF820D557A082547 /* SaidAppBackupService.swift in Sources */,
+				611005C79919F05981517F5C /* SaidMenu.swift in Sources */,
+				A90AE2CD41B48C9C980544D4 /* SettingsViewController.swift in Sources */,
+				545B89961D4C20942097B2B2 /* SidebarViewController.swift in Sources */,
+				1FDAC0986FE530FB8257F05B /* SimpleZip.swift in Sources */,
+				A7F2DD7B21095EB095E71669 /* SpeakingPracticeVisuals.swift in Sources */,
+				5D062BF7F5CDA2EB0E56E2EA /* SpeakingResultHistoryStore.swift in Sources */,
+				667F03A96192417BF9432004 /* SpeakingReviewComponents.swift in Sources */,
+				8CC81F1DDAD9977E40DA5DED /* StatisticsViewController.swift in Sources */,
+				47250DA15FDDC38636D823CC /* SyncViewController.swift in Sources */,
+				BB6924099F234797582B0935 /* TranslationBatchViewController.swift in Sources */,
+				63B9259ED383AD640E3E4AAF /* TranslationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55729A5A1443606ED4ECDF9D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F42E624B07D80BD66CCA729A /* ActionIconFactory.swift in Sources */,
+				AF711219F2376FC4C4E1C1BA /* AddSpeakingCardViewController.swift in Sources */,
+				DC33148FFAF637F7C6A02730 /* AnkiBackend.swift in Sources */,
+				1B0896E6F4A6A6422AE999ED /* AnkiCollection.swift in Sources */,
+				387881BC52EB22BB4B5ED995 /* AnkiManagementModels.swift in Sources */,
+				FA71A11CFE4DA6F7D1C6264D /* AnkiScheduler.swift in Sources */,
+				C9CDE97112DE542CCDD91936 /* AnkiStore.swift in Sources */,
+				CE6BEDEEB0D257AFFFED5D25 /* AppDelegate.swift in Sources */,
+				B977383670F024D3188F9795 /* AudioRecorder.swift in Sources */,
+				42A2515B561A21CD3FACF6E7 /* AzureSpeechResponse.swift in Sources */,
+				1B9349DD154B770D94AEBCD1 /* AzureSpeechService.swift in Sources */,
+				3DDEF750410CF8C84BF2417C /* BackupBundleHelper.swift in Sources */,
+				678962E66BEC335052963E73 /* BrowserViewController.swift in Sources */,
+				8D13B176B35335E49B660F0F /* CardModels.swift in Sources */,
+				A5CEF7BADEF7596056288632 /* ComposeMode.swift in Sources */,
+				D744AA69027B640283DA5322 /* DSComponents.swift in Sources */,
+				DF24884CBC73940A07A9123E /* DSTheme.swift in Sources */,
+				3A43F8005BF659803CAEB110 /* DataMaintenanceViewController.swift in Sources */,
+				3ABAE73602D94755EA9A0760 /* DeckCustomStudyViewController.swift in Sources */,
+				88BDD34C69D723B0D4BD0784 /* DeckListViewController.swift in Sources */,
+				8B7A612322DA2504707670F6 /* DeckOptionsViewController.swift in Sources */,
+				71142AC81AB53F801597DBAA /* DeckParentPickerViewController.swift in Sources */,
+				3E295BF24DCEDBC603DB1DCB /* DeckPracticePreferences.swift in Sources */,
+				B3B39BB0A120E681C9DEEC77 /* DeckPracticePreferencesViewController.swift in Sources */,
+				43CAAB616FA1ED951BE157CC /* EdgeTTSBatchViewController.swift in Sources */,
+				E5E1DDB0DD07C53721FF4E41 /* EdgeTTSService.swift in Sources */,
+				951090CD3A87BED37C6B76B7 /* IELTSNativeService.swift in Sources */,
+				17ED33176EC6FC57A751D2F1 /* IELTSServiceModels.swift in Sources */,
+				A7B2EA8FC40539DED2110A18 /* IELTSSpeakingMode.swift in Sources */,
+				8E59092E9BCC7DE286696D85 /* KeychainStore.swift in Sources */,
+				58554BE41E1265E4FBEA8C10 /* MemoryGuard.swift in Sources */,
+				6EC1A01675AA22E83B5393F6 /* ModeRouter.swift in Sources */,
+				7A8DF8D531983DB7BD3F3683 /* NoteEditorViewController.swift in Sources */,
+				6121C64E6DCC75FCEDE34319 /* NoteFieldMapper.swift in Sources */,
+				C1F0D3E9E736FE69317C7809 /* OfficialAnkiCollection.swift in Sources */,
+				5EB1D40E562E75538B0FF72A /* PronounceAssessment.swift in Sources */,
+				C8710DEB5F31C3A7F54D2321 /* PronounceAttachments.swift in Sources */,
+				AE48F71377B690305EDE08EA /* PronounceDomain.swift in Sources */,
+				279C08CFBBA0C6DA62CEC25F /* PronounceHistoryStore.swift in Sources */,
+				43A3CECDFDCD368C53E0E7AB /* PronounceMode.swift in Sources */,
+				27DB543113D51C2986DC4017 /* PronounceSessionController.swift in Sources */,
+				5D1816FB0DAB08C81467860E /* QwenService.swift in Sources */,
+				81C725F60536C630998CA5F7 /* ReviewViewController.swift in Sources */,
+				A469191B85F05F9EFA566FD1 /* RootSplitViewController.swift in Sources */,
+				6388AE6036FB802E38EA4BFF /* SaidApkgMigration.swift in Sources */,
+				B095C9292FF8C0E81280FD08 /* SaidAppBackupService.swift in Sources */,
+				9A726FEB89864009410C9865 /* SaidMenu.swift in Sources */,
+				35B0854A009652519BA3246E /* SettingsViewController.swift in Sources */,
+				D80B4E9F38E24168BBAF6DA6 /* SidebarViewController.swift in Sources */,
+				03119045B73CDD7D6ED46ACE /* SimpleZip.swift in Sources */,
+				262BA5EDE9DFCBE4AC11C130 /* SpeakingPracticeVisuals.swift in Sources */,
+				FFA72871F28F3C9B8558DF43 /* SpeakingResultHistoryStore.swift in Sources */,
+				EADFAAC403F4CB98922ECE0C /* SpeakingReviewComponents.swift in Sources */,
+				B9CF1EA7AC153B7BCF8D0B53 /* StatisticsViewController.swift in Sources */,
+				B499F0E93871219E7FFFDD8F /* SyncViewController.swift in Sources */,
+				CB83730783D80612C1C1C9EC /* TranslationBatchViewController.swift in Sources */,
+				FD4A63EFA3B40D20AF73469C /* TranslationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B93C00AE8928B3D851460505 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -441,77 +678,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D548D973E9289DA98688AE98 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E631CBDE7BEA93D2812BD783 /* ActionIconFactory.swift in Sources */,
-				38C2683B53C8A89BBAAB7826 /* AddSpeakingCardViewController.swift in Sources */,
-				ADBA4EBB05F31B0701EE0731 /* AnkiBackend.swift in Sources */,
-				2AA1AD165E862C5AA6459283 /* AnkiCollection.swift in Sources */,
-				353187D7001581983FD51A2E /* AnkiManagementModels.swift in Sources */,
-				44F0069FC15327FD4CC0654D /* AnkiScheduler.swift in Sources */,
-				E08A35A5AF46CC38F3B4FD8F /* AnkiStore.swift in Sources */,
-				D78620E8C9D253DBD5306CBF /* AppDelegate.swift in Sources */,
-				063C1429FF113054DDFEA5A6 /* AudioRecorder.swift in Sources */,
-				EE16656FAFAE430A5FCBE845 /* AzureSpeechResponse.swift in Sources */,
-				5E4148275826C193BEBEA8DA /* AzureSpeechService.swift in Sources */,
-				BE3976B85B7D51A085C522B4 /* BrowserViewController.swift in Sources */,
-				1CF28BF4C623B9D59EA2C457 /* CardModels.swift in Sources */,
-				BF3FF441E44C3A8E862DFD59 /* ComposeMode.swift in Sources */,
-				4D1F46EF61449F7BDA59EBC6 /* DSComponents.swift in Sources */,
-				D7637F0CEAA5966F953A11CE /* DSTheme.swift in Sources */,
-				A882C2B25168C1C8C30B058B /* DataMaintenanceViewController.swift in Sources */,
-				AF7369FC0995EF77E0F687D7 /* DeckCustomStudyViewController.swift in Sources */,
-				7B15CC7A41A158F23190A851 /* DeckListViewController.swift in Sources */,
-				9A995244FC636C18D1B15AEE /* DeckOptionsViewController.swift in Sources */,
-				B4F3CF851F4BB2F2526954A6 /* DeckParentPickerViewController.swift in Sources */,
-				8AC5FB053DD5E0ED7C4892EF /* DeckPracticePreferences.swift in Sources */,
-				1D7D40E477D34078437E10CD /* DeckPracticePreferencesViewController.swift in Sources */,
-				DD7788BE8A98AEF307610F24 /* EdgeTTSBatchViewController.swift in Sources */,
-				4304E35BC31FFB488A5BB015 /* EdgeTTSService.swift in Sources */,
-				B801E86E9BEE0F0958ED9D2D /* IELTSNativeService.swift in Sources */,
-				6C7CEDAEEC759D3565558A3F /* IELTSServiceModels.swift in Sources */,
-				5FF6A5F847642E499D3A0582 /* IELTSSpeakingMode.swift in Sources */,
-				983D89F01A323CE54CEECD8C /* KeychainStore.swift in Sources */,
-				A1B2C3D401234567890ABCDE /* BackupBundleHelper.swift in Sources */,
-				A1B2C3D401234567890ABCE0 /* SaidAppBackupService.swift in Sources */,
-				3DC20CDDE31FAEE8F7EE8438 /* MemoryGuard.swift in Sources */,
-				BA3AFDC65663AB2A0CE75A34 /* ModeRouter.swift in Sources */,
-				6A16C1CDD8E0C55722E546CB /* NoteEditorViewController.swift in Sources */,
-				E996A1C5B54E9E4B1271F9F5 /* NoteFieldMapper.swift in Sources */,
-				B7709DE9C5A2C407698F91AF /* OfficialAnkiCollection.swift in Sources */,
-				758A34D27BF87270B576CE60 /* PronounceAssessment.swift in Sources */,
-				6A000CB5078296824838C087 /* PronounceAttachments.swift in Sources */,
-				BD2C340E0656A0AA1C94C59F /* PronounceDomain.swift in Sources */,
-				359E25A5CFA3547EA1A4FB27 /* PronounceHistoryStore.swift in Sources */,
-				E09BD7BCB251D1508EFC5DAF /* PronounceMode.swift in Sources */,
-				FAF0810C2DCDA3CCE1FD1822 /* PronounceSessionController.swift in Sources */,
-				6FA81C54D81933DF3797CE16 /* QwenService.swift in Sources */,
-				31D835C1CA4D541C50AA5CA8 /* ReviewViewController.swift in Sources */,
-				D8EBBC1F782DABA6CF9F85F5 /* RootSplitViewController.swift in Sources */,
-				671476ADFE83D1F4B005D357 /* SaidApkgMigration.swift in Sources */,
-				1C8B6E29EFCF18E6A9CCC760 /* SaidMenu.swift in Sources */,
-				47CECD8436623EFEE4879DF2 /* SettingsViewController.swift in Sources */,
-				F8686531DDBC2004E19724A6 /* SidebarViewController.swift in Sources */,
-				ECED644E7187CF8F7CBFBF99 /* SimpleZip.swift in Sources */,
-				0F1539C738827B0ABB04790F /* SpeakingPracticeVisuals.swift in Sources */,
-				B94D9EB7D7341D86BBAB47B9 /* SpeakingResultHistoryStore.swift in Sources */,
-				9EB808221CA20E02D493FD8A /* SpeakingReviewComponents.swift in Sources */,
-				AF2E079825639391D00A3ABC /* StatisticsViewController.swift in Sources */,
-				0E5C4686CEA7147B0B85812F /* SyncViewController.swift in Sources */,
-				6BD95BDDCDBF7C8271BCDA2D /* TranslationBatchViewController.swift in Sources */,
-				54E0C35AFF2F9D2239A73C69 /* TranslationService.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		35C34A3EF19692E2520C3750 /* PBXTargetDependency */ = {
+		C0D1609A0E498A11A47B0A60 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BB51F8390AE36D28C27E9DA4 /* Said */;
-			targetProxy = 1E554B19320EB42CDD08ED43 /* PBXContainerItemProxy */;
+			target = 7DC8D540FB25A16DFE050912 /* Said-iPad */;
+			targetProxy = D63A4AADC96416DBD0AE20F9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -588,11 +761,34 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};
-		60379B1EC9D17947E7003CF5 /* Debug */ = {
+		2EBD3FEB0F95CC139A163BF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = C8XVZJLC2D;
+				ENABLE_DEBUG_DYLIB = NO;
+				INFOPLIST_FILE = Said/Supporting/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "$(inherited) -lsqlite3 -lz";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = "$(inherited) -Wl,-force_load,$(PROJECT_DIR)/AnkiBackend/AnkiRust.xcframework/ios-arm64/libanki_bridge_ios.a -lsqlite3 -lz";
+				PRODUCT_BUNDLE_IDENTIFIER = com.misaka10704.Said;
+				PRODUCT_NAME = Said;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		85ADB8347EF4FAA5C54F272D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -615,30 +811,6 @@
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
-		};
-		6CB9532C33F303E6B0EF5B28 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = C8XVZJLC2D;
-				ENABLE_DEBUG_DYLIB = NO;
-				INFOPLIST_FILE = Said/Supporting/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_LDFLAGS = "$(inherited) -lsqlite3 -lz";
-				"OTHER_LDFLAGS[sdk=iphoneos*]" = "$(inherited) -Wl,-force_load,$(PROJECT_DIR)/AnkiBackend/AnkiRust.xcframework/ios-arm64/libanki_bridge_ios.a -lsqlite3 -lz";
-				PRODUCT_BUNDLE_IDENTIFIER = com.misaka10704.Said;
-				PRODUCT_NAME = Said;
-				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = 2;
-			};
-			name = Release;
 		};
 		9AC6E23A307ABD806C432064 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -701,9 +873,56 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
+		};
+		A8A7ACD8B72C5E842EEAE601 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = C8XVZJLC2D;
+				ENABLE_DEBUG_DYLIB = NO;
+				INFOPLIST_FILE = Said/Supporting/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "$(inherited) -lsqlite3 -lz";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = "$(inherited) -Wl,-force_load,$(PROJECT_DIR)/AnkiBackend/AnkiRust.xcframework/ios-arm64/libanki_bridge_ios.a -lsqlite3 -lz";
+				PRODUCT_BUNDLE_IDENTIFIER = com.misaka10704.Said;
+				PRODUCT_NAME = Said;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		C6570933148D5CB7ECEEE03F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = C8XVZJLC2D;
+				ENABLE_DEBUG_DYLIB = NO;
+				INFOPLIST_FILE = Said/Supporting/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "$(inherited) -lsqlite3 -lz";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = "$(inherited) -Wl,-force_load,$(PROJECT_DIR)/AnkiBackend/AnkiRust.xcframework/ios-arm64/libanki_bridge_ios.a -lsqlite3 -lz";
+				PRODUCT_BUNDLE_IDENTIFIER = com.misaka10704.Said;
+				PRODUCT_NAME = Said;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
 		};
 		DEC7C5CFB8AB50ED7382D0C6 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -735,6 +954,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		41DF76F120B399369B6FFB4A /* Build configuration list for PBXNativeTarget "Said-iPhone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2EBD3FEB0F95CC139A163BF5 /* Debug */,
+				A8A7ACD8B72C5E842EEAE601 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		86F638CA2A5B93BC4ED3DCB3 /* Build configuration list for PBXProject "Said" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -744,11 +972,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		A786A49FBD5FB9E24EFC851E /* Build configuration list for PBXNativeTarget "Said" */ = {
+		F36A75C87CD348FCE5A00503 /* Build configuration list for PBXNativeTarget "Said-iPad" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				60379B1EC9D17947E7003CF5 /* Debug */,
-				6CB9532C33F303E6B0EF5B28 /* Release */,
+				85ADB8347EF4FAA5C54F272D /* Debug */,
+				C6570933148D5CB7ECEEE03F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -774,12 +1002,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1A50012FBCC730FBD7D14FEC /* Starscream */ = {
+		2C385EBE4A6F903761BB29E0 /* Starscream */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 487C2DC89D159AC2A04AF735 /* XCRemoteSwiftPackageReference "Starscream" */;
 			productName = Starscream;
 		};
-		A9C4C56BB2A4DCC8DD3EDE09 /* SaidAnkiBackend */ = {
+		47A43A8046B88DD7ABE38631 /* SaidAnkiBackend */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SaidAnkiBackend;
+		};
+		5724DAE0A73CD59A4B4B7130 /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 487C2DC89D159AC2A04AF735 /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
+		};
+		77D306093966B98F3892C995 /* SaidAnkiBackend */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SaidAnkiBackend;
 		};
