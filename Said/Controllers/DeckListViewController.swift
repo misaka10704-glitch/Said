@@ -21,7 +21,7 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
     private let importQueue = DispatchQueue(label: "com.said.anki.deck-import", qos: .userInitiated)
     private var roots: [DeckManagementNode] = []
     private var rows: [Row] = []
-    private var collapsedDeckIDs = Set<Int64>()
+    private var collapsedDeckIDs = DeckListCollapseStore.shared.collapsedDeckIDs()
     private var isImporting = false
 
     init(provider: DeckManagementDataProviding = OfficialDeckManagementProvider()) {
@@ -151,6 +151,7 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
                 switch result {
                 case .success(let nodes):
                     self.roots = nodes
+                    self.pruneCollapsedDeckIDs()
                     self.rebuildRows()
                     self.summaryHeader.configure(nodes: nodes)
                     self.emptyState.isHidden = !nodes.isEmpty
@@ -225,7 +226,10 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
                 DispatchQueue.main.async {
                     switch result {
                     case .success:
-                        if let parent = parent { self.collapsedDeckIDs.remove(parent.id) }
+                        if let parent = parent {
+                            self.collapsedDeckIDs.remove(parent.id)
+                            self.persistCollapsedDeckIDs()
+                        }
                         self.reload()
                     case .failure(let error):
                         self.presentAlert(error.localizedDescription)
@@ -348,7 +352,18 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
         } else {
             collapsedDeckIDs.insert(node.id)
         }
+        persistCollapsedDeckIDs()
         rebuildRows()
+    }
+
+    private func persistCollapsedDeckIDs() {
+        DeckListCollapseStore.shared.save(collapsedDeckIDs)
+    }
+
+    private func pruneCollapsedDeckIDs() {
+        let validIDs = Set(flattened(roots).map(\.id))
+        DeckListCollapseStore.shared.prune(keeping: validIDs)
+        collapsedDeckIDs = DeckListCollapseStore.shared.collapsedDeckIDs()
     }
 
     @objc private func handleLongPress(_ recognizer: UILongPressGestureRecognizer) {

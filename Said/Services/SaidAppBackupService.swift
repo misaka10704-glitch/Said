@@ -35,6 +35,7 @@ enum SaidAppBackupService {
         "said_appearance_mode",
         "said_interface_scale",
         "said_deck_practice_preferences_v1",
+        "said_deck_list_collapsed_v1",
         "said_speaking_result_history_v1",
     ]
 

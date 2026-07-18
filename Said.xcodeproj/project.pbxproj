@@ -37,6 +37,9 @@
 		43A3CECDFDCD368C53E0E7AB /* PronounceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F06BE14835A0D0D566A8F0C /* PronounceMode.swift */; };
 		43CAAB616FA1ED951BE157CC /* EdgeTTSBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB228A1AC065F97164B404AA /* EdgeTTSBatchViewController.swift */; };
 		47250DA15FDDC38636D823CC /* SyncViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1375F0D663F2A6F0D7AA4BB6 /* SyncViewController.swift */; };
+		D4C1A5E82B6F4A7093E1C8D7 /* DeckListCollapseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B0A4D71A5E493827F1D6C8 /* DeckListCollapseStore.swift */; };
+		E5D2B6F93C704B8194F2D9E8 /* DeckListCollapseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B0A4D71A5E493827F1D6C8 /* DeckListCollapseStore.swift */; };
+		F7E8D9C0B1A234567890CDEF /* DeckListCollapseStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D7C8B9A0F123456789ABCD /* DeckListCollapseStoreTests.swift */; };
 		4ED48B2FE1503240E17C3C02 /* MigrationNoteSanitizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E9A45F450AF9E58DC93DA2 /* MigrationNoteSanitizerTests.swift */; };
 		545B89961D4C20942097B2B2 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7278BD9D4BD17223E001D0 /* SidebarViewController.swift */; };
 		54ACCA86FD6DE328A07EECBD /* IELTSServiceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986A2E72104124EFE0076F5D /* IELTSServiceModels.swift */; };
@@ -160,6 +163,8 @@
 		2D21643C31D9992BF08B3073 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2EDBCAEDADDC79DF467D38C7 /* MemoryGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryGuard.swift; sourceTree = "<group>"; };
 		34C84C91DA61895B7E98C1A9 /* ComposeMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMode.swift; sourceTree = "<group>"; };
+		C3B0A4D71A5E493827F1D6C8 /* DeckListCollapseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckListCollapseStore.swift; sourceTree = "<group>"; };
+		E6D7C8B9A0F123456789ABCD /* DeckListCollapseStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckListCollapseStoreTests.swift; sourceTree = "<group>"; };
 		39E9A45F450AF9E58DC93DA2 /* MigrationNoteSanitizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationNoteSanitizerTests.swift; sourceTree = "<group>"; };
 		3A5AA4842152319BA7FAF93C /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
 		4521950673C5944FA255C50F /* SimpleZip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleZip.swift; sourceTree = "<group>"; };
@@ -280,6 +285,7 @@
 			isa = PBXGroup;
 			children = (
 				39E9A45F450AF9E58DC93DA2 /* MigrationNoteSanitizerTests.swift */,
+				E6D7C8B9A0F123456789ABCD /* DeckListCollapseStoreTests.swift */,
 			);
 			path = SaidTests;
 			sourceTree = "<group>";
@@ -374,6 +380,7 @@
 				6461C22D4A9E0124005C71D1 /* AzureSpeechResponse.swift */,
 				EED9FA3219989485A7787583 /* AzureSpeechService.swift */,
 				EA97FDB1B94E8D9B3DD266F5 /* BackupBundleHelper.swift */,
+				C3B0A4D71A5E493827F1D6C8 /* DeckListCollapseStore.swift */,
 				8FC3435D6C504DDD50DF4E3C /* DeckPracticePreferences.swift */,
 				90BED9C081C3F9BB4C045E2F /* EdgeTTSService.swift */,
 				F4B977A89474DC981EB362E1 /* IELTSNativeService.swift */,
@@ -568,6 +575,7 @@
 				A2FED9C3ADD2BAC834DFCD6C /* DeckListViewController.swift in Sources */,
 				622754D2D7BF9AF60A9F4E0D /* DeckOptionsViewController.swift in Sources */,
 				5DD6802E27A92C4E51B8B912 /* DeckParentPickerViewController.swift in Sources */,
+				D4C1A5E82B6F4A7093E1C8D7 /* DeckListCollapseStore.swift in Sources */,
 				15657DE81CB5C2B5D161BC3D /* DeckPracticePreferences.swift in Sources */,
 				68637903D3A83EE4BA36BF86 /* DeckPracticePreferencesViewController.swift in Sources */,
 				1D93008F7B3E2EFE2F24E155 /* EdgeTTSBatchViewController.swift in Sources */,
@@ -632,6 +640,7 @@
 				88BDD34C69D723B0D4BD0784 /* DeckListViewController.swift in Sources */,
 				8B7A612322DA2504707670F6 /* DeckOptionsViewController.swift in Sources */,
 				71142AC81AB53F801597DBAA /* DeckParentPickerViewController.swift in Sources */,
+				E5D2B6F93C704B8194F2D9E8 /* DeckListCollapseStore.swift in Sources */,
 				3E295BF24DCEDBC603DB1DCB /* DeckPracticePreferences.swift in Sources */,
 				B3B39BB0A120E681C9DEEC77 /* DeckPracticePreferencesViewController.swift in Sources */,
 				43CAAB616FA1ED951BE157CC /* EdgeTTSBatchViewController.swift in Sources */,
@@ -675,6 +684,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4ED48B2FE1503240E17C3C02 /* MigrationNoteSanitizerTests.swift in Sources */,
+				F7E8D9C0B1A234567890CDEF /* DeckListCollapseStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
