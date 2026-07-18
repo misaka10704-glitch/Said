@@ -168,10 +168,9 @@ final class OfficialAnkiCollection {
     }
 
     func exportDeck(id: Int64, to url: URL, includeScheduling: Bool = true) throws {
-        try services.exportDeck(
-            id: id,
-            path: url.path,
-            includeScheduling: includeScheduling
+        try exportApkg(
+            to: url,
+            options: .desktopSync(deckID: id, includeScheduling: includeScheduling)
         )
     }
 
@@ -292,16 +291,38 @@ final class OfficialAnkiCollection {
         }
     }
 
-    func importApkg(from url: URL) throws {
-        _ = try services.importAnkiPackage(path: url.path)
+    @discardableResult
+    func importApkg(from url: URL) throws -> SaidApkgImportResult {
+        let response = try services.importAnkiPackage(path: url.path)
         resetCollectionCaches()
+        return SaidApkgImportResult(
+            newCount: Int(response.log.new.count),
+            updatedCount: Int(response.log.updated.count),
+            duplicateCount: Int(response.log.duplicate.count),
+            notesNeedingTranslation: try countNotesNeedingTranslation(),
+            notesNeedingAudio: try countNotesNeedingReferenceAudio()
+        )
     }
 
     func exportApkg(to url: URL) throws {
+        try exportApkg(to: url, options: .deviceMigration())
+    }
+
+    func exportApkg(to url: URL, options: SaidApkgExportOptions) throws {
+        var snapshots: [MigrationNoteSnapshot] = []
+        if options.shouldSanitizeNotes {
+            snapshots = try applyMigrationSanitization(for: options.deckID)
+        }
+        defer {
+            if !snapshots.isEmpty {
+                try? restoreMigrationSnapshots(snapshots)
+            }
+        }
         try services.exportAnkiPackage(
-            deckID: nil,
+            deckID: options.deckID,
             path: url.path,
-            includeScheduling: true
+            includeScheduling: options.includeScheduling,
+            includeMedia: options.includeMedia
         )
     }
 
@@ -787,6 +808,85 @@ final class OfficialAnkiCollection {
         deckNames.removeAll()
         selectedDeckID = nil
         loadedDeckOptions.removeAll()
+    }
+
+    private func applyMigrationSanitization(for deckID: Int64?) throws -> [MigrationNoteSnapshot] {
+        let noteIDs = try noteIDs(forDeck: deckID)
+        var snapshots: [MigrationNoteSnapshot] = []
+        var sanitizedNotes: [SaidNote] = []
+        for noteID in noteIDs {
+            let note = try services.note(id: noteID)
+            snapshots.append(
+                MigrationNoteSnapshot(
+                    noteID: noteID,
+                    fields: note.fields,
+                    tags: note.tags
+                )
+            )
+            let notetype = try services.notetype(id: note.notetypeID)
+            sanitizedNotes.append(
+                MigrationNoteSanitizer.sanitize(note: note, fieldNames: notetype.fieldNames).note
+            )
+        }
+        for note in sanitizedNotes {
+            try services.update(note)
+        }
+        return snapshots
+    }
+
+    private func restoreMigrationSnapshots(_ snapshots: [MigrationNoteSnapshot]) throws {
+        for snapshot in snapshots {
+            var note = try services.note(id: snapshot.noteID)
+            note.fields = snapshot.fields
+            note.tags = snapshot.tags
+            try services.update(note)
+        }
+    }
+
+    private func noteIDs(forDeck deckID: Int64?) throws -> [Int64] {
+        if let deckID = deckID {
+            var noteIDs = Set<Int64>()
+            for cardID in try cardIDs(inDeck: deckID) {
+                noteIDs.insert(try services.card(id: cardID).noteID)
+            }
+            return noteIDs.sorted()
+        }
+        return try allNoteIDs()
+    }
+
+    private func allNoteIDs() throws -> [Int64] {
+        var noteIDs = Set<Int64>()
+        for cardID in try services.searchCards("deck:*") {
+            noteIDs.insert(try services.card(id: cardID).noteID)
+        }
+        return noteIDs.sorted()
+    }
+
+    func countNotesNeedingTranslation() throws -> Int {
+        try services.searchNotes("tag:trans").count
+    }
+
+    func countNotesNeedingReferenceAudio() throws -> Int {
+        var count = 0
+        for noteID in try allNoteIDs() {
+            let note = try services.note(id: noteID)
+            if note.fields.contains(where: MigrationNoteSanitizer.containsSoundTag) {
+                continue
+            }
+            let notetype = try services.notetype(id: note.notetypeID)
+            guard let sourceIndex = NoteFieldMapper.sourceFieldIndex(
+                in: notetype.fieldNames,
+                fields: note.fields
+            ),
+            note.fields.indices.contains(sourceIndex) else {
+                continue
+            }
+            let source = PronounceReferenceTargetParser.stripField(note.fields[sourceIndex])
+            if !source.isEmpty {
+                count += 1
+            }
+        }
+        return count
     }
 
     private func withQueuedCardsLock<T>(_ body: () throws -> T) rethrows -> T {

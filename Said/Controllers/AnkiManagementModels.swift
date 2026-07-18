@@ -287,7 +287,7 @@ protocol DeckManagementDataProviding: AnyObject {
     func exportDeck(
         deckID: Int64,
         to url: URL,
-        includeScheduling: Bool,
+        options: SaidApkgExportOptions,
         completion: @escaping (Result<Void, Error>) -> Void
     )
     func loadCustomStudyDefaults(
@@ -401,15 +401,11 @@ final class OfficialDeckManagementProvider: DeckManagementDataProviding {
     func exportDeck(
         deckID: Int64,
         to url: URL,
-        includeScheduling: Bool,
+        options: SaidApkgExportOptions,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         perform(completion: completion) {
-            try self.collection().exportDeck(
-                id: deckID,
-                to: url,
-                includeScheduling: includeScheduling
-            )
+            try self.collection().exportApkg(to: url, options: options)
         }
     }
 

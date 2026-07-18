@@ -276,13 +276,13 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
             }
             let folder = FileManager.default.temporaryDirectory
                 .appendingPathComponent("said-import-\(UUID().uuidString)", isDirectory: true)
-            let result: Result<Void, Error>
+            let result: Result<SaidApkgImportResult, Error>
             do {
                 try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
                 let localURL = folder.appendingPathComponent(source.lastPathComponent)
                 try FileManager.default.copyItem(at: source, to: localURL)
-                _ = try AnkiStore.shared.importApkg(localURL)
-                result = .success(())
+                let importResult = try AnkiStore.shared.importApkg(localURL)
+                result = .success(importResult)
             } catch {
                 result = .failure(error)
             }
@@ -291,9 +291,9 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
                 guard let self = self else { return }
                 self.setImporting(false)
                 switch result {
-                case .success:
+                case .success(let importResult):
                     self.reload()
-                    self.presentAlert("导入成功")
+                    self.presentAlert(importResult.formattedMessage)
                 case .failure(let error):
                     self.presentAlert("导入失败：\(error.localizedDescription)")
                 }
@@ -582,11 +582,20 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
             from: self,
             title: "导出 \(node.name)",
             items: [
+                SaidMenuItem(title: "换机导出（无媒体）", icon: .exportDeck) { [weak self] in
+                    self?.exportDeck(node, options: .deviceMigration(deckID: node.id))
+                },
                 SaidMenuItem(title: "包含学习进度", icon: .exportWithScheduling) { [weak self] in
-                    self?.exportDeck(node, includeScheduling: true)
+                    self?.exportDeck(
+                        node,
+                        options: .desktopSync(deckID: node.id, includeScheduling: true)
+                    )
                 },
                 SaidMenuItem(title: "不含学习进度", icon: .exportWithoutScheduling) { [weak self] in
-                    self?.exportDeck(node, includeScheduling: false)
+                    self?.exportDeck(
+                        node,
+                        options: .desktopSync(deckID: node.id, includeScheduling: false)
+                    )
                 },
             ],
             sourceView: sourceView ?? view,
@@ -596,17 +605,18 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
         )
     }
 
-    private func exportDeck(_ node: DeckManagementNode, includeScheduling: Bool) {
+    private func exportDeck(_ node: DeckManagementNode, options: SaidApkgExportOptions) {
         let safeName = node.name
             .replacingOccurrences(of: "::", with: "_")
             .replacingOccurrences(of: "/", with: "_")
+        let suffix = options.profile == .deviceMigration ? "_migration" : ""
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("\(safeName).apkg")
+            .appendingPathComponent("\(safeName)\(suffix).apkg")
         try? FileManager.default.removeItem(at: url)
         provider.exportDeck(
             deckID: node.id,
             to: url,
-            includeScheduling: includeScheduling
+            options: options
         ) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self = self else { return }

@@ -19,16 +19,20 @@ final class AnkiStore {
     }
 
     @discardableResult
-    func importApkg(_ url: URL) throws -> OfficialAnkiCollection {
+    func importApkg(_ url: URL) throws -> SaidApkgImportResult {
         let col = try requireCollection()
-        try col.importApkg(from: url)
+        let result = try col.importApkg(from: url)
         collection = col
-        return col
+        return result
+    }
+
+    func exportApkg(to url: URL, options: SaidApkgExportOptions) throws {
+        guard let col = collection else { throw AnkiError.exportFailed("尚无集合") }
+        try col.exportApkg(to: url, options: options)
     }
 
     func exportApkg(to url: URL) throws {
-        guard let col = collection else { throw AnkiError.exportFailed("尚无集合") }
-        try col.exportApkg(to: url)
+        try exportApkg(to: url, options: .deviceMigration())
     }
 
     func requireCollection() throws -> OfficialAnkiCollection {

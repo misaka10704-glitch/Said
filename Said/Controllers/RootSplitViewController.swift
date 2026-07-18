@@ -22,7 +22,7 @@ final class RootSplitViewController: UIViewController, ThemeRefreshable, UIGestu
     private var selectedSection: SaidSection = .decks
     private var isCompactLayout = false
     private var isDrawerOpen = false
-    private var isSidebarCollapsed = false
+    private var isSidebarCollapsed = true
     private let managementProvider = OfficialBrowserProvider()
     private let syncProvider = OfficialSyncProvider()
 

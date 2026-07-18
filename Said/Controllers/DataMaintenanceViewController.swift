@@ -17,10 +17,15 @@ struct CollectionRestoreConfirmation {
 }
 
 enum CollectionExportKind {
-  case apkg
+  case apkg(options: SaidApkgExportOptions, filePrefix: String)
   case colpkg(includeMedia: Bool)
   case noteCSV
   case cardCSV
+}
+
+enum CollectionImportResult {
+  case apkg(SaidApkgImportResult)
+  case text(String)
 }
 
 protocol LocalDataMaintenanceProviding: AnyObject {
@@ -31,7 +36,7 @@ protocol LocalDataMaintenanceProviding: AnyObject {
     _ confirmation: CollectionRestoreConfirmation, typedText: String,
     completion: @escaping (Result<Void, Error>) -> Void)
   func checkDatabase(completion: @escaping (Result<[String], Error>) -> Void)
-  func importFile(at url: URL, completion: @escaping (Result<String, Error>) -> Void)
+  func importFile(at url: URL, completion: @escaping (Result<CollectionImportResult, Error>) -> Void)
   func export(
     _ kind: CollectionExportKind, to url: URL,
     completion: @escaping (Result<UInt32?, Error>) -> Void)
@@ -131,18 +136,18 @@ final class OfficialLocalDataMaintenanceProvider: LocalDataMaintenanceProviding 
     }
   }
 
-  func importFile(at url: URL, completion: @escaping (Result<String, Error>) -> Void) {
+  func importFile(at url: URL, completion: @escaping (Result<CollectionImportResult, Error>) -> Void) {
     queue.async {
       do {
         let ext = url.pathExtension.lowercased()
         let collection = try AnkiStore.shared.requireCollection()
         switch ext {
         case "apkg":
-          try collection.importApkg(from: url)
-          completion(.success("APKG 导入完成"))
+          let result = try collection.importApkg(from: url)
+          completion(.success(.apkg(result)))
         case "csv", "tsv", "txt":
           let summary = try collection.importText(from: url)
-          completion(.success("文本导入完成：\(summary)"))
+          completion(.success(.text("文本导入完成：\(summary)")))
         default:
           completion(.failure(DataMaintenanceError.unsupportedFile(ext)))
         }
@@ -161,8 +166,8 @@ final class OfficialLocalDataMaintenanceProvider: LocalDataMaintenanceProviding 
       do {
         let collection = try AnkiStore.shared.requireCollection()
         switch kind {
-        case .apkg:
-          try collection.exportApkg(to: url)
+        case .apkg(let options, _):
+          try collection.exportApkg(to: url, options: options)
           completion(.success(nil))
         case .colpkg(let includeMedia):
           try collection.exportCollectionPackage(to: url, includeMedia: includeMedia)
@@ -191,7 +196,8 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
     "立即备份集合",
     "官方数据库检查",
     "导入 APKG / COLPKG / CSV",
-    "导出 APKG",
+    "换机导出 APKG",
+    "导出 APKG（含媒体，桌面同步）",
     "导出 COLPKG",
     "导出笔记 CSV",
     "导出卡片 CSV",
@@ -310,10 +316,19 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
     case 0: createBackup()
     case 1: checkDatabase()
     case 2: pickImportFile()
-    case 3: export(.apkg, fileExtension: "apkg")
-    case 4: chooseColpkgExport(sourceView: tableView.cellForRow(at: indexPath))
-    case 5: export(.noteCSV, fileExtension: "csv")
-    case 6: export(.cardCSV, fileExtension: "csv")
+    case 3:
+      export(
+        .apkg(options: .deviceMigration(), filePrefix: "Said_migration"),
+        fileExtension: "apkg"
+      )
+    case 4:
+      export(
+        .apkg(options: .desktopSync(deckID: nil, includeScheduling: true), filePrefix: "Said_sync"),
+        fileExtension: "apkg"
+      )
+    case 5: chooseColpkgExport(sourceView: tableView.cellForRow(at: indexPath))
+    case 6: export(.noteCSV, fileExtension: "csv")
+    case 7: export(.cardCSV, fileExtension: "csv")
     default: break
     }
   }
@@ -407,8 +422,13 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
         self.setBusy(false)
         self.removePendingImport()
         switch result {
-        case .success(let message):
-          self.showMessage(message)
+        case .success(let importResult):
+          switch importResult {
+          case .apkg(let summary):
+            self.showMessage(summary.formattedMessage)
+          case .text(let message):
+            self.showMessage(message)
+          }
         case .failure(let error):
           self.showMessage(error.localizedDescription)
         }
@@ -495,7 +515,7 @@ final class DataMaintenanceViewController: UITableViewController, UIDocumentPick
       let stamp = Int(Date().timeIntervalSince1970)
       let prefix: String
       switch kind {
-      case .apkg: prefix = "Said_collection"
+      case .apkg(_, let filePrefix): prefix = filePrefix
       case .colpkg: prefix = "Said_collection"
       case .noteCSV: prefix = "Said_notes"
       case .cardCSV: prefix = "Said_cards"

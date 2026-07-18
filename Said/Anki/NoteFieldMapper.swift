@@ -171,7 +171,7 @@ enum NoteFieldMapper {
         let trimmed = meaning.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return html }
         let div = "<div class=\"\(wordMeaningDivClass)\">\(escapeHTML(trimmed))</div>"
-        let remainder = removeWordMeaningDiv(from: html).trimmingCharacters(in: .whitespacesAndNewlines)
+        let remainder = removingWordMeaningDiv(from: html).trimmingCharacters(in: .whitespacesAndNewlines)
         if remainder.isEmpty { return div }
         return div + "\n" + remainder
     }
@@ -329,7 +329,7 @@ enum NoteFieldMapper {
         return plain.isEmpty ? nil : plain
     }
 
-    private static func removeWordMeaningDiv(from html: String) -> String {
+    static func removingWordMeaningDiv(from html: String) -> String {
         let pattern = "(?is)<div\\b[^>]*class=\"[^\"]*\\b\(wordMeaningDivClass)\\b[^\"]*\"[^>]*>.*?</div>\\s*"
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return html }
         return regex.stringByReplacingMatches(

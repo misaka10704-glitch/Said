@@ -120,6 +120,13 @@ public struct SaidNote: Sendable {
     public let notetypeID: Int64
     public var fields: [String]
     public var tags: [String]
+
+    public init(id: Int64, notetypeID: Int64, fields: [String], tags: [String]) {
+        self.id = id
+        self.notetypeID = notetypeID
+        self.fields = fields
+        self.tags = tags
+    }
 }
 
 public struct SaidNotetype: Sendable {
@@ -1076,8 +1083,7 @@ public final class SaidAnkiServices {
         return response.val
     }
 
-    @discardableResult
-    public func importAnkiPackage(path: String) throws -> String {
+    public func importAnkiPackage(path: String) throws -> Anki_ImportExport_ImportResponse {
         var options = Anki_ImportExport_ImportAnkiPackageOptions()
         options.mergeNotetypes = true
         options.withScheduling = true
@@ -1085,12 +1091,11 @@ public final class SaidAnkiServices {
         var request = Anki_ImportExport_ImportAnkiPackageRequest()
         request.packagePath = path
         request.options = options
-        let response: Anki_ImportExport_ImportResponse = try backend.invoke(
+        return try backend.invoke(
             service: RustAnkiBackend.Service.importExport,
             method: RustAnkiBackend.ImportExportMethod.importAnkiPackage,
             request: request
         )
-        return "new \(response.log.new.count), updated \(response.log.updated.count), duplicates \(response.log.duplicate.count)"
     }
 
     @discardableResult
@@ -1223,12 +1228,13 @@ public final class SaidAnkiServices {
     public func exportAnkiPackage(
         deckID: Int64?,
         path: String,
-        includeScheduling: Bool = true
+        includeScheduling: Bool = true,
+        includeMedia: Bool = true
     ) throws {
         var options = Anki_ImportExport_ExportAnkiPackageOptions()
         options.withScheduling = includeScheduling
         options.withDeckConfigs = true
-        options.withMedia = true
+        options.withMedia = includeMedia
         options.legacy = false
         var limit = Anki_ImportExport_ExportLimit()
         if let deckID = deckID {
@@ -1250,12 +1256,14 @@ public final class SaidAnkiServices {
     public func exportDeck(
         id: Int64,
         path: String,
-        includeScheduling: Bool = true
+        includeScheduling: Bool = true,
+        includeMedia: Bool = true
     ) throws {
         try exportAnkiPackage(
             deckID: id,
             path: path,
-            includeScheduling: includeScheduling
+            includeScheduling: includeScheduling,
+            includeMedia: includeMedia
         )
     }
 

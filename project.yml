@@ -62,3 +62,16 @@ targets:
         LSSupportsOpeningDocumentsInPlace: true
         UIRequiresFullScreen: true
         MinimumOSVersion: "12.0"
+  SaidTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "12.0"
+    sources:
+      - path: SaidTests
+    dependencies:
+      - target: Said
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.misaka10704.SaidTests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Said.app/Said"
