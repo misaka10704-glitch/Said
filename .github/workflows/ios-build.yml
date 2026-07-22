@@ -16,10 +16,10 @@ jobs:
         include:
           - route: ipad
             scheme: Said-iPad
-            run_tests: true
+            run_tests: false
           - route: iphone
             scheme: Said-iPhone
-            run_tests: false
+            run_tests: true
     steps:
       - uses: actions/checkout@v4
 
@@ -35,11 +35,12 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
-      - name: Unit tests (iPad route)
+      # SaidTests host is Said-iPhone (moved off Said-iPad in 0d5182e).
+      - name: Unit tests (iPhone route)
         if: matrix.run_tests
         run: |
           xcodebuild \
-            -scheme Said-iPad \
+            -scheme Said-iPhone \
             -destination 'platform=iOS Simulator,name=iPad (A16)' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
