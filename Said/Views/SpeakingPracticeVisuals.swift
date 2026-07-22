@@ -5,6 +5,7 @@ final class DeckListSummaryHeaderView: UIView {
     private let newColumn = DeckCountSummaryColumn(prefix: "新", color: DSTheme.voiceBlue)
     private let learningColumn = DeckCountSummaryColumn(prefix: "学", color: DSTheme.learningAmber)
     private let reviewColumn = DeckCountSummaryColumn(prefix: "复", color: DSTheme.brandCyan)
+    private let bottomDivider = UIView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,7 +34,8 @@ final class DeckListSummaryHeaderView: UIView {
 
     func applyTheme() {
         backgroundColor = DSTheme.c.background
-        summaryLabel.textColor = DSTheme.c.textSecondary
+        summaryLabel.textColor = DSTheme.c.textTertiary
+        bottomDivider.backgroundColor = DSTheme.c.divider
         newColumn.applyTheme()
         learningColumn.applyTheme()
         reviewColumn.applyTheme()
@@ -41,7 +43,7 @@ final class DeckListSummaryHeaderView: UIView {
 
     private func build() {
         isAccessibilityElement = true
-        summaryLabel.font = DSTheme.bodyFont(size: 13)
+        summaryLabel.font = DSTheme.bodyFont(size: 12)
         summaryLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         let counts = UIStackView(arrangedSubviews: [newColumn, learningColumn, reviewColumn])
@@ -49,17 +51,35 @@ final class DeckListSummaryHeaderView: UIView {
         counts.spacing = DSTheme.DeckCounts.columnSpacing
         counts.alignment = .center
 
-        let stack = UIStackView(arrangedSubviews: [summaryLabel, counts])
+        // Mirror DeckTreeRowCell's more-button width so count columns share an axis.
+        let moreSpacer = UIView()
+        moreSpacer.translatesAutoresizingMaskIntoConstraints = false
+        moreSpacer.widthAnchor.constraint(equalToConstant: 36).isActive = true
+
+        let trailing = UIStackView(arrangedSubviews: [counts, moreSpacer])
+        trailing.axis = .horizontal
+        trailing.alignment = .center
+        trailing.spacing = 2
+
+        let stack = UIStackView(arrangedSubviews: [summaryLabel, trailing])
         stack.axis = .horizontal
         stack.alignment = .center
-        stack.spacing = 12
+        stack.spacing = DSTheme.Spacing.sm
         stack.translatesAutoresizingMaskIntoConstraints = false
+        bottomDivider.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stack)
+        addSubview(bottomDivider)
         NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            stack.leadingAnchor.constraint(
+                equalTo: leadingAnchor, constant: DSTheme.DeckCounts.leadingInset),
+            stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
             stack.topAnchor.constraint(equalTo: topAnchor),
-            stack.bottomAnchor.constraint(equalTo: bottomAnchor)
+            stack.bottomAnchor.constraint(equalTo: bottomAnchor),
+            bottomDivider.leadingAnchor.constraint(
+                equalTo: leadingAnchor, constant: DSTheme.DeckCounts.leadingInset),
+            bottomDivider.trailingAnchor.constraint(equalTo: trailingAnchor),
+            bottomDivider.bottomAnchor.constraint(equalTo: bottomAnchor),
+            bottomDivider.heightAnchor.constraint(equalToConstant: DSTheme.List.separatorHeight)
         ])
         applyTheme()
     }
@@ -77,7 +97,7 @@ private final class DeckCountSummaryColumn: UIView {
     var value: Int = 0 {
         didSet {
             valueLabel.text = "\(value)"
-            valueLabel.alpha = value == 0 ? 0.42 : 1
+            valueLabel.alpha = value == 0 ? 0.38 : 1
         }
     }
 
@@ -85,7 +105,7 @@ private final class DeckCountSummaryColumn: UIView {
         self.color = color
         super.init(frame: .zero)
         prefixLabel.text = prefix
-        prefixLabel.font = DSTheme.bodyFont(size: 10)
+        prefixLabel.font = DSTheme.titleFont(size: 10)
         prefixLabel.textAlignment = .center
         valueLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .semibold)
         valueLabel.textAlignment = .center
@@ -93,7 +113,7 @@ private final class DeckCountSummaryColumn: UIView {
         let stack = UIStackView(arrangedSubviews: [prefixLabel, valueLabel])
         stack.axis = .vertical
         stack.alignment = .center
-        stack.spacing = 0
+        stack.spacing = 1
         stack.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stack)
         NSLayoutConstraint.activate([
@@ -111,7 +131,7 @@ private final class DeckCountSummaryColumn: UIView {
     }
 
     func applyTheme() {
-        prefixLabel.textColor = color.withAlphaComponent(0.85)
+        prefixLabel.textColor = color.withAlphaComponent(0.72)
         valueLabel.textColor = color
     }
 }
@@ -122,7 +142,7 @@ final class DeckTreeRowCell: UITableViewCell {
     private let disclosureButton = UIButton(type: .system)
     private let accentView = UIView()
     private let titleLabel = UILabel()
-    private let filteredLabel = UILabel()
+    private let filteredBadge = UILabel()
     private let newLabel = UILabel()
     private let learningLabel = UILabel()
     private let reviewLabel = UILabel()
@@ -151,9 +171,9 @@ final class DeckTreeRowCell: UITableViewCell {
         self.moreAction = moreAction
         let shortName = node.name.components(separatedBy: "::").last ?? node.name
         titleLabel.text = shortName
-        filteredLabel.isHidden = !node.filtered
+        filteredBadge.isHidden = !node.filtered
         accentView.backgroundColor = DSTheme.practiceAccent(deckName: node.name)
-        leadingConstraint.constant = 10 + CGFloat(min(depth, 8)) * 18
+        leadingConstraint.constant = 8 + CGFloat(min(depth, 8)) * 16
         disclosureButton.isHidden = node.children.isEmpty
         disclosureButton.setTitle(expanded ? "▾" : "▸", for: .normal)
         configureCount(newLabel, value: node.newCount)
@@ -165,17 +185,21 @@ final class DeckTreeRowCell: UITableViewCell {
     }
 
     func applyTheme() {
-        backgroundColor = DSTheme.c.background
-        contentView.backgroundColor = DSTheme.c.background
-        titleLabel.textColor = DSTheme.c.textPrimary
-        filteredLabel.textColor = DSTheme.c.warning
-        disclosureButton.tintColor = DSTheme.c.textSecondary
-        moreButton.tintColor = DSTheme.c.textSecondary
+        let colors = DSTheme.c
+        backgroundColor = colors.background
+        contentView.backgroundColor = colors.background
+        titleLabel.textColor = colors.textPrimary
+        filteredBadge.textColor = colors.warning
+        filteredBadge.backgroundColor = DSTheme.tintedSurface(colors.warning, alpha: 0.16)
+        disclosureButton.tintColor = colors.textTertiary
+        disclosureButton.setTitleColor(colors.textTertiary, for: .normal)
+        moreButton.tintColor = colors.textTertiary
+        moreButton.setTitleColor(colors.textTertiary, for: .normal)
         newLabel.textColor = DSTheme.voiceBlue
         learningLabel.textColor = DSTheme.learningAmber
         reviewLabel.textColor = DSTheme.brandCyan
         let selected = UIView()
-        selected.backgroundColor = DSTheme.c.surfaceHover
+        selected.backgroundColor = colors.surfaceHover
         selectedBackgroundView = selected
     }
 
@@ -189,33 +213,44 @@ final class DeckTreeRowCell: UITableViewCell {
 
     private func configureCount(_ label: UILabel, value: Int) {
         label.text = "\(value)"
-        label.alpha = value == 0 ? 0.42 : 1
+        label.alpha = value == 0 ? 0.38 : 1
     }
 
     private func build() {
+        preservesSuperviewLayoutMargins = false
+        contentView.preservesSuperviewLayoutMargins = false
+        contentView.layoutMargins = .zero
         disclosureButton.setTitle("▸", for: .normal)
-        disclosureButton.titleLabel?.font = DSTheme.titleFont(size: 15)
+        disclosureButton.titleLabel?.font = DSTheme.titleFont(size: 14)
         disclosureButton.addTarget(self, action: #selector(disclose), for: .touchUpInside)
         disclosureButton.accessibilityLabel = "展开或收起"
         accentView.layer.cornerRadius = 2
-        titleLabel.font = DSTheme.bodyFont(size: 15)
+        titleLabel.font = DSTheme.titleFont(size: 15)
         titleLabel.lineBreakMode = .byTruncatingMiddle
-        filteredLabel.text = "筛选"
-        filteredLabel.font = DSTheme.titleFont(size: 10)
+        filteredBadge.text = "筛选"
+        filteredBadge.font = DSTheme.titleFont(size: 10)
+        filteredBadge.textAlignment = .center
+        filteredBadge.layer.cornerRadius = 4
+        filteredBadge.clipsToBounds = true
+        filteredBadge.setContentHuggingPriority(.required, for: .horizontal)
         [newLabel, learningLabel, reviewLabel].forEach {
             $0.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .semibold)
-            $0.textAlignment = .right
+            $0.textAlignment = .center
             $0.widthAnchor.constraint(equalToConstant: DSTheme.DeckCounts.columnWidth).isActive = true
         }
-        moreButton.setTitle("•••", for: .normal)
-        moreButton.titleLabel?.font = DSTheme.titleFont(size: 13)
+        moreButton.setTitle("···", for: .normal)
+        moreButton.titleLabel?.font = DSTheme.titleFont(size: 18)
         moreButton.addTarget(self, action: #selector(showMore), for: .touchUpInside)
         moreButton.accessibilityLabel = "更多操作"
 
-        let titleStack = UIStackView(arrangedSubviews: [titleLabel, filteredLabel])
+        let badgeWidth = filteredBadge.widthAnchor.constraint(equalToConstant: 34)
+        badgeWidth.priority = .defaultHigh
+        let badgeHeight = filteredBadge.heightAnchor.constraint(equalToConstant: 18)
+
+        let titleStack = UIStackView(arrangedSubviews: [titleLabel, filteredBadge])
         titleStack.axis = .horizontal
         titleStack.alignment = .center
-        titleStack.spacing = 6
+        titleStack.spacing = 8
         let counts = UIStackView(arrangedSubviews: [newLabel, learningLabel, reviewLabel])
         counts.axis = .horizontal
         counts.spacing = DSTheme.DeckCounts.columnSpacing
@@ -226,25 +261,27 @@ final class DeckTreeRowCell: UITableViewCell {
         }
         leadingConstraint = disclosureButton.leadingAnchor.constraint(
             equalTo: contentView.leadingAnchor,
-            constant: 10
+            constant: 8
         )
         NSLayoutConstraint.activate([
+            badgeWidth,
+            badgeHeight,
             leadingConstraint,
             disclosureButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            disclosureButton.widthAnchor.constraint(equalToConstant: 26),
+            disclosureButton.widthAnchor.constraint(equalToConstant: 24),
             disclosureButton.heightAnchor.constraint(equalToConstant: 36),
-            accentView.leadingAnchor.constraint(equalTo: disclosureButton.trailingAnchor, constant: 1),
+            accentView.leadingAnchor.constraint(equalTo: disclosureButton.trailingAnchor, constant: 2),
             accentView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            accentView.widthAnchor.constraint(equalToConstant: 4),
+            accentView.widthAnchor.constraint(equalToConstant: 3),
             accentView.heightAnchor.constraint(equalToConstant: 18),
             titleStack.leadingAnchor.constraint(equalTo: accentView.trailingAnchor, constant: 8),
             titleStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            counts.leadingAnchor.constraint(greaterThanOrEqualTo: titleStack.trailingAnchor, constant: 6),
+            counts.leadingAnchor.constraint(greaterThanOrEqualTo: titleStack.trailingAnchor, constant: 8),
             counts.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             moreButton.leadingAnchor.constraint(equalTo: counts.trailingAnchor, constant: 2),
-            moreButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -6),
+            moreButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             moreButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            moreButton.widthAnchor.constraint(equalToConstant: 38),
+            moreButton.widthAnchor.constraint(equalToConstant: 36),
             moreButton.heightAnchor.constraint(equalToConstant: 36)
         ])
         applyTheme()

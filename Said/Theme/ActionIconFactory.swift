@@ -255,21 +255,27 @@ enum ActionIconFactory {
             arrow.stroke()
 
         case .importFile:
+            // Fill the glyph bounds more like createDeck so nav icons share visual weight.
+            let inset = rect.insetBy(dx: 1.5, dy: 1.5)
             let tray = UIBezierPath()
-            tray.move(to: CGPoint(x: rect.minX + 2, y: rect.maxY - 6))
-            tray.addLine(to: CGPoint(x: rect.minX + 2, y: rect.maxY - 2))
-            tray.addLine(to: CGPoint(x: rect.maxX - 2, y: rect.maxY - 2))
-            tray.addLine(to: CGPoint(x: rect.maxX - 2, y: rect.maxY - 6))
-            tray.lineWidth = 1.55
+            tray.move(to: CGPoint(x: inset.minX + 1, y: inset.maxY - 5))
+            tray.addLine(to: CGPoint(x: inset.minX + 1, y: inset.maxY - 1))
+            tray.addLine(to: CGPoint(x: inset.maxX - 1, y: inset.maxY - 1))
+            tray.addLine(to: CGPoint(x: inset.maxX - 1, y: inset.maxY - 5))
+            tray.lineWidth = 1.7
+            tray.lineCapStyle = .round
+            tray.lineJoinStyle = .round
             tray.stroke()
             let arrow = UIBezierPath()
-            arrow.move(to: CGPoint(x: rect.midX, y: rect.minY + 2))
-            arrow.addLine(to: CGPoint(x: rect.midX, y: rect.maxY - 7))
-            arrow.move(to: CGPoint(x: rect.midX, y: rect.maxY - 7))
-            arrow.addLine(to: CGPoint(x: rect.midX - 4, y: rect.maxY - 11))
-            arrow.move(to: CGPoint(x: rect.midX, y: rect.maxY - 7))
-            arrow.addLine(to: CGPoint(x: rect.midX + 4, y: rect.maxY - 11))
+            arrow.move(to: CGPoint(x: inset.midX, y: inset.minY + 1))
+            arrow.addLine(to: CGPoint(x: inset.midX, y: inset.maxY - 6))
+            arrow.move(to: CGPoint(x: inset.midX, y: inset.maxY - 6))
+            arrow.addLine(to: CGPoint(x: inset.midX - 4.5, y: inset.maxY - 10.5))
+            arrow.move(to: CGPoint(x: inset.midX, y: inset.maxY - 6))
+            arrow.addLine(to: CGPoint(x: inset.midX + 4.5, y: inset.maxY - 10.5))
             arrow.lineWidth = 1.7
+            arrow.lineCapStyle = .round
+            arrow.lineJoinStyle = .round
             arrow.stroke()
 
         case .referenceAudio, .playback:

@@ -32,6 +32,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     private let edgeTTS = EdgeTTSService.shared
     private let ieltsService = IELTSNativeService()
     private let resultHistory = SpeakingResultHistoryStore.shared
+    private var memoryWarningObserver: NSObjectProtocol?
 
     private var card: AnkiCardSnapshot?
     private var mode: PracticeMode = .unsupported
@@ -103,7 +104,7 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
         pronounceSession.requestRecordingPermission { [weak self] allowed in
             if !allowed { self?.setStatus("需要麦克风权限", error: true) }
         }
-        MemoryGuard.lowMemoryWarningInstall(on: self) { [weak self] in
+        memoryWarningObserver = MemoryGuard.lowMemoryWarningInstall(on: self) { [weak self] in
             self?.releaseTransientResources()
             MemoryGuard.trimWebViewProcessIfNeeded()
             self?.setStatus("内存紧张：已释放音频与网络任务", error: true)
@@ -114,6 +115,9 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
 
     deinit {
         NotificationCenter.default.removeObserver(self)
+        if let observer = memoryWarningObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
         cleanupReviewSession(stopWebView: true)
     }
 
@@ -971,7 +975,44 @@ final class ReviewViewController: UIViewController, ThemeRefreshable, WKNavigati
     @objc private func applicationDidBecomeActive() {
         guard reloadAfterBackground else { return }
         reloadAfterBackground = false
-        loadNext()
+        restoreCurrentCardAfterBackground()
+    }
+
+    private func restoreCurrentCardAfterBackground() {
+        guard let currentCard = card else {
+            loadNext()
+            return
+        }
+        mode = ModeRouter.mode(for: currentCard, deckHint: deckName)
+        operationGeneration += 1
+        isRecording = false
+        didAttachCurrentRecording = false
+        pronounceSession.reset()
+        if mode == .pronounce {
+            pronounceSession.configure(card: currentCard, deckHint: deckName)
+            if referenceMediaQueue.isEmpty {
+                pronounceSession.loadReferenceAudio()
+            }
+        } else {
+            pronounceSession.configureRecording(card: currentCard)
+        }
+        if deckPreferences.curtainEnabled {
+            cardView.conceal()
+        } else {
+            cardView.reveal()
+        }
+        easeBar.setIntervals(currentCard.nextIntervals)
+        setAnswerControlsEnabled(true)
+        controlBar.setTitle("录音", for: .record)
+        resultPanel.reset()
+        setResultCollapsed(false, animated: false)
+        loadCardSide(reviewHTML(for: currentCard), card: currentCard)
+        setStatus("\(modeTitle(mode))  ·  \(currentCard.modelName)")
+        resultHistory.latest(cardID: currentCard.cardId) { [weak self] snapshot in
+            guard let self = self, self.card?.cardId == currentCard.cardId, let snapshot = snapshot else { return }
+            self.resultPanel.render(snapshot.content())
+            self.setResultCollapsed(false, animated: false)
+        }
     }
 
     private func cleanupReviewSession(stopWebView: Bool) {

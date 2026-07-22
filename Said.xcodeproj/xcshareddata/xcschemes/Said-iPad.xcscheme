@@ -37,17 +37,6 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "481EDFD1BDF5CA4C5222B98C"
-               BuildableName = "SaidTests.xctest"
-               BlueprintName = "SaidTests"
-               ReferencedContainer = "container:Said.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

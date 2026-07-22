@@ -113,7 +113,7 @@ final class CardRevealView: UIView, ThemeRefreshable {
             curtain.accessibilityLabel = "重新遮住问题或句子"
         } else {
             curtain.backgroundColor = .black
-            curtain.setImage(ActionIconFactory.image(.reveal, pointSize: 22), for: .normal)
+            curtain.setImage(ActionIconFactory.image(.reveal, pointSize: 20), for: .normal)
             curtain.setTitle("  点击显示问题 / 句子", for: .normal)
             curtain.accessibilityLabel = "显示问题或句子"
         }
@@ -182,22 +182,22 @@ final class ReviewControlBar: UIView, ThemeRefreshable {
 
     private func build() {
         translatesAutoresizingMaskIntoConstraints = false
-        layer.cornerRadius = 12
+        layer.cornerRadius = DSTheme.cornerRadius
         layer.borderWidth = 1
         stack.axis = .horizontal
         stack.distribution = .fillEqually
-        stack.spacing = 6
+        stack.spacing = DSTheme.Spacing.xxs
         stack.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stack)
         for action in Action.allCases {
             let button = UIButton(type: .system)
             button.setTitle(action.title, for: .normal)
-            button.setImage(ActionIconFactory.image(iconKind(for: action), pointSize: 17), for: .normal)
+            button.setImage(ActionIconFactory.image(iconKind(for: action), pointSize: 16), for: .normal)
             button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -3, bottom: 0, right: 3)
             button.titleLabel?.font = DSTheme.titleFont(size: 13)
             button.titleLabel?.adjustsFontSizeToFitWidth = true
             button.titleLabel?.minimumScaleFactor = 0.78
-            button.layer.cornerRadius = 8
+            button.layer.cornerRadius = DSTheme.Form.cornerRadius
             button.layer.borderWidth = 1
             button.accessibilityLabel = action.title
             button.tag = Action.allCases.firstIndex(of: action) ?? 0
@@ -252,13 +252,7 @@ final class AnswerEaseBar: UIView, ThemeRefreshable {
 
     func setIntervals(_ intervals: [AnkiEase: String]) {
         buttons.forEach { button, ease, _ in
-            let title: String
-            switch ease {
-            case .again: title = "Again"
-            case .hard: title = "Hard"
-            case .good: title = "Good"
-            case .easy: title = "Easy"
-            }
+            let title = Self.title(for: ease)
             if let interval = intervals[ease], !interval.isEmpty {
                 button.setTitle("\(title)\n\(interval)", for: .normal)
                 button.accessibilityLabel = "\(title)，下次间隔 \(interval)"
@@ -267,6 +261,15 @@ final class AnswerEaseBar: UIView, ThemeRefreshable {
                 button.accessibilityLabel = title
             }
             button.accessibilityHint = "使用此记忆程度回答当前卡片"
+        }
+    }
+
+    private static func title(for ease: AnkiEase) -> String {
+        switch ease {
+        case .again: return "重来"
+        case .hard: return "困难"
+        case .good: return "良好"
+        case .easy: return "简单"
         }
     }
 
@@ -283,30 +286,30 @@ final class AnswerEaseBar: UIView, ThemeRefreshable {
 
     private func build() {
         translatesAutoresizingMaskIntoConstraints = false
-        layer.cornerRadius = 12
+        layer.cornerRadius = DSTheme.cornerRadius
         layer.borderWidth = 1
         stack.axis = .horizontal
         stack.distribution = .fillEqually
-        stack.spacing = 6
+        stack.spacing = DSTheme.Spacing.xxs
         stack.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stack)
-        let values: [(String, AnkiEase, UIColor)] = [
-            ("Again", .again, DSTheme.easeAgain),
-            ("Hard", .hard, DSTheme.easeHard),
-            ("Good", .good, DSTheme.easeGood),
-            ("Easy", .easy, DSTheme.easeEasy)
+        let values: [(AnkiEase, UIColor)] = [
+            (.again, DSTheme.easeAgain),
+            (.hard, DSTheme.easeHard),
+            (.good, DSTheme.easeGood),
+            (.easy, DSTheme.easeEasy)
         ]
         for (index, value) in values.enumerated() {
             let button = UIButton(type: .system)
-            button.setTitle(value.0, for: .normal)
+            button.setTitle(Self.title(for: value.0), for: .normal)
             button.titleLabel?.font = DSTheme.titleFont(size: 12)
             button.titleLabel?.numberOfLines = 2
             button.titleLabel?.textAlignment = .center
-            button.layer.cornerRadius = 8
+            button.layer.cornerRadius = DSTheme.Form.cornerRadius
             button.layer.borderWidth = 1
             button.tag = index
             button.addTarget(self, action: #selector(tapped(_:)), for: .touchUpInside)
-            buttons.append((button, value.1, value.2))
+            buttons.append((button, value.0, value.1))
             stack.addArrangedSubview(button)
         }
         NSLayoutConstraint.activate([

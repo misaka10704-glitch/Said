@@ -96,7 +96,7 @@ final class SidebarViewController: UIViewController, ThemeRefreshable, UITableVi
 
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.text = "Said"
-        titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .semibold)
+        titleLabel.font = DSTheme.titleFont(size: 19)
         headerView.addSubview(titleLabel)
 
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -224,8 +224,13 @@ private final class SidebarCell: UITableViewCell {
 
     private func applyTheme() {
         let colors = DSTheme.c
-        selectionSurface.backgroundColor = isCurrentSection ? colors.surfaceHover : .clear
+        selectionSurface.backgroundColor = isCurrentSection
+            ? DSTheme.tintedSurface(colors.accent, alpha: 0.16)
+            : .clear
         sectionIconView.tintColor = isCurrentSection ? colors.accent : colors.textSecondary
         sectionTitleLabel.textColor = isCurrentSection ? colors.textPrimary : colors.textSecondary
+        sectionTitleLabel.font = isCurrentSection
+            ? DSTheme.titleFont(size: 15)
+            : DSTheme.bodyFont(size: 15)
     }
 }

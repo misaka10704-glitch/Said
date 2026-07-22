@@ -56,7 +56,7 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         guard tableView.tableHeaderView != nil else { return }
-        let size = CGSize(width: tableView.bounds.width, height: 48)
+        let size = CGSize(width: tableView.bounds.width, height: 52)
         if tableView.tableHeaderView?.frame.size != size {
             summaryHeader.frame = CGRect(origin: .zero, size: size)
             tableView.tableHeaderView = summaryHeader
@@ -75,6 +75,7 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
         summaryHeader.applyTheme()
         emptyState.applyTheme()
         loadingIndicator.color = colors.accent
+        configureNavigationItems()
         tableView.reloadData()
     }
 
@@ -83,34 +84,35 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
     }
 
     private func configureNavigationItems() {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.alignment = .center
-        stack.spacing = 8
-        for (icon, selector, label) in [
-            (ActionIconFactory.Kind.createDeck, #selector(showAddMenu(_:)), "创建牌组"),
-            (ActionIconFactory.Kind.importFile, #selector(importApkg), "导入 APKG")
-        ] {
-            let button = UIButton(type: .system)
-            let pointSize: CGFloat = icon == .importFile ? 14 : 18
-            button.setImage(ActionIconFactory.image(icon, pointSize: pointSize), for: .normal)
-            button.tintColor = DSTheme.c.accent
-            button.accessibilityLabel = label
-            button.addTarget(self, action: selector, for: .touchUpInside)
-            button.widthAnchor.constraint(equalToConstant: 32).isActive = true
-            button.heightAnchor.constraint(equalToConstant: 32).isActive = true
-            stack.addArrangedSubview(button)
-        }
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stack)
+        let create = ActionIconFactory.barItem(
+            kind: .createDeck,
+            target: self,
+            action: #selector(showAddMenu(_:)),
+            accessibility: "创建牌组"
+        )
+        let importItem = ActionIconFactory.barItem(
+            kind: .importFile,
+            target: self,
+            action: #selector(importApkg),
+            accessibility: "导入 APKG"
+        )
+        // rightBarButtonItems: first item is the rightmost.
+        navigationItem.rightBarButtonItems = [importItem, create]
     }
 
     private func configureTable() {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(DeckTreeRowCell.self, forCellReuseIdentifier: DeckTreeRowCell.reuseIdentifier)
-        tableView.rowHeight = 44
-        tableView.estimatedRowHeight = 44
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 48, bottom: 0, right: 12)
+        tableView.rowHeight = 48
+        tableView.estimatedRowHeight = 48
+        // Align with title start (disclosure + accent) and more-button trailing reserve.
+        tableView.separatorInset = UIEdgeInsets(
+            top: 0,
+            left: 46,
+            bottom: 0,
+            right: DSTheme.DeckCounts.trailingReserved
+        )
         tableView.tableFooterView = UIView()
         tableView.tableHeaderView = summaryHeader
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -197,8 +199,9 @@ final class DeckListViewController: UIViewController, ThemeRefreshable,
                     self?.importApkg()
                 },
             ],
-            sourceView: sender as? UIView ?? view,
+            sourceView: (sender as? UIView) ?? view,
             sourceRect: (sender as? UIView)?.bounds,
+            barButtonItem: sender as? UIBarButtonItem,
             preferVertical: true
         )
     }

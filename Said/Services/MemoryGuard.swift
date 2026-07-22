@@ -13,7 +13,11 @@ enum MemoryGuard {
         URLCache.shared.removeAllCachedResponses()
     }
 
-    static func lowMemoryWarningInstall(on vc: UIViewController, handler: @escaping () -> Void) {
+    @discardableResult
+    static func lowMemoryWarningInstall(
+        on vc: UIViewController,
+        handler: @escaping () -> Void
+    ) -> NSObjectProtocol {
         NotificationCenter.default.addObserver(
             forName: UIApplication.didReceiveMemoryWarningNotification,
             object: nil,

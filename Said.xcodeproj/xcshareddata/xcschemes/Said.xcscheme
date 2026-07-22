@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7DC8D540FB25A16DFE050912"
+               BlueprintIdentifier = "E909AB1409C1C0DC86AA61F5"
                BuildableName = "Said.app"
-               BlueprintName = "Said-iPad"
+               BlueprintName = "Said-iPhone"
                ReferencedContainer = "container:Said.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,9 +30,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7DC8D540FB25A16DFE050912"
+            BlueprintIdentifier = "E909AB1409C1C0DC86AA61F5"
             BuildableName = "Said.app"
-            BlueprintName = "Said-iPad"
+            BlueprintName = "Said-iPhone"
             ReferencedContainer = "container:Said.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -64,9 +64,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7DC8D540FB25A16DFE050912"
+            BlueprintIdentifier = "E909AB1409C1C0DC86AA61F5"
             BuildableName = "Said.app"
-            BlueprintName = "Said-iPad"
+            BlueprintName = "Said-iPhone"
             ReferencedContainer = "container:Said.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -81,9 +81,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7DC8D540FB25A16DFE050912"
+            BlueprintIdentifier = "E909AB1409C1C0DC86AA61F5"
             BuildableName = "Said.app"
-            BlueprintName = "Said-iPad"
+            BlueprintName = "Said-iPhone"
             ReferencedContainer = "container:Said.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

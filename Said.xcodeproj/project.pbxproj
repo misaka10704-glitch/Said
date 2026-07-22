@@ -37,9 +37,6 @@
 		43A3CECDFDCD368C53E0E7AB /* PronounceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F06BE14835A0D0D566A8F0C /* PronounceMode.swift */; };
 		43CAAB616FA1ED951BE157CC /* EdgeTTSBatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB228A1AC065F97164B404AA /* EdgeTTSBatchViewController.swift */; };
 		47250DA15FDDC38636D823CC /* SyncViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1375F0D663F2A6F0D7AA4BB6 /* SyncViewController.swift */; };
-		D4C1A5E82B6F4A7093E1C8D7 /* DeckListCollapseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B0A4D71A5E493827F1D6C8 /* DeckListCollapseStore.swift */; };
-		E5D2B6F93C704B8194F2D9E8 /* DeckListCollapseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B0A4D71A5E493827F1D6C8 /* DeckListCollapseStore.swift */; };
-		F7E8D9C0B1A234567890CDEF /* DeckListCollapseStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D7C8B9A0F123456789ABCD /* DeckListCollapseStoreTests.swift */; };
 		4ED48B2FE1503240E17C3C02 /* MigrationNoteSanitizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E9A45F450AF9E58DC93DA2 /* MigrationNoteSanitizerTests.swift */; };
 		545B89961D4C20942097B2B2 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7278BD9D4BD17223E001D0 /* SidebarViewController.swift */; };
 		54ACCA86FD6DE328A07EECBD /* IELTSServiceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986A2E72104124EFE0076F5D /* IELTSServiceModels.swift */; };
@@ -73,15 +70,18 @@
 		81C725F60536C630998CA5F7 /* ReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 284A744EE2F7844CC35B4217 /* ReviewViewController.swift */; };
 		87B8F84D18FFC8D8A63494DB /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE34578D1FAECAB0827FA258 /* AudioRecorder.swift */; };
 		88BDD34C69D723B0D4BD0784 /* DeckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E33F51427CB26B76A10469D /* DeckListViewController.swift */; };
+		8B6FABDE9C1FAF77598C116E /* DeckListCollapseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A69B827700F855C3391275 /* DeckListCollapseStore.swift */; };
 		8B7A612322DA2504707670F6 /* DeckOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB9CD7AFD92A136169D079B /* DeckOptionsViewController.swift */; };
 		8CC81F1DDAD9977E40DA5DED /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D8C2AD1879D2F4F398D308 /* StatisticsViewController.swift */; };
 		8D13B176B35335E49B660F0F /* CardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E2D33B3AA8CC3F278B9D50 /* CardModels.swift */; };
+		8E080C1351FFF3A36BB70AA6 /* DeckListCollapseStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B52F60F69DE5CD796D17C5 /* DeckListCollapseStoreTests.swift */; };
 		8E59092E9BCC7DE286696D85 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6349FE976A49BE071AF8604D /* KeychainStore.swift */; };
 		951090CD3A87BED37C6B76B7 /* IELTSNativeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B977A89474DC981EB362E1 /* IELTSNativeService.swift */; };
 		996FCEB8D7E392A8DACDA57F /* PronounceHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0380051720A13104BEFEA030 /* PronounceHistoryStore.swift */; };
 		99D144AD4E92664A2C1FD76C /* DataMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B863DE671883CA5078B5F5 /* DataMaintenanceViewController.swift */; };
 		9A726FEB89864009410C9865 /* SaidMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501DCB5B0975F5F127155488 /* SaidMenu.swift */; };
 		9A74FD577FF9EB788C4FF379 /* EdgeTTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90BED9C081C3F9BB4C045E2F /* EdgeTTSService.swift */; };
+		9CA38600AFAF32FD4FF66F77 /* DeckListCollapseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A69B827700F855C3391275 /* DeckListCollapseStore.swift */; };
 		A2FED9C3ADD2BAC834DFCD6C /* DeckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E33F51427CB26B76A10469D /* DeckListViewController.swift */; };
 		A38D3EB48F2C38C8205BBCB4 /* PronounceAttachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7CAC929665736896CC7CA2 /* PronounceAttachments.swift */; };
 		A469191B85F05F9EFA566FD1 /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5AA4842152319BA7FAF93C /* RootSplitViewController.swift */; };
@@ -138,12 +138,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D63A4AADC96416DBD0AE20F9 /* PBXContainerItemProxy */ = {
+		1CCC6EDFE49AB573D2AD0C91 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A9261C0B681C0DA739A3762D /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 7DC8D540FB25A16DFE050912;
-			remoteInfo = "Said-iPad";
+			remoteGlobalIDString = E909AB1409C1C0DC86AA61F5;
+			remoteInfo = "Said-iPhone";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -163,8 +163,7 @@
 		2D21643C31D9992BF08B3073 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2EDBCAEDADDC79DF467D38C7 /* MemoryGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryGuard.swift; sourceTree = "<group>"; };
 		34C84C91DA61895B7E98C1A9 /* ComposeMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMode.swift; sourceTree = "<group>"; };
-		C3B0A4D71A5E493827F1D6C8 /* DeckListCollapseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckListCollapseStore.swift; sourceTree = "<group>"; };
-		E6D7C8B9A0F123456789ABCD /* DeckListCollapseStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckListCollapseStoreTests.swift; sourceTree = "<group>"; };
+		37B52F60F69DE5CD796D17C5 /* DeckListCollapseStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckListCollapseStoreTests.swift; sourceTree = "<group>"; };
 		39E9A45F450AF9E58DC93DA2 /* MigrationNoteSanitizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationNoteSanitizerTests.swift; sourceTree = "<group>"; };
 		3A5AA4842152319BA7FAF93C /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
 		4521950673C5944FA255C50F /* SimpleZip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleZip.swift; sourceTree = "<group>"; };
@@ -190,6 +189,7 @@
 		944A94806A303FC46D6A6080 /* SaidLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SaidLogo.png; sourceTree = "<group>"; };
 		971E751593E2213393282A99 /* QwenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QwenService.swift; sourceTree = "<group>"; };
 		986A2E72104124EFE0076F5D /* IELTSServiceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IELTSServiceModels.swift; sourceTree = "<group>"; };
+		98A69B827700F855C3391275 /* DeckListCollapseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckListCollapseStore.swift; sourceTree = "<group>"; };
 		998DBCA09F2C3E27FD861CDB /* BrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserViewController.swift; sourceTree = "<group>"; };
 		9C4DAE712E0E0BE55D568241 /* AnkiStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiStore.swift; sourceTree = "<group>"; };
 		A32F3358A5A7D495178CAD73 /* SaidTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SaidTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -284,8 +284,8 @@
 		1C0FDDFB069FD6AD4E5131E7 /* SaidTests */ = {
 			isa = PBXGroup;
 			children = (
+				37B52F60F69DE5CD796D17C5 /* DeckListCollapseStoreTests.swift */,
 				39E9A45F450AF9E58DC93DA2 /* MigrationNoteSanitizerTests.swift */,
-				E6D7C8B9A0F123456789ABCD /* DeckListCollapseStoreTests.swift */,
 			);
 			path = SaidTests;
 			sourceTree = "<group>";
@@ -380,7 +380,7 @@
 				6461C22D4A9E0124005C71D1 /* AzureSpeechResponse.swift */,
 				EED9FA3219989485A7787583 /* AzureSpeechService.swift */,
 				EA97FDB1B94E8D9B3DD266F5 /* BackupBundleHelper.swift */,
-				C3B0A4D71A5E493827F1D6C8 /* DeckListCollapseStore.swift */,
+				98A69B827700F855C3391275 /* DeckListCollapseStore.swift */,
 				8FC3435D6C504DDD50DF4E3C /* DeckPracticePreferences.swift */,
 				90BED9C081C3F9BB4C045E2F /* EdgeTTSService.swift */,
 				F4B977A89474DC981EB362E1 /* IELTSNativeService.swift */,
@@ -430,7 +430,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				C0D1609A0E498A11A47B0A60 /* PBXTargetDependency */,
+				1495CFEB6345530C70F22A78 /* PBXTargetDependency */,
 			);
 			name = SaidTests;
 			packageProductDependencies = (
@@ -572,10 +572,10 @@
 				D03559F37F27F180DBD00DBE /* DSTheme.swift in Sources */,
 				99D144AD4E92664A2C1FD76C /* DataMaintenanceViewController.swift in Sources */,
 				39F51F4125C0F12C1BCA0AF9 /* DeckCustomStudyViewController.swift in Sources */,
+				9CA38600AFAF32FD4FF66F77 /* DeckListCollapseStore.swift in Sources */,
 				A2FED9C3ADD2BAC834DFCD6C /* DeckListViewController.swift in Sources */,
 				622754D2D7BF9AF60A9F4E0D /* DeckOptionsViewController.swift in Sources */,
 				5DD6802E27A92C4E51B8B912 /* DeckParentPickerViewController.swift in Sources */,
-				D4C1A5E82B6F4A7093E1C8D7 /* DeckListCollapseStore.swift in Sources */,
 				15657DE81CB5C2B5D161BC3D /* DeckPracticePreferences.swift in Sources */,
 				68637903D3A83EE4BA36BF86 /* DeckPracticePreferencesViewController.swift in Sources */,
 				1D93008F7B3E2EFE2F24E155 /* EdgeTTSBatchViewController.swift in Sources */,
@@ -637,10 +637,10 @@
 				DF24884CBC73940A07A9123E /* DSTheme.swift in Sources */,
 				3A43F8005BF659803CAEB110 /* DataMaintenanceViewController.swift in Sources */,
 				3ABAE73602D94755EA9A0760 /* DeckCustomStudyViewController.swift in Sources */,
+				8B6FABDE9C1FAF77598C116E /* DeckListCollapseStore.swift in Sources */,
 				88BDD34C69D723B0D4BD0784 /* DeckListViewController.swift in Sources */,
 				8B7A612322DA2504707670F6 /* DeckOptionsViewController.swift in Sources */,
 				71142AC81AB53F801597DBAA /* DeckParentPickerViewController.swift in Sources */,
-				E5D2B6F93C704B8194F2D9E8 /* DeckListCollapseStore.swift in Sources */,
 				3E295BF24DCEDBC603DB1DCB /* DeckPracticePreferences.swift in Sources */,
 				B3B39BB0A120E681C9DEEC77 /* DeckPracticePreferencesViewController.swift in Sources */,
 				43CAAB616FA1ED951BE157CC /* EdgeTTSBatchViewController.swift in Sources */,
@@ -683,18 +683,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E080C1351FFF3A36BB70AA6 /* DeckListCollapseStoreTests.swift in Sources */,
 				4ED48B2FE1503240E17C3C02 /* MigrationNoteSanitizerTests.swift in Sources */,
-				F7E8D9C0B1A234567890CDEF /* DeckListCollapseStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		C0D1609A0E498A11A47B0A60 /* PBXTargetDependency */ = {
+		1495CFEB6345530C70F22A78 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7DC8D540FB25A16DFE050912 /* Said-iPad */;
-			targetProxy = D63A4AADC96416DBD0AE20F9 /* PBXContainerItemProxy */;
+			target = E909AB1409C1C0DC86AA61F5 /* Said-iPhone */;
+			targetProxy = 1CCC6EDFE49AB573D2AD0C91 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -780,6 +780,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = C8XVZJLC2D;
@@ -804,6 +806,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = C8XVZJLC2D;
@@ -892,6 +896,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = C8XVZJLC2D;
@@ -916,6 +922,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = C8XVZJLC2D;

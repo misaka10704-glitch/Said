@@ -76,56 +76,60 @@ final class ThemeManager {
 }
 
 enum DSTheme {
+    private static func rgb(_ red: CGFloat, _ green: CGFloat, _ blue: CGFloat, alpha: CGFloat = 1) -> UIColor {
+        UIColor(red: red / 255, green: green / 255, blue: blue / 255, alpha: alpha)
+    }
+
     /// Connects-compatible neutral palette with Said's own semantic accents.
-    static let brandCyan = UIColor(red: 16 / 255, green: 163 / 255, blue: 127 / 255, alpha: 1)
-    static let voiceBlue = UIColor(red: 57 / 255, green: 145 / 255, blue: 245 / 255, alpha: 1)
-    static let pronounceCoral = UIColor(red: 242 / 255, green: 126 / 255, blue: 98 / 255, alpha: 1)
-    static let speakingViolet = UIColor(red: 139 / 255, green: 112 / 255, blue: 232 / 255, alpha: 1)
-    static let learningAmber = UIColor(red: 226 / 255, green: 164 / 255, blue: 63 / 255, alpha: 1)
-    static let destructiveRed = UIColor(red: 224 / 255, green: 72 / 255, blue: 72 / 255, alpha: 1)
+    static let brandCyan = rgb(16, 163, 127)
+    static let voiceBlue = rgb(57, 145, 245)
+    static let pronounceCoral = rgb(242, 126, 98)
+    static let speakingViolet = rgb(139, 112, 232)
+    static let learningAmber = rgb(226, 164, 63)
+    static let destructiveRed = rgb(224, 72, 72)
 
     // Anki answer-button semantics. Keep these stable across appearance modes.
-    static let easeAgain = UIColor(red: 218 / 255, green: 72 / 255, blue: 72 / 255, alpha: 1)
-    static let easeHard = UIColor(red: 216 / 255, green: 142 / 255, blue: 49 / 255, alpha: 1)
-    static let easeGood = UIColor(red: 52 / 255, green: 168 / 255, blue: 102 / 255, alpha: 1)
-    static let easeEasy = UIColor(red: 65 / 255, green: 135 / 255, blue: 224 / 255, alpha: 1)
+    static let easeAgain = rgb(218, 72, 72)
+    static let easeHard = rgb(216, 142, 49)
+    static let easeGood = rgb(52, 168, 102)
+    static let easeEasy = rgb(65, 135, 224)
 
     static let dark = ThemeColors(
-        background: UIColor(red: 33 / 255, green: 33 / 255, blue: 33 / 255, alpha: 1),
-        sidebarBackground: UIColor(red: 23 / 255, green: 23 / 255, blue: 23 / 255, alpha: 1),
-        surface: UIColor(red: 44 / 255, green: 44 / 255, blue: 44 / 255, alpha: 1),
-        surfaceHover: UIColor(red: 52 / 255, green: 52 / 255, blue: 52 / 255, alpha: 1),
-        border: UIColor(red: 64 / 255, green: 64 / 255, blue: 64 / 255, alpha: 1),
-        divider: UIColor(red: 40 / 255, green: 40 / 255, blue: 40 / 255, alpha: 1),
-        textPrimary: UIColor(red: 236 / 255, green: 236 / 255, blue: 241 / 255, alpha: 1),
-        textSecondary: UIColor(red: 172 / 255, green: 172 / 255, blue: 182 / 255, alpha: 1),
-        textTertiary: UIColor(red: 120 / 255, green: 120 / 255, blue: 130 / 255, alpha: 1),
+        background: rgb(33, 33, 33),
+        sidebarBackground: rgb(23, 23, 23),
+        surface: rgb(44, 44, 44),
+        surfaceHover: rgb(52, 52, 52),
+        border: rgb(64, 64, 64),
+        divider: rgb(40, 40, 40),
+        textPrimary: rgb(236, 236, 241),
+        textSecondary: rgb(172, 172, 182),
+        textTertiary: rgb(120, 120, 130),
         accent: brandCyan,
         success: easeGood,
         warning: easeHard,
         destructive: destructiveRed,
-        inputBackground: UIColor(red: 48 / 255, green: 48 / 255, blue: 52 / 255, alpha: 1),
-        inputBorder: UIColor(red: 70 / 255, green: 70 / 255, blue: 76 / 255, alpha: 1),
+        inputBackground: rgb(48, 48, 52),
+        inputBorder: rgb(70, 70, 76),
         navBarStyle: .black,
         statusBarStyle: .lightContent
     )
 
     static let light = ThemeColors(
         background: .white,
-        sidebarBackground: UIColor(red: 247 / 255, green: 247 / 255, blue: 248 / 255, alpha: 1),
+        sidebarBackground: rgb(247, 247, 248),
         surface: .white,
-        surfaceHover: UIColor(red: 236 / 255, green: 236 / 255, blue: 241 / 255, alpha: 1),
-        border: UIColor(red: 226 / 255, green: 226 / 255, blue: 232 / 255, alpha: 1),
-        divider: UIColor(red: 235 / 255, green: 235 / 255, blue: 240 / 255, alpha: 1),
-        textPrimary: UIColor(red: 13 / 255, green: 13 / 255, blue: 13 / 255, alpha: 1),
-        textSecondary: UIColor(red: 90 / 255, green: 90 / 255, blue: 98 / 255, alpha: 1),
-        textTertiary: UIColor(red: 142 / 255, green: 142 / 255, blue: 150 / 255, alpha: 1),
+        surfaceHover: rgb(236, 236, 241),
+        border: rgb(226, 226, 232),
+        divider: rgb(235, 235, 240),
+        textPrimary: rgb(13, 13, 13),
+        textSecondary: rgb(90, 90, 98),
+        textTertiary: rgb(142, 142, 150),
         accent: brandCyan,
         success: easeGood,
         warning: easeHard,
         destructive: destructiveRed,
         inputBackground: .white,
-        inputBorder: UIColor(red: 210 / 255, green: 210 / 255, blue: 218 / 255, alpha: 1),
+        inputBorder: rgb(210, 210, 218),
         navBarStyle: .default,
         statusBarStyle: .default
     )
@@ -150,8 +154,12 @@ enum DSTheme {
     }
 
     enum DeckCounts {
-        static let columnWidth: CGFloat = 30
-        static let columnSpacing: CGFloat = 2
+        static let columnWidth: CGFloat = 38
+        static let columnSpacing: CGFloat = 8
+        /// Space reserved for the row "more" control so header counts line up.
+        /// Matches: more trailing(12) + more width(36) + gap(2).
+        static let trailingReserved: CGFloat = 50
+        static let leadingInset: CGFloat = 16
     }
 
     enum Form {
